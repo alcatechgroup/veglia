@@ -41,6 +41,65 @@ a{text-decoration:none;color:inherit}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(45,166,125,.5)}70%{box-shadow:0 0 0 8px rgba(45,166,125,0)}100%{box-shadow:0 0 0 0 rgba(45,166,125,0)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── DARK MODE VARIABLES ─────────────────────────────────────────────────── */
+html[data-theme="dark"]{
+  --warm:#060F1A;
+  --cream:#0B1E35;
+  --bone:#0F2440;
+  --line:rgba(93,211,168,0.1);
+  --text:#FBF8F1;
+  --text-mid:rgba(251,248,241,0.65);
+  --text-soft:rgba(251,248,241,0.4);
+  --twilight:#1A3A5C;
+  --navy:#0B2545;
+}
+html[data-theme="dark"] body{background:var(--warm)}
+html[data-theme="dark"] .section-lei{background:var(--cream)}
+html[data-theme="dark"] .lei-card{background:var(--bone);border-color:rgba(93,211,168,.15)}
+html[data-theme="dark"] .lei-note{background:rgba(93,211,168,.05);border-color:rgba(93,211,168,.12);color:rgba(251,248,241,.5)}
+html[data-theme="dark"] .section-vacivitta{background:var(--warm)}
+html[data-theme="dark"] .section-header h2{color:var(--text)}
+html[data-theme="dark"] .pull-quote{color:var(--text)}
+html[data-theme="dark"] .dra-card{background:var(--bone);border-color:rgba(93,211,168,.12)}
+html[data-theme="dark"] .dra-info h4{color:var(--text)}
+html[data-theme="dark"] .dra-info p{color:var(--text-soft)}
+html[data-theme="dark"] .section-planos{background:var(--cream)}
+html[data-theme="dark"] .plano-card{background:var(--bone);border-color:rgba(93,211,168,.12)}
+html[data-theme="dark"] .plano-name{color:var(--text)}
+html[data-theme="dark"] .plano-desc{color:var(--text-soft);border-color:rgba(255,255,255,.08)}
+html[data-theme="dark"] .plano-features li{color:rgba(251,248,241,.75)}
+html[data-theme="dark"] .btn-plano{color:rgba(251,248,241,.7);border-color:rgba(255,255,255,.12)}
+html[data-theme="dark"] .btn-plano:hover{background:var(--twilight);color:#fff;border-color:var(--twilight)}
+html[data-theme="dark"] .section-faq{background:var(--warm)}
+html[data-theme="dark"] .faq-item{background:var(--bone);border-color:rgba(255,255,255,.08)}
+html[data-theme="dark"] .faq-q{color:var(--text)}
+html[data-theme="dark"] .faq-a{color:var(--text-soft)}
+html[data-theme="dark"] .faq-icon{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.4)}
+html[data-theme="dark"] .hero{background:radial-gradient(ellipse at 20% 40%,#0F2E52 0%,#091A30 55%,#060F1A 100%)}
+html[data-theme="dark"] .hero h1{color:var(--text)}
+html[data-theme="dark"] .hero-eyebrow{background:rgba(93,211,168,.08);border-color:rgba(93,211,168,.15);color:rgba(251,248,241,.75)}
+html[data-theme="dark"] .hero-lead{color:var(--text-mid)}
+html[data-theme="dark"] .btn-primary{background:var(--mint);color:var(--navy)}
+html[data-theme="dark"] .btn-primary:hover{background:var(--champagne);box-shadow:0 8px 24px rgba(93,211,168,.2)}
+html[data-theme="dark"] .btn-ghost{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:rgba(251,248,241,.65)}
+html[data-theme="dark"] .btn-ghost:hover{background:rgba(255,255,255,.1);border-color:var(--mint);color:var(--mint)}
+html[data-theme="dark"] .hero-card-body{background:rgba(11,37,69,.85);border-color:rgba(93,211,168,.15)}
+html[data-theme="dark"] .hero-card h3{color:var(--text)}
+html[data-theme="dark"] .hero-step p{color:rgba(251,248,241,.75)}
+html[data-theme="dark"] .hero-step strong{color:var(--text)}
+html[data-theme="dark"] .vacivitta-seal{border-color:rgba(255,255,255,.08)}
+html[data-theme="dark"] .seal-text{color:rgba(251,248,241,.4)}
+html[data-theme="dark"] .seal-text strong{color:rgba(251,248,241,.7)}
+html[data-theme="dark"] footer{background:#030C18;border-color:rgba(255,255,255,.04)}
+html[data-theme="dark"] .footer-about{color:rgba(255,255,255,.25)}
+
+/* ── THEME TOGGLE BUTTON ─────────────────────────────────────────────────── */
+.theme-toggle{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;padding:0}
+.theme-toggle:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35)}
+.icon-sun,.icon-moon{transition:opacity .2s,transform .2s;position:absolute}
+html:not([data-theme="dark"]) .icon-moon{opacity:0;transform:rotate(20deg) scale(.7)}
+html[data-theme="dark"] .icon-sun{opacity:0;transform:rotate(-20deg) scale(.7)}
+
 /* NAV */
 .nav-wrap{position:fixed;top:16px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:1200px;z-index:100}
 .nav{background:rgba(11,37,69,.9);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.08);border-radius:99px;padding:10px 12px 10px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px}
@@ -246,6 +305,12 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
       <a href="#faq">FAQ</a>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema" style="position:relative">
+        <!-- Sol — tema claro -->
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <!-- Lua — tema escuro -->
+        <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+      </button>
       <a href="/acesso" class="nav-acesso-rh">Acesso RH</a>
       <a href="#contato" class="nav-cta">Solicitar demo</a>
     </div>
@@ -562,6 +627,30 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
 </footer>
 
 <script>
+/* ── THEME TOGGLE ──────────────────────────────────────────────────────────── */
+(function(){
+  const STORAGE_KEY = 'veglia-theme';
+  const html = document.documentElement;
+  const saved = localStorage.getItem(STORAGE_KEY);
+  // Apply saved preference immediately (before paint) to avoid flash
+  if (saved === 'dark') html.setAttribute('data-theme', 'dark');
+  window.addEventListener('DOMContentLoaded', function(){
+    const btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    btn.addEventListener('click', function(){
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        html.removeAttribute('data-theme');
+        localStorage.setItem(STORAGE_KEY, 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem(STORAGE_KEY, 'dark');
+      }
+    });
+  });
+})();
+
+/* ── FAQ ───────────────────────────────────────────────────────────────────── */
 function toggleFaq(btn) {
   const item = btn.parentElement;
   const isOpen = item.classList.contains('open');
