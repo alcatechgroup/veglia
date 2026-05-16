@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 // ─── Pages: public ────────────────────────────────────────────────────────────
 import Login from "@/pages/Login";
+import AcessoRH from "@/pages/AcessoRH";
 import Unauthorized from "@/pages/Unauthorized";
 import AceitarConvite from "@/pages/AceitarConvite";
 import Diagnostico from "@/pages/Diagnostico";
@@ -52,7 +53,7 @@ function AppRedirect() {
 
 function AdminApp() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute requiredRole={["admin"]}>
       <AdminLayout>
         <Routes>
           <Route index element={<Overview />} />
@@ -154,6 +155,7 @@ export default function App() {
       <Routes>
         {/* Rotas públicas */}
         <Route path="/login" element={<Login />} />
+        <Route path="/acesso" element={<AcessoRH />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/aceitar-convite" element={<AceitarConvite />} />
