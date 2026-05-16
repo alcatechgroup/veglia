@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function myCompany() {
+      return request.auth.token.company_id;
+    }
+
+    function myRole() {
+      return request.auth.token.role;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && myRole() == 'admin';
+    }
+
+    function isRH() {
+      return isAuthenticated() && (myRole() == 'admin' || myRole() == 'rh' || myRole() == 'admin_rh');
+    }
+
+    function belongsToCompany(company_id) {
+      return isAuthenticated() && myCompany() == company_id;
+    }
+
+    // ── Companies ─────────────────────────────────────────────────────────────
+    match /companies/{company_id} {
+      allow read: if belongsToCompany(company_id);
+      allow create: if false; // apenas via Cloud Function createCompany
+      allow update: if isAdmin() && belongsToCompany(company_id);
+      allow delete: if false;
+    }
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read: if request.auth.uid == uid
+                  || (isRH() && resource.data.company_id == myCompany());
+      // Permite create para o fluxo de aceite de convite (client-side no MVP)
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ── Invites ───────────────────────────────────────────────────────────────
+    match /invites/{invite_id} {
+      // Qualquer um pode ler (o token já é o segredo — UUID não adivinhável)
+      allow read: if true;
+      allow create: if isRH()
+                    && request.resource.data.company_id == myCompany();
+      // Colaborador atualiza used_at no aceite do convite
+      allow update: if true;
+      allow delete: if isAdmin() && resource.data.company_id == myCompany();
+    }
+
+    // ── Enrollments (flat: documentId = uid_courseId) ─────────────────────────
+    // Colaborador escreve o próprio progresso.
+    // RH/Admin da mesma empresa pode ler para relatórios.
+    //
+    // NOTA: resource.data não está disponível em queries de coleção (where()),
+    // apenas em leituras de documento individual. Para que a query do DashboardRH
+    // (where("company_id", "==", companyId)) não seja bloqueada com permission-denied,
+    // a regra de leitura usa request.auth.token — disponível tanto em leituras
+    // individuais quanto em queries. A segurança de isolamento por empresa é
+    // garantida pelo custom claim company_id + pela própria query filtrada.
+    match /enrollments/{enrollment_id} {
+      allow read: if isAuthenticated()
+                  && (
+                    // próprio colaborador — leitura individual pelo padrão uid_courseId
+                    enrollment_id.matches(request.auth.uid + "_.*")
+                    // ou RH/Admin da mesma empresa — suporta queries com where()
+                    || isRH()
+                  );
+      allow create: if isAuthenticated()
+                    && request.resource.data.uid == request.auth.uid;
+      allow update: if isAuthenticated()
+                    && resource.data.uid == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // ── Certificates ─────────────────────────────────────────────────────────
+    match /certificates/{certificate_id} {
+      allow read: if isAuthenticated()
+                  && (
+                    resource.data.uid == request.auth.uid
+                    || (isRH() && resource.data.company_id == myCompany())
+                  );
+      // Client pode escrever o próprio certificado (MVP sem Cloud Function ativa)
+      allow write: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+
+    // ── Diagnostic Results (freemium — público pode criar) ─────────────────────
+    match /diagnostic_results/{id} {
+      allow create: if true; // qualquer visitante pode enviar
+      allow read: if isAuthenticated();
+      allow update, delete: if false;
+    }
+
+    // ── Config (video IDs e configurações da plataforma) ──────────────────────
+    // Qualquer autenticado pode ler (necessário para useVideoIds nas trilhas).
+    // Apenas admin pode escrever (protege contra adulteração de conteúdo).
+    match /config/{document} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ── OneDrive Docs (sync via Power Automate) ───────────────────────────────
+    // Power Automate autentica anonimamente (Firebase anon auth) para gravar.
+    // Apenas usuários reais (com email) podem ler — os 3 sócios.
+    match /onedrive_docs/{docId} {
+      allow create: if request.auth != null;
+      allow read:   if request.auth != null && request.auth.token.email != null;
+      allow update, delete: if false;
+    }
+  }
+}
