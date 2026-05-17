@@ -120,6 +120,8 @@ interface VegliaPlayerProps {
   moduleTitle?: string;
   /** uid do colaborador autenticado */
   uid: string;
+  /** company_id do colaborador — obrigatório para isolamento multi-tenant no Firestore */
+  companyId: string;
   /**
    * Quando true, o vídeo toca normalmente mas nenhum dado é gravado no Firestore.
    * Usado na pré-visualização do RH para evitar criar enrollments falsos.
@@ -136,6 +138,7 @@ export function VegliaPlayer({
   moduleId,
   moduleTitle,
   uid,
+  companyId,
   previewMode = false,
   onWatched,
 }: VegliaPlayerProps) {
@@ -172,6 +175,7 @@ export function VegliaPlayer({
         enrollRef,
         {
           uid,
+          company_id: companyId,
           course_id: courseId,
           [`modules.${moduleId}.watched_at`]: Date.now(),
           [`modules.${moduleId}.quiz_passed`]: false,
@@ -184,7 +188,7 @@ export function VegliaPlayer({
     }
 
     onWatched?.();
-  }, [uid, courseId, moduleId, previewMode, onWatched, stopPoll]);
+  }, [uid, companyId, courseId, moduleId, previewMode, onWatched, stopPoll]);
 
   const startPoll = useCallback(
     (player: YTPlayer) => {
@@ -215,6 +219,7 @@ export function VegliaPlayer({
               await setDoc(
                 enrollRef,
                 {
+                  company_id: companyId,
                   [`modules.${moduleId}.watch_percent_last`]: percent,
                   updated_at: serverTimestamp(),
                 },
@@ -227,7 +232,7 @@ export function VegliaPlayer({
         }
       }, 5000);
     },
-    [uid, courseId, moduleId, previewMode, markWatched, stopPoll]
+    [uid, companyId, courseId, moduleId, previewMode, markWatched, stopPoll]
   );
 
   // Effect para vídeo real: inicializa o player YouTube.

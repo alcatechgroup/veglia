@@ -52,7 +52,11 @@ service cloud.firestore {
       allow create: if isRH()
                     && request.resource.data.company_id == myCompany();
       // Colaborador atualiza used_at no aceite do convite
-      allow update: if true;
+      // Restringe a apenas o destinatário do convite; bloqueia alteração de company_id e role
+      allow update: if isAuthenticated()
+                    && resource.data.email == request.auth.token.email
+                    && !('company_id' in request.resource.data.diff(resource.data).affectedKeys())
+                    && !('role' in request.resource.data.diff(resource.data).affectedKeys());
       allow delete: if isAdmin() && resource.data.company_id == myCompany();
     }
 
@@ -71,8 +75,8 @@ service cloud.firestore {
                   && (
                     // próprio colaborador — leitura individual pelo padrão uid_courseId
                     enrollment_id.matches(request.auth.uid + "_.*")
-                    // ou RH/Admin da mesma empresa — suporta queries com where()
-                    || isRH()
+                    // ou RH/Admin da mesma empresa — verifica company_id para isolamento
+                    || (isRH() && resource.data.company_id == myCompany())
                   );
       allow create: if isAuthenticated()
                     && request.resource.data.uid == request.auth.uid;
@@ -82,19 +86,21 @@ service cloud.firestore {
     }
 
     // ── Certificates ─────────────────────────────────────────────────────────
+    // Escrita exclusiva via Cloud Function (Admin SDK ignora estas rules).
+    // Client nunca cria ou altera certificados — evita adulteração.
     match /certificates/{certificate_id} {
       allow read: if isAuthenticated()
                   && (
                     resource.data.uid == request.auth.uid
                     || (isRH() && resource.data.company_id == myCompany())
                   );
-      // Client pode escrever o próprio certificado (MVP sem Cloud Function ativa)
-      allow write: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      allow create, update: if false;
+      allow delete: if false;
     }
 
-    // ── Diagnostic Results (freemium — público pode criar) ─────────────────────
+    // ── Diagnostic Results (freemium — visitante autenticado pode criar) ─────────
     match /diagnostic_results/{id} {
-      allow create: if true; // qualquer visitante pode enviar
+      allow create: if isAuthenticated();
       allow read: if isAuthenticated();
       allow update, delete: if false;
     }

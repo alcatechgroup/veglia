@@ -224,6 +224,8 @@ export default function TrilhaLei15377() {
       const isLast = LEI_15377_MODULES[LEI_15377_MODULES.length - 1].id === activeModuleId;
       if (passed && isLast) {
         update.completed_at = now;
+        // Garantir company_id presente no enrollment — exigido por generateCertificate
+        update.company_id = claims.company_id;
       }
 
       await setDoc(ref, update, { merge: true });
@@ -371,6 +373,7 @@ export default function TrilhaLei15377() {
                 moduleId={activeModule.id}
                 moduleTitle={`Módulo ${LEI_15377_MODULES.findIndex((m) => m.id === activeModule.id) + 1}: ${activeModule.title}`}
                 uid={uid}
+                companyId={claims?.company_id ?? ""}
                 onWatched={handleWatched}
               />
               {activeProgress?.watched_at && !activeProgress.quiz_passed && (
