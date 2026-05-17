@@ -161,6 +161,13 @@ veglia-platform/
 | 34 | F13 IndicePreventivo: dashboard 4 dimensões, score ao vivo, histórico ISPC, impacto financeiro estimado | Executada 2026-05-16 | /app/indice |
 | 35 | AppLayout sidebar reestruturada: seções Compliance, Educação, Indicadores, Gestão para RH | Executada 2026-05-16 | apps/web/src/layouts/AppLayout.tsx |
 | 36 | App.tsx: rotas /app/compliance/*, /app/diagnostico, /app/indice adicionadas; PassaportePublico removido (bug de undefined import) | Executada 2026-05-16 | apps/web/src/App.tsx |
+| 37 | Gravação com Dra. Amanda agendada para 22/05/2026 | Confirmada 2026-05-17 | — |
+| 38 | Call com VR agendada para semana de 17/05/2026 — Rodolfo | Confirmada 2026-05-17 | — |
+| 39 | Domínio www.veglia.com.br confirmado; DNS da landing sobe segunda-feira 18/05/2026 | Confirmada 2026-05-17 | — |
+| 40 | Preços atualizados: Essencial R$29,90/mês até 30 vidas; Crescimento R$29,90 + R$0,49/vida até 1.000; Enterprise R$29,90 + R$0,39/vida acima de 1.000 | Aprovada 2026-05-17 | — |
+| 41 | Atendente Vela implementada na landing page com Kanban de leads em /admin/leads | Executada 2026-05-17 | apps/web/public/landing.html · apps/web/src/pages/admin/ |
+| 42 | ANTHROPIC_API_KEY configurada no Firebase Secret Manager — IA preventiva ativa | Executada 2026-05-17 | functions/src/index.ts |
+| 43 | T1 MVP dev ~75% completo — gaps críticos de Firestore Rules sendo corrigidos em 17/05 | Em progresso 2026-05-17 | firestore.rules |
 
 ## 6. Decisões pendentes
 
@@ -215,18 +222,21 @@ Detalhamento por frente em `docs/strategy/03-roadmap-operacional-30dias.html`.
 - [ ] Call exploratória com VR
 
 ### Frente Dev (Rodolfo + dev contratado)
-- [ ] Setup Firebase Blaze + monorepo + CI/CD
-- [ ] Auth multi-tenant + design system Linecraft
-- [ ] VegliaPlayer (YouTube IFrame + tracking)
-- [ ] Módulo Vacinação ponta a ponta
+- [x] Setup Firebase Blaze + monorepo + CI/CD
+- [x] Auth multi-tenant + design system Linecraft
+- [x] VegliaPlayer (YouTube IFrame + tracking)
+- [x] Módulo Vacinação ponta a ponta
 - [x] Dashboard RH MVP em staging.vegl.ia
+- [x] F01–F21 implementados (Sprints 1–4)
+- [x] Atendente Vela + Kanban de leads
+- [x] IA Preventiva (Anthropic API) configurada
 
 ### Frente Comunicação
 - [x] Landing page institucional no ar (deployada em 16/05 — https://veglia-6e734.web.app)
 - [x] Assets LinkedIn criados (logo 400×400, banner 1584×396, post imagem + texto MD)
-- [ ] Perfis LinkedIn Page + Instagram @vegl.ia
-- [ ] 8 posts publicados (4 LinkedIn + 4 carrosseis IG)
-- [ ] Gravação 1º vídeo educacional com Dra. Amanda
+- [ ] Perfis LinkedIn Page + Instagram @vegl.ia (pendente)
+- [ ] 8 posts publicados (4 LinkedIn + 4 carrosseis IG) (pendente)
+- [ ] Gravação 1º vídeo educacional com Dra. Amanda (agendado para 22/05)
 
 ---
 
@@ -273,4 +283,25 @@ Ou invoque diretamente os sub-agents:
 
 ---
 
-**Última atualização:** 2026-05-16 · Fase ativa: T1 MVP · Sprint: Semana 2 de 12 · Build: 197 módulos, zero erros TypeScript.
+## 13. Checklist demo VR (semana de 17/05/2026)
+
+### Tecnico (dev)
+- [x] Landing page no ar com Vela + precos corretos
+- [x] Plataforma RH completa (F01–F21) em staging
+- [x] Admin com Kanban de leads
+- [ ] Firestore Rules corrigidas para demo ponta a ponta (em progresso 17/05)
+- [ ] Empresa piloto cadastrada no Firestore
+- [ ] VideoIds cadastrados em /admin/conteudo
+
+### Operacional
+- [ ] www.veglia.com.br apontando para Firebase (segunda 18/05)
+- [ ] 1 video da Dra. Amanda no YouTube (gravacao 22/05)
+- [ ] Deck de pitch atualizado com novos precos
+
+### Comercial
+- [ ] Call com VR confirmada (semana de 17/05)
+- [ ] Proposta white label preparada para VR
+
+---
+
+**Última atualização:** 2026-05-17 · Fase ativa: T1 MVP · Sprint: Semana 2 de 12.

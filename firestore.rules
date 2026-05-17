@@ -99,10 +99,12 @@ service cloud.firestore {
     }
 
     // ── Diagnostic Results (freemium — visitante autenticado pode criar) ─────────
+    // uid no payload deve ser o do próprio usuário — bloqueia escrita cross-user.
     match /diagnostic_results/{id} {
-      allow create: if isAuthenticated();
-      allow read: if isAuthenticated();
-      allow update, delete: if false;
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      allow delete: if false;
     }
 
     // ── Config (video IDs e configurações da plataforma) ──────────────────────
@@ -130,6 +132,85 @@ service cloud.firestore {
     match /leads/{leadId} {
       allow read, write: if isAdmin();
       allow create: if true;
+    }
+
+    // ── Health Passports ──────────────────────────────────────────────────────
+    // Colaborador lê/escreve o próprio passaporte vacinal.
+    // RH da mesma empresa pode ler (relatórios de cobertura).
+    match /health_passports/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isRH());
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ── Video Progress ────────────────────────────────────────────────────────
+    // Colaborador escreve/lê o próprio progresso de vídeo.
+    // Nota: o player atual usa enrollments/{uid_courseId}; esta coleção é
+    // reservada para tracking granular futuro (por segmento/timestamp).
+    match /video_progress/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ── Compliance Scores ─────────────────────────────────────────────────────
+    // Calculado pela Cloud Function — client nunca escreve.
+    // RH lê apenas o score da própria empresa.
+    match /compliance_scores/{companyId} {
+      allow read: if isRH() && myCompany() == companyId;
+      allow write: if false; // somente Cloud Function via Admin SDK
+    }
+
+    // ── Vaccination Records ───────────────────────────────────────────────────
+    // Colaborador cria/lê os próprios registros. Nenhuma alteração ou deleção.
+    // RH da mesma empresa pode ler para relatórios.
+    match /vaccination_records/{recordId} {
+      allow read: if isAuthenticated() && (
+        resource.data.uid == request.auth.uid || isRH()
+      );
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ── Company Certificates ──────────────────────────────────────────────────
+    // Gerado pela Cloud Function após conclusão do curso.
+    // RH lê os certificados da própria empresa.
+    match /company_certificates/{docId} {
+      allow read: if isRH();
+      allow write: if false; // somente Cloud Function via Admin SDK
+    }
+
+    // ── Notifications ─────────────────────────────────────────────────────────
+    // Usuário lê e pode marcar como lida (campo 'read' apenas).
+    // Criação e deleção: exclusivo Cloud Function.
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated() && resource.data.user_id == request.auth.uid;
+      allow update: if isAuthenticated()
+        && resource.data.user_id == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow create, delete: if false; // somente Cloud Function
+    }
+
+    // ── User Points ───────────────────────────────────────────────────────────
+    // Gamificação futura (F09). Escrita exclusiva via Cloud Function.
+    match /user_points/{userId} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if false; // somente Cloud Function via Admin SDK
+    }
+
+    // ── AI Chats ──────────────────────────────────────────────────────────────
+    // Usuário lê/escreve apenas o próprio histórico de chat.
+    // Subcoleção messages segue o mesmo isolamento do documento pai.
+    match /ai_chats/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      match /messages/{msgId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+
+    // ── Audit Events ──────────────────────────────────────────────────────────
+    // Escrito exclusivamente pela Cloud Function (Admin SDK).
+    // Somente admin interno pode ler — auditoria de segurança.
+    match /audit_events/{eventId} {
+      allow read: if isAdmin();
+      allow write: if false;
     }
   }
 }

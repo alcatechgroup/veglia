@@ -23,8 +23,23 @@ export default function Onboarding() {
       const createCompany = httpsCallable(functions, "createCompany");
       await createCompany({ companyName: companyName.trim(), cnpj: cnpj.trim() || undefined });
 
-      // Força refresh do token para pegar os novos custom claims
-      await auth.currentUser?.getIdToken(true);
+      // Poll até o syncUserClaims trigger propagar company_id no JWT.
+      // O trigger Firestore é assíncrono — um único getIdToken(true) pode
+      // retornar antes de os claims serem gravados pelo Admin SDK.
+      const waitForClaims = async (maxAttempts = 5, delayMs = 1500): Promise<boolean> => {
+        for (let i = 0; i < maxAttempts; i++) {
+          const token = await auth.currentUser?.getIdTokenResult(true); // force refresh
+          if (token?.claims?.company_id) return true;
+          await new Promise<void>((r) => setTimeout(r, delayMs));
+        }
+        return false; // timeout — navegar mesmo assim com aviso de console
+      };
+
+      const claimsReady = await waitForClaims();
+      if (!claimsReady) {
+        console.warn("[Onboarding] Claims não propagados a tempo — navegando mesmo assim");
+      }
+
       navigate("/app/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao criar empresa. Tente novamente.");
