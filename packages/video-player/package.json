@@ -1,0 +1,20 @@
+{
+  "name": "@veglia/video-player",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@veglia/firebase-config": "workspace:*",
+    "@veglia/shared": "workspace:*",
+    "firebase": "^10.14.0",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "typescript": "^5.5.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  }
+}

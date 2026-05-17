@@ -12,8 +12,9 @@ import Unauthorized from "@/pages/Unauthorized";
 import AceitarConvite from "@/pages/AceitarConvite";
 import Diagnostico from "@/pages/Diagnostico";
 import CalculadoraVacinal from "@/pages/CalculadoraVacinal";
+import PassaportePublico from "@/pages/PassaportePublico";
 
-// ─── Pages: app (cliente) ─────────────────────────────────────────────────────
+// ─── Pages: app — S1 Core ────────────────────────────────────────────────────
 import Onboarding from "@/pages/app/Onboarding";
 import Trilhas from "@/pages/app/Trilhas";
 import TrilhaLei15377 from "@/pages/app/TrilhaLei15377";
@@ -27,6 +28,35 @@ import TrilhasRH from "@/pages/app/TrilhasRH";
 import CalendarioVacinalRH from "@/pages/app/CalendarioVacinalRH";
 import InCompanyVaciVitta from "@/pages/app/InCompanyVaciVitta";
 
+// ─── F01 Compliance (S1) ──────────────────────────────────────────────────────
+import ComplianceDashboard from "@/pages/app/ComplianceDashboard";
+import ComplianceVacinacao from "@/pages/app/ComplianceVacinacao";
+import ComplianceTreinamentos from "@/pages/app/ComplianceTreinamentos";
+import ComplianceRelatorio from "@/pages/app/ComplianceRelatorio";
+
+// ─── F02 Diagnóstico do colaborador (S1) ─────────────────────────────────────
+import DiagnosticoColaborador from "@/pages/app/DiagnosticoColaborador";
+
+// ─── F13 Índice Preventivo Corporativo (S2) ──────────────────────────────────
+import IndicePreventivo from "@/pages/app/IndicePreventivo";
+
+// ─── F06 Certificação de Empresa ──────────────────────────────────────────────
+import CertificacaoEmpresa from "@/pages/app/CertificacaoEmpresa";
+
+// ─── Pages: app — S2+ ────────────────────────────────────────────────────────
+import Campanhas from "@/pages/app/Campanhas";
+import Jornadas from "@/pages/app/Jornadas";
+import Conquistas from "@/pages/app/Conquistas";
+import Passaporte from "@/pages/app/Passaporte";
+import ISPC from "@/pages/app/ISPC";
+import Sipat from "@/pages/app/Sipat";
+import Notificacoes from "@/pages/app/Notificacoes";
+import Marketplace from "@/pages/app/Marketplace";
+import Canal from "@/pages/app/Canal";
+import Assistente from "@/pages/app/Assistente";
+import Beneficios from "@/pages/app/Beneficios";
+import Familia from "@/pages/app/Familia";
+
 // ─── Pages: admin (command center) ───────────────────────────────────────────
 import Overview from "@/pages/admin/Overview";
 import Roadmap from "@/pages/admin/Roadmap";
@@ -38,6 +68,12 @@ import Roteiros from "@/pages/admin/Roteiros";
 import Comunicacao from "@/pages/admin/Comunicacao";
 import PitchDeck from "@/pages/admin/PitchDeck";
 import GerenciarConteudo from "@/pages/admin/GerenciarConteudo";
+import WhiteLabel from "@/pages/admin/WhiteLabel";
+import Epidemiologia from "@/pages/admin/Epidemiologia";
+import AdminCanal from "@/pages/admin/AdminCanal";
+import AdminMarketplace from "@/pages/admin/AdminMarketplace";
+import AdminBeneficios from "@/pages/admin/AdminBeneficios";
+import Analytics from "@/pages/admin/Analytics";
 
 // ─── Redirect inteligente por role ────────────────────────────────────────────
 
@@ -73,6 +109,54 @@ function AdminApp() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="white-label"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <WhiteLabel />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="epidemiologia"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <Epidemiologia />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="canal"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <AdminCanal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="marketplace"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <AdminMarketplace />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="beneficios"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <AdminBeneficios />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="analytics"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </AdminLayout>
     </ProtectedRoute>
@@ -88,6 +172,8 @@ function ClientApp() {
         <Routes>
           {/* Redireciona /app para dashboard se for RH/admin, senao para trilhas */}
           <Route index element={<AppRedirect />} />
+
+          {/* ── S1: Dashboard principal ── */}
           <Route
             path="dashboard"
             element={
@@ -96,11 +182,52 @@ function ClientApp() {
               </ProtectedRoute>
             }
           />
+
+          {/* ── S1: F01 Compliance ── */}
+          <Route
+            path="compliance"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <ComplianceDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="compliance/vacinacao"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <ComplianceVacinacao />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="compliance/treinamentos"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <ComplianceTreinamentos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="compliance/relatorio"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <ComplianceRelatorio />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── S1: F02 Diagnóstico colaborador ── */}
+          <Route path="diagnostico" element={<DiagnosticoColaborador />} />
+
+          {/* ── S1: F03 Trilhas ── */}
           <Route path="trilhas" element={<Trilhas />} />
           <Route path="trilha/lei-15377" element={<TrilhaLei15377 />} />
           <Route path="trilha/nr-1" element={<TrilhaNr1 />} />
           <Route path="certificado" element={<Certificado />} />
           <Route path="certificados" element={<Certificados />} />
+
+          {/* ── S1: Gestão RH ── */}
           <Route
             path="convites"
             element={
@@ -141,6 +268,61 @@ function ClientApp() {
               </ProtectedRoute>
             }
           />
+
+          {/* ── S2: F13 Índice Preventivo ── */}
+          <Route
+            path="indice"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <IndicePreventivo />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── F06: Certificacao Empresa ── */}
+          <Route
+            path="certificacao-empresa"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <CertificacaoEmpresa />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── S2+: Features bloqueadas no MVP (stub pages já existentes) ── */}
+          <Route
+            path="campanhas"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <Campanhas />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="jornadas" element={<Jornadas />} />
+          <Route path="conquistas" element={<Conquistas />} />
+          <Route path="passaporte" element={<Passaporte />} />
+          <Route
+            path="ispc"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <ISPC />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="sipat"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <Sipat />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="notificacoes" element={<Notificacoes />} />
+          <Route path="marketplace" element={<Marketplace />} />
+          <Route path="canal" element={<Canal />} />
+          <Route path="assistente" element={<Assistente />} />
+          <Route path="beneficios" element={<Beneficios />} />
+          <Route path="familia" element={<Familia />} />
         </Routes>
       </AppLayout>
     </ProtectedRoute>
@@ -161,6 +343,9 @@ export default function App() {
         <Route path="/aceitar-convite" element={<AceitarConvite />} />
         <Route path="/diagnostico" element={<Diagnostico />} />
         <Route path="/calculadora-vacinal" element={<CalculadoraVacinal />} />
+
+        {/* Passaporte publico — verificacao por terceiros sem login */}
+        <Route path="/passaporte/:token" element={<PassaportePublico />} />
 
         {/* Rotas protegidas */}
         <Route path="/admin/*" element={<AdminApp />} />

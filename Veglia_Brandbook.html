@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegl.ia® — Mood Board · v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000;
+    --cream: #F4EDE0;
+    --cream-dim: #E8DFCC;
+    --vegl-green: #1A3A5C;       /* Twilight Blue · primária */
+    --vegl-green-deep: #0B2545;  /* Azul profundo · backgrounds */
+    --champagne: #C9A96E;        /* Acento secundário · ponto do logo */
+    --mint: #5DD3A8;             /* Mint Vacivitta · ".ia" + ecossistema */
+    --mint-deep: #2DA67D;        /* Mint escuro · texto sobre fundo claro */
+    --line: rgba(26, 58, 92, 0.12);
+    --text-soft: rgba(0, 0, 0, 0.6);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #1a1a1a;
+    color: var(--vegl-green-deep);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--vegl-green); color: var(--cream); }
+
+  /* ============ DECK SHELL ============ */
+  .deck {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .slide.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ============ SLIDE BASES ============ */
+  .slide-bg-cream { background: var(--cream); color: var(--vegl-green-deep); }
+  .slide-bg-black { background: var(--black); color: var(--cream); }
+  .slide-bg-green { background: var(--vegl-green); color: var(--cream); }
+
+  /* ============ SLIDE FRAME ============ */
+  .frame {
+    position: absolute;
+    inset: 60px 80px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* small marker top-left */
+  .marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  .marker strong {
+    font-weight: 700;
+    display: block;
+  }
+
+  /* footer */
+  .signature {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    opacity: 0.85;
+  }
+
+  /* ============ HERO COVER ============ */
+  .cover-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 700;
+    font-size: clamp(60px, 9vw, 130px);
+    letter-spacing: -4px;
+    color: var(--cream);
+    line-height: 1;
+  }
+
+  .cover-logo sup {
+    font-size: 0.18em;
+    font-weight: 400;
+    margin-left: 0.05em;
+    vertical-align: super;
+    letter-spacing: 0;
+  }
+
+  .cover-logo .dot-mark {
+    display: inline-block;
+    width: 0.12em;
+    height: 0.12em;
+    border-radius: 50%;
+    background: var(--champagne);
+    margin: 0 0.04em 0.18em;
+    vertical-align: middle;
+  }
+
+  .cover-logo .ia-text {
+    color: var(--mint);
+    font-weight: 800;
+  }
+
+  /* ============ TITLE LARGE ============ */
+  .title-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 20px;
+  }
+
+  h1.bold-line {
+    font-weight: 800;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 1;
+    letter-spacing: -2.5px;
+  }
+
+  h1.light-line {
+    font-weight: 300;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 1;
+    letter-spacing: -2.5px;
+  }
+
+  /* ============ TEXT BLOCKS ============ */
+  .text-block {
+    max-width: 1100px;
+    font-size: clamp(28px, 3vw, 48px);
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: -1px;
+  }
+
+  .text-block strong { font-weight: 700; }
+
+  .text-block.center { margin-top: auto; margin-bottom: auto; }
+
+  /* ============ PRINCIPLES TABLE ============ */
+  .principles {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    column-gap: 80px;
+    row-gap: 60px;
+    margin-top: 100px;
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  .principles-header {
+    display: contents;
+  }
+
+  .principles-header > div {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--vegl-green-deep);
+    padding-bottom: 50px;
+  }
+
+  .principle-name {
+    font-size: clamp(40px, 4vw, 60px);
+    font-weight: 400;
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+
+  .principle-desc {
+    font-size: 18px;
+    line-height: 1.5;
+    font-weight: 400;
+    max-width: 420px;
+  }
+
+  .principle-translation {
+    font-size: clamp(24px, 2.4vw, 34px);
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+
+  /* ============ SPECTRUM ============ */
+  .spectrum {
+    position: absolute;
+    inset: 60px 80px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .spectrum-poles {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 60px;
+  }
+
+  .pole {
+    font-size: 22px;
+    line-height: 1.3;
+    font-weight: 400;
+  }
+
+  .pole.right { text-align: right; }
+
+  .spectrum-line {
+    position: relative;
+    height: 1px;
+    background: var(--cream);
+    margin: 80px 0 100px;
+  }
+
+  .spectrum-line::before,
+  .spectrum-line::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--cream);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .spectrum-line::before { left: -2px; }
+  .spectrum-line::after { right: -2px; }
+
+  .spectrum-center {
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .spectrum-center::after {
+    content: '▼';
+    display: block;
+    font-size: 14px;
+    margin-top: 12px;
+    color: var(--cream);
+  }
+
+  /* ============ REFERENCES ============ */
+  .references-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    flex: 1;
+    align-items: stretch;
+  }
+
+  .references-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-content: start;
+  }
+
+  .ref-card {
+    border: 1px solid rgba(244, 237, 224, 0.25);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 110px;
+    justify-content: center;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .ref-card.image {
+    aspect-ratio: 4 / 3;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  .ref-card-title {
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .ref-card-meta {
+    font-size: 12px;
+    opacity: 0.65;
+    line-height: 1.4;
+  }
+
+  /* swatch grid for visual references */
+  .ref-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .ref-swatch {
+    aspect-ratio: 1;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .ref-swatch-meta {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    font-weight: 600;
+  }
+
+  /* ============ LOGO PRESENTATION ============ */
+  .logo-canvas {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .vegl-mark {
+    font-weight: 700;
+    line-height: 1;
+    color: var(--vegl-green-deep);
+    letter-spacing: -3px;
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .vegl-mark .v-text { font-weight: 700; }
+
+  .vegl-mark .v-dot {
+    display: inline-block;
+    background: var(--champagne);
+    border-radius: 50%;
+    margin: 0 0.05em 0.2em;
+    align-self: center;
+  }
+
+  .vegl-mark .v-ai {
+    font-weight: 800;
+    color: var(--mint-deep);
+    letter-spacing: -2px;
+  }
+
+  .vegl-mark.huge { font-size: clamp(120px, 14vw, 220px); }
+  .vegl-mark.huge .v-dot { width: 0.13em; height: 0.13em; }
+
+  .vegl-mark.medium { font-size: 64px; }
+  .vegl-mark.medium .v-dot { width: 0.13em; height: 0.13em; }
+
+  .vegl-mark.small { font-size: 32px; letter-spacing: -1px; }
+  .vegl-mark.small .v-dot { width: 0.13em; height: 0.13em; }
+
+  .vegl-mark.cream { color: var(--cream); }
+  .vegl-mark.green-bg-version .v-ai { color: var(--mint); }
+
+  .vegl-mark.mono-cream { color: var(--cream); }
+  .vegl-mark.mono-cream .v-dot,
+  .vegl-mark.mono-cream .v-ai { color: var(--cream); background: var(--cream); }
+  .vegl-mark.mono-cream .v-dot { background: var(--cream); }
+
+  /* logo subtitle */
+  .logo-tagline {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--vegl-green-deep);
+    opacity: 0.8;
+  }
+
+  /* logo annotations */
+  .logo-annotated {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .logo-anno {
+    position: absolute;
+    font-size: 14px;
+    line-height: 1.4;
+    max-width: 280px;
+  }
+
+  .logo-anno::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: currentColor;
+    margin-top: 8px;
+    width: 80px;
+  }
+
+  /* ============ PALETTE ============ */
+  .palette-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-top: 60px;
+    flex: 1;
+    align-content: stretch;
+    align-items: stretch;
+  }
+
+  .palette-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px;
+    min-height: 380px;
+  }
+
+  .palette-block.dark { color: var(--cream); }
+  .palette-block.light { color: var(--vegl-green-deep); border: 1px solid var(--line); }
+
+  .palette-block-name {
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .palette-block-codes {
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+
+  /* ============ TYPOGRAPHY DEMO ============ */
+  .type-demo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 80px;
+  }
+
+  .type-demo h3 {
+    font-size: 13px;
+    font-weight: 400;
+    margin-bottom: 30px;
+    color: var(--text-soft);
+  }
+
+  .type-sample {
+    font-weight: 800;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: -3px;
+    margin-bottom: 24px;
+  }
+
+  .type-sample.thin {
+    font-weight: 300;
+  }
+
+  .type-meta {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-soft);
+  }
+
+  /* ============ MANIFESTO ============ */
+  .manifesto-text {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: left;
+    font-size: clamp(28px, 3vw, 44px);
+    line-height: 1.3;
+    font-weight: 300;
+    letter-spacing: -1px;
+  }
+
+  .manifesto-text p { margin-bottom: 24px; }
+  .manifesto-text strong { font-weight: 700; }
+  .manifesto-text em { font-style: italic; color: var(--champagne); }
+
+  /* ============ NAV ============ */
+  .nav-bar {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 76, 58, 0.92);
+    backdrop-filter: blur(20px);
+    padding: 6px 12px;
+    border-radius: 99px;
+    z-index: 100;
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .nav-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: var(--cream);
+    color: var(--vegl-green);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .nav-counter {
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    min-width: 56px;
+    text-align: center;
+  }
+
+  .keys-hint {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-soft);
+    opacity: 0.5;
+    z-index: 99;
+  }
+
+  /* ============ APPLICATIONS ============ */
+  .app-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-top: 60px;
+    flex: 1;
+  }
+
+  .app-card {
+    border: 1px solid var(--line);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .app-card.dark {
+    background: var(--vegl-green-deep);
+    color: var(--cream);
+    border-color: var(--vegl-green-deep);
+  }
+
+  .app-card.cream-bg {
+    background: var(--cream-dim);
+  }
+
+  .app-card-tag {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.7;
+  }
+
+  .app-card-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+  }
+
+  .app-card-meta {
+    font-size: 12px;
+    line-height: 1.4;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="keys-hint">← →</div>
+
+<div class="deck">
+
+<!-- ============ SLIDE 1 · COVER ============ -->
+<section class="slide slide-bg-black active">
+  <div class="cover-logo">
+    Vegl<span class="dot-mark"></span><span class="ia-text">ia</span><sup>®</sup>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 · TITLE ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="title-stack">
+      <h1 class="bold-line">Vegl.ia</h1>
+      <h1 class="light-line">Mood Board</h1>
+    </div>
+    <div class="signature">RRevela © Maio 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 · INTRO CONCEITUAL ============ -->
+<section class="slide slide-bg-black">
+  <div class="frame">
+    <div class="text-block center">
+      Hoje, vamos ver o direcionamento desejado para a id. visual. As materializações que veremos são <strong>conceituais</strong>, com objetivo de mostrar os elementos funcionando em conjunto, porém sem layouts ou materiais finais. A partir da aprovação do mood board, vamos criar materiais com conteúdo e forma finais.
+    </div>
+    <div class="signature" style="color: var(--cream); opacity: 0.6;">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 · CONTEXTO ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Contexto</span>
+    </div>
+
+    <div style="margin-top: 100px; max-width: 1000px;">
+      <div class="text-block">
+        <strong>Vegl.ia</strong> é a primeira plataforma de Compliance Preventivo Corporativo do Brasil — construída para empresas que precisam cumprir a Lei 15.377/2026 e cuidar da saúde dos colaboradores em uma só jornada.
+      </div>
+
+      <div class="text-block" style="margin-top: 40px;">
+        Nasce como <strong>parte do ecossistema Vacivitta</strong> — herda a operação real de vacinação, a autoridade científica e a capilaridade nacional. Oferece em troca tecnologia, IA e canal corporativo B2B.
+      </div>
+
+      <div class="text-block" style="margin-top: 40px;">
+        Inspirada na vigília italiana e na autoridade institucional latina, busca ser <strong>premium e cotidiana</strong> ao mesmo tempo — uma marca que cuida silenciosamente do que importa.
+      </div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5 · PRINCÍPIO 1 ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Princípios de design</span>
+    </div>
+
+    <div class="principles">
+      <div class="principles-header">
+        <div>Princípio</div>
+        <div>Descrição</div>
+        <div>Tradução visual</div>
+      </div>
+
+      <div class="principle-name">Vigília</div>
+      <div class="principle-desc">Atenção contínua que não se anuncia. Inspirada na palavra italiana <em>veglia</em> — quem vela cuida sem ser pedido. A marca evoca presença discreta e proteção institucional.</div>
+      <div class="principle-translation">Tipografia precisa /<br>Símbolo simples</div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6 · PRINCÍPIO 2 ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Princípios de design</span>
+    </div>
+
+    <div class="principles">
+      <div class="principles-header">
+        <div>Princípio</div>
+        <div>Descrição</div>
+        <div>Tradução visual</div>
+      </div>
+
+      <div class="principle-name">Vigília</div>
+      <div class="principle-desc">Atenção contínua que não se anuncia. Inspirada na palavra italiana <em>veglia</em> — quem vela cuida sem ser pedido. A marca evoca presença discreta e proteção institucional.</div>
+      <div class="principle-translation">Tipografia precisa /<br>Símbolo simples</div>
+
+      <div class="principle-name">Cuidado<br>institucional</div>
+      <div class="principle-desc">Saúde corporativa não é cobrança fria — é zelo profissional. A Vegl.ia comunica autoridade técnica sem rigidez, calor sem informalidade. Latim moderno, médico humanizado.</div>
+      <div class="principle-translation">Paleta natural /<br>Composição clássica</div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 · PRINCÍPIO 3 ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Princípios de design</span>
+    </div>
+
+    <div class="principles">
+      <div class="principles-header">
+        <div>Princípio</div>
+        <div>Descrição</div>
+        <div>Tradução visual</div>
+      </div>
+
+      <div class="principle-name">Vigília</div>
+      <div class="principle-desc">Atenção contínua que não se anuncia. Inspirada na palavra italiana <em>veglia</em> — quem vela cuida sem ser pedido. A marca evoca presença discreta e proteção institucional.</div>
+      <div class="principle-translation">Tipografia precisa /<br>Símbolo simples</div>
+
+      <div class="principle-name">Cuidado<br>institucional</div>
+      <div class="principle-desc">Saúde corporativa não é cobrança fria — é zelo profissional. A Vegl.ia comunica autoridade técnica sem rigidez, calor sem informalidade. Latim moderno, médico humanizado.</div>
+      <div class="principle-translation">Paleta natural /<br>Composição clássica</div>
+
+      <div class="principle-name">IA discreta</div>
+      <div class="principle-desc">Tecnologia incorporada à marca, sem precisar gritar. O ".ia" no logotipo já comunica modernidade e inteligência aplicada. Não é SaaS frio, é guardião inteligente.</div>
+      <div class="principle-translation">Acento dourado /<br>Detalhe minimalista</div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8 · SPECTRUM ESQUERDA ============ -->
+<section class="slide slide-bg-black">
+  <div class="frame">
+    <div class="marker" style="color: var(--cream);">
+      <strong>Vegl.ia</strong>
+      <span>Princípios de design</span>
+    </div>
+
+    <div class="spectrum-poles" style="margin-top: 80px;">
+      <div class="pole">
+        SaaS frio<br>
+        Burocrata<br>
+        Compliance genérico
+      </div>
+      <div class="pole right">
+        Editorial<br>
+        Italiano<br>
+        Cuidado humano
+      </div>
+    </div>
+
+    <div class="spectrum-line"></div>
+
+    <div class="references-row">
+      <div class="references-col">
+        <div class="ref-card">
+          <div class="ref-card-title">Generic LMS Dashboards</div>
+          <div class="ref-card-meta">Cinza-azul, ícones genéricos, copy técnico-frio</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-title">SAP / Workday / Visual de ERP</div>
+          <div class="ref-card-meta">Auste eficiência sem alma — distância emocional</div>
+        </div>
+        <div class="ref-grid">
+          <div class="ref-swatch" style="background: #0F1F2E; color: #fff;">
+            <span class="ref-swatch-meta">Padrão</span>
+            <span>SaaS Frio</span>
+          </div>
+          <div class="ref-swatch" style="background: #4F5B66; color: #fff;">
+            <span class="ref-swatch-meta">Ausência</span>
+            <span>Cinza Genérico</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="references-col">
+        <div class="ref-card">
+          <div class="ref-card-title">Aesop · Le Labo</div>
+          <div class="ref-card-meta">Tipografia editorial, cuidado em cada detalhe, premium discreto</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-title">Stripe · Linear · Notion</div>
+          <div class="ref-card-meta">Clareza editorial em produto digital, calor em SaaS B2B</div>
+        </div>
+        <div class="ref-grid">
+          <div class="ref-swatch" style="background: var(--vegl-green); color: var(--cream);">
+            <span class="ref-swatch-meta">Veglia</span>
+            <span>Deep Sage</span>
+          </div>
+          <div class="ref-swatch" style="background: var(--champagne); color: var(--vegl-green-deep);">
+            <span class="ref-swatch-meta">Acento</span>
+            <span>Champagne</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="signature" style="color: var(--cream); opacity: 0.6;">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9 · SPECTRUM CENTRO ============ -->
+<section class="slide slide-bg-black">
+  <div class="frame">
+    <div class="marker" style="color: var(--cream);">
+      <strong>Vegl.ia</strong>
+      <span>Princípios de design</span>
+    </div>
+
+    <div class="spectrum-poles" style="margin-top: 80px;">
+      <div class="pole">
+        SaaS frio<br>
+        Burocrata<br>
+        Compliance genérico
+      </div>
+      <div class="pole right">
+        Editorial<br>
+        Italiano<br>
+        Cuidado humano
+      </div>
+    </div>
+
+    <div class="spectrum-line">
+      <div class="spectrum-center">
+        Vamos buscar<br>o meio-termo
+      </div>
+    </div>
+
+    <div class="references-row">
+      <div class="references-col">
+        <div class="ref-card">
+          <div class="ref-card-title">Generic LMS Dashboards</div>
+          <div class="ref-card-meta">Cinza-azul, ícones genéricos, copy técnico-frio</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-title">SAP / Workday / Visual de ERP</div>
+          <div class="ref-card-meta">Auste eficiência sem alma — distância emocional</div>
+        </div>
+        <div class="ref-grid">
+          <div class="ref-swatch" style="background: #0F1F2E; color: #fff;">
+            <span class="ref-swatch-meta">Padrão</span>
+            <span>SaaS Frio</span>
+          </div>
+          <div class="ref-swatch" style="background: #4F5B66; color: #fff;">
+            <span class="ref-swatch-meta">Ausência</span>
+            <span>Cinza Genérico</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="references-col">
+        <div class="ref-card">
+          <div class="ref-card-title">Aesop · Le Labo</div>
+          <div class="ref-card-meta">Tipografia editorial, cuidado em cada detalhe, premium discreto</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-title">Stripe · Linear · Notion</div>
+          <div class="ref-card-meta">Clareza editorial em produto digital, calor em SaaS B2B</div>
+        </div>
+        <div class="ref-grid">
+          <div class="ref-swatch" style="background: var(--vegl-green); color: var(--cream);">
+            <span class="ref-swatch-meta">Veglia</span>
+            <span>Deep Sage</span>
+          </div>
+          <div class="ref-swatch" style="background: var(--champagne); color: var(--vegl-green-deep);">
+            <span class="ref-swatch-meta">Acento</span>
+            <span>Champagne</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="signature" style="color: var(--cream); opacity: 0.6;">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 · LOGO PROPOSTO ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Logotipo</span>
+    </div>
+
+    <div class="logo-canvas">
+      <div class="vegl-mark huge">
+        <span class="v-text">Vegl</span><span class="v-dot"></span><span class="v-ai">ia</span>
+      </div>
+    </div>
+
+    <div class="logo-tagline">— O guardião da saúde dos seus funcionários —</div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 · LOGO ANATOMIA ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Logotipo</span>
+    </div>
+
+    <div class="logo-canvas logo-annotated">
+      <div class="vegl-mark huge">
+        <span class="v-text">Vegl</span><span class="v-dot"></span><span class="v-ai">ia</span>
+      </div>
+
+      <div class="logo-anno" style="top: 30%; left: 8%;">
+        <strong>Vegl</strong> em sans-serif geométrica, peso 700. Ancora a marca em raiz semântica latina (vigília), com letra sólida e institucional.
+      </div>
+
+      <div class="logo-anno" style="top: 28%; right: 8%; text-align: right;">
+        Ponto em <strong>champagne</strong> separa nome e tecnologia. Símbolo central da marca — pode aparecer isolado em aplicações reduzidas (ícone, favicon).
+      </div>
+
+      <div class="logo-anno" style="bottom: 25%; right: 12%; text-align: right;">
+        <strong>.ia</strong> em peso 800, dourado. Marca a presença de <em>inteligência aplicada</em> sem precisar dizer "AI" — ".ia" é simultaneamente extensão de domínio e selo tecnológico.
+      </div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12 · LOGO VARIAÇÕES ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Logotipo / Variações</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 100px; flex: 1; align-items: stretch;">
+      <div style="background: var(--cream); border: 1px solid var(--line); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px;">
+        <div class="vegl-mark medium">
+          <span class="v-text">Vegl</span><span class="v-dot"></span><span class="v-ai">ia</span>
+        </div>
+        <div style="margin-top: 40px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.5;">Principal · sobre cream</div>
+      </div>
+
+      <div style="background: var(--vegl-green-deep); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px;">
+        <div class="vegl-mark medium green-bg-version" style="color: var(--cream);">
+          <span class="v-text">Vegl</span><span class="v-dot"></span><span class="v-ai">ia</span>
+        </div>
+        <div style="margin-top: 40px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cream); opacity: 0.5;">Negativa · sobre verde</div>
+      </div>
+
+      <div style="background: var(--black); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px;">
+        <div class="vegl-mark medium" style="color: var(--cream);">
+          <span class="v-text">Vegl</span><span class="v-dot"></span><span class="v-ai">ia</span>
+        </div>
+        <div style="margin-top: 40px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cream); opacity: 0.5;">Negativa · preto</div>
+      </div>
+
+      <div style="background: var(--champagne); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px;">
+        <div class="vegl-mark medium" style="color: var(--vegl-green-deep);">
+          <span class="v-text">Vegl</span><span class="v-dot" style="background: var(--vegl-green-deep);"></span><span class="v-ai" style="color: var(--vegl-green-deep);">ia</span>
+        </div>
+        <div style="margin-top: 40px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.6;">Mono · champagne</div>
+      </div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE NOVO · ECOSSISTEMA VACIVITTA ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Ecossistema Vacivitta</span>
+    </div>
+
+    <div style="margin-top: 60px;">
+      <h1 class="bold-line" style="font-size: 48px;">Vegl.ia não nasce sozinha.</h1>
+      <h1 class="light-line" style="font-size: 48px;">É parte de um ecossistema completo.</h1>
+    </div>
+
+    <div style="margin-top: 80px; flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+
+      <div style="padding: 40px 28px; background: var(--mint); color: var(--vegl-green-deep); display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700; opacity: 0.7;">Pilar 01</div>
+          <div style="font-size: 36px; font-weight: 700; line-height: 1; margin-top: 8px; letter-spacing: -1px;">Vacivitta</div>
+        </div>
+        <div>
+          <div style="font-size: 13px; line-height: 1.5; opacity: 0.85; margin-bottom: 14px;">Operação · Campanhas de vacinação corporativa e licenciamento de unidades.</div>
+          <div style="font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;">Estabelecido</div>
+        </div>
+      </div>
+
+      <div style="padding: 40px 28px; background: var(--vegl-green); color: var(--cream); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+        <div style="position: absolute; top: 14px; right: 14px; padding: 4px 10px; background: var(--mint); color: var(--vegl-green-deep); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; border-radius: 99px;">Aqui</div>
+        <div>
+          <div style="font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700; color: var(--mint);">Pilar 02</div>
+          <div style="font-size: 36px; font-weight: 700; line-height: 1; margin-top: 8px; letter-spacing: -1px;">Vegl<span style="color: var(--champagne);">.</span><span style="color: var(--mint);">ia</span></div>
+        </div>
+        <div>
+          <div style="font-size: 13px; line-height: 1.5; opacity: 0.85; margin-bottom: 14px;">Educação · Compliance preventivo corporativo e plataforma white-label para RHs.</div>
+          <div style="font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; color: var(--mint);">Em construção</div>
+        </div>
+      </div>
+
+      <div style="padding: 40px 28px; background: var(--cream-dim); color: var(--vegl-green-deep); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--line);">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700; opacity: 0.6;">Pilar 03</div>
+          <div style="font-size: 28px; font-weight: 700; line-height: 1; margin-top: 8px; letter-spacing: -1px;">Dra. Amanda<br>Conde Perez<br>Fernandes</div>
+        </div>
+        <div>
+          <div style="font-size: 12px; line-height: 1.45; opacity: 0.85; margin-bottom: 10px;">Pediatra · Neonatologista · Nutrologia · membro SBIm. Diretora Médica da Vacivitta. Valida cada módulo da plataforma.</div>
+          <div style="font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;">Autoridade científica</div>
+        </div>
+      </div>
+
+      <div style="padding: 40px 28px; background: var(--cream-dim); color: var(--vegl-green-deep); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--line);">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700; opacity: 0.6;">Pilar 04</div>
+          <div style="font-size: 36px; font-weight: 700; line-height: 1; margin-top: 8px; letter-spacing: -1px;">Vitta<br>Plus</div>
+        </div>
+        <div>
+          <div style="font-size: 13px; line-height: 1.5; opacity: 0.85; margin-bottom: 14px;">Recorrência · Plano premium de benefícios para pacientes e famílias.</div>
+          <div style="font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;">Em roadmap</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE NOVO · CONEXÃO VEGL.IA × VACIVITTA ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>A conexão</span>
+    </div>
+
+    <div style="margin-top: 60px; max-width: 1100px;">
+      <div class="text-block">
+        A Vegl.ia é <strong>autônoma como marca</strong> e <strong>conectada como ecossistema</strong>. O verde menta no <em style="color: var(--mint-deep); font-style: normal; font-weight: 700;">.ia</em> é a herança visual da Vacivitta — anuncia parentesco sem submissão.
+      </div>
+    </div>
+
+    <div style="margin-top: 80px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 60px; align-items: center; flex: 1;">
+
+      <div style="text-align: center;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 140px; height: 140px; border-radius: 50%; background: var(--mint); margin-bottom: 20px;">
+          <span style="font-size: 56px; font-weight: 700; color: var(--vegl-green-deep); letter-spacing: -2px;">V</span>
+        </div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--vegl-green-deep);">Vacivitta</div>
+        <div style="font-size: 13px; color: var(--text-soft); margin-top: 6px; max-width: 260px; margin-left: auto; margin-right: auto; line-height: 1.5;">Operação real de vacinação · Marca consolidada · Capilaridade nacional</div>
+      </div>
+
+      <div style="font-size: 80px; font-weight: 300; color: var(--mint-deep); letter-spacing: -4px;">×</div>
+
+      <div style="text-align: center;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 140px; height: 140px; border-radius: 50%; background: var(--vegl-green); margin-bottom: 20px;">
+          <div class="vegl-mark small green-bg-version" style="color: var(--cream);">
+            <span class="v-text">V</span><span class="v-dot" style="background: var(--champagne);"></span><span class="v-ai">a</span>
+          </div>
+        </div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--vegl-green-deep);">Vegl<span style="color: var(--champagne);">.</span><span style="color: var(--mint-deep);">ia</span></div>
+        <div style="font-size: 13px; color: var(--text-soft); margin-top: 6px; max-width: 260px; margin-left: auto; margin-right: auto; line-height: 1.5;">Tecnologia + IA · Plataforma de compliance · Canal corporativo B2B</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 40px; padding: 24px 32px; border-left: 3px solid var(--mint-deep); background: var(--cream-dim); max-width: 1000px;">
+      <div style="font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700; color: var(--mint-deep); margin-bottom: 8px;">Como aparece nos materiais</div>
+      <div style="font-size: 18px; line-height: 1.5; color: var(--vegl-green-deep);">
+        Em peças institucionais: <strong>"Vegl.ia · powered by Vacivitta"</strong>.<br>
+        Em white-label nos carriers: <strong>"[Carrier] Compliance · powered by Vegl.ia"</strong>.<br>
+        Em selo de certificação: <strong>"Empresa Parceira · Vegl.ia × Vacivitta"</strong>.
+      </div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 13 · PALETA ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Paleta</span>
+    </div>
+
+    <div style="margin-top: 60px;">
+      <h1 class="bold-line" style="font-size: 48px;">Azul-noite.</h1>
+      <h1 class="light-line" style="font-size: 48px;">Verde menta da Vacivitta.</h1>
+    </div>
+
+    <div class="palette-row">
+      <div class="palette-block dark" style="background: var(--vegl-green);">
+        <div>
+          <div class="palette-block-codes">Primária</div>
+        </div>
+        <div>
+          <div class="palette-block-name">Twilight<br>Blue</div>
+          <div class="palette-block-codes" style="margin-top: 14px;">
+            #1A3A5C<br>
+            R26 G58 B92
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-block dark" style="background: var(--vegl-green-deep);">
+        <div>
+          <div class="palette-block-codes">Profundidade</div>
+        </div>
+        <div>
+          <div class="palette-block-name">Deep<br>Navy</div>
+          <div class="palette-block-codes" style="margin-top: 14px;">
+            #0B2545<br>
+            R11 G37 B69
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-block dark" style="background: var(--mint); color: var(--vegl-green-deep);">
+        <div>
+          <div class="palette-block-codes" style="opacity: 0.85;">Vacivitta · ".ia"</div>
+        </div>
+        <div>
+          <div class="palette-block-name">Mint<br>Vacivitta</div>
+          <div class="palette-block-codes" style="margin-top: 14px; opacity: 0.85;">
+            #5DD3A8<br>
+            R93 G211 B168
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-block dark" style="background: var(--champagne); color: var(--vegl-green-deep);">
+        <div>
+          <div class="palette-block-codes" style="opacity: 0.85;">Acento · ponto</div>
+        </div>
+        <div>
+          <div class="palette-block-name">Champagne</div>
+          <div class="palette-block-codes" style="margin-top: 14px; opacity: 0.85;">
+            #C9A96E<br>
+            R201 G169 B110
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-block light" style="background: var(--cream);">
+        <div>
+          <div class="palette-block-codes">Base</div>
+        </div>
+        <div>
+          <div class="palette-block-name">Cream</div>
+          <div class="palette-block-codes" style="margin-top: 14px;">
+            #F4EDE0<br>
+            R244 G237 B224
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 14 · TIPOGRAFIA ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Tipografia</span>
+    </div>
+
+    <div style="margin-top: 60px;">
+      <h1 class="bold-line" style="font-size: 48px;">Uma fonte.</h1>
+      <h1 class="light-line" style="font-size: 48px;">Dois pesos. Sistema completo.</h1>
+    </div>
+
+    <div class="type-demo">
+      <div>
+        <h3>Inter · Bold (700-900)</h3>
+        <div class="type-sample">Vigília</div>
+        <div class="type-meta">
+          Para títulos, displays, headlines, marcas.<br>
+          Peso 700 a 900. Geométrica, institucional, premium.
+        </div>
+      </div>
+      <div>
+        <h3>Inter · Light (300-400)</h3>
+        <div class="type-sample thin">Vigília</div>
+        <div class="type-meta">
+          Para corpo de texto, manifesto, copy editorial.<br>
+          Peso 300 a 400. Editorial, calmo, elegante.
+        </div>
+      </div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 15 · APLICAÇÕES ============ -->
+<section class="slide slide-bg-cream">
+  <div class="frame">
+    <div class="marker">
+      <strong>Vegl.ia</strong>
+      <span>Aplicações</span>
+    </div>
+
+    <div style="margin-top: 60px;">
+      <h1 class="bold-line" style="font-size: 48px;">Como a marca</h1>
+      <h1 class="light-line" style="font-size: 48px;">vive em produto.</h1>
+    </div>
+
+    <div class="app-grid">
+      <div class="app-card dark">
+        <div class="app-card-tag" style="color: var(--champagne);">App Mobile</div>
+        <div class="app-card-content">
+          <div style="text-align: center;">
+            <div class="vegl-mark small mono-cream" style="display: inline-flex; color: var(--cream);">
+              <span class="v-text">Vegl</span><span class="v-dot" style="background: var(--champagne);"></span><span class="v-ai" style="color: var(--champagne);">ia</span>
+            </div>
+            <div style="margin-top: 20px; font-size: 12px; opacity: 0.6;">App de bolso do RH</div>
+          </div>
+        </div>
+        <div class="app-card-meta">Notificações inteligentes · Compliance em qualquer lugar</div>
+      </div>
+
+      <div class="app-card cream-bg">
+        <div class="app-card-tag" style="color: var(--vegl-green);">Dashboard Web</div>
+        <div class="app-card-content">
+          <div style="text-align: center;">
+            <div class="vegl-mark small">
+              <span class="v-text">Vegl</span><span class="v-dot"></span><span class="v-ai">ia</span>
+            </div>
+            <div style="margin-top: 20px; font-size: 12px; opacity: 0.6;">Visão completa para RH</div>
+          </div>
+        </div>
+        <div class="app-card-meta">Auditável · Visual editorial · Dashboards limpos</div>
+      </div>
+
+      <div class="app-card dark" style="background: var(--vegl-green);">
+        <div class="app-card-tag" style="color: var(--champagne);">White Label</div>
+        <div class="app-card-content">
+          <div style="text-align: center;">
+            <div style="font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.7; margin-bottom: 12px;">Powered by</div>
+            <div class="vegl-mark small" style="color: var(--cream);">
+              <span class="v-text">Vegl</span><span class="v-dot" style="background: var(--champagne);"></span><span class="v-ai" style="color: var(--champagne);">ia</span>
+            </div>
+            <div style="margin-top: 20px; font-size: 12px; opacity: 0.7;">Em VR · Alelo · Ticket</div>
+          </div>
+        </div>
+        <div class="app-card-meta">Selo embarcado nos carriers de RH</div>
+      </div>
+    </div>
+
+    <div class="signature">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 16 · MANIFESTO ============ -->
+<section class="slide slide-bg-black">
+  <div class="frame">
+    <div class="marker" style="color: var(--cream);">
+      <strong>Vegl.ia</strong>
+      <span>Manifesto</span>
+    </div>
+
+    <div style="flex: 1; display: flex; align-items: center; justify-content: flex-start; padding-top: 40px;">
+      <div class="manifesto-text">
+        <p>Há obrigações que <strong>nenhuma empresa</strong> pode ignorar.</p>
+        <p>E há cuidados que <em>nenhuma vigilância padrão</em> alcança.</p>
+        <p>A Vegl.ia nasce desse encontro — entre o compliance que se exige e o cuidado que se entrega.</p>
+        <p>Não somos mais uma plataforma de treinamento. Somos a <strong>vigília silenciosa</strong> que protege quem produz, atende e cuida.</p>
+        <p style="margin-top: 50px; font-size: 0.7em; font-weight: 700; letter-spacing: 1px; color: var(--champagne);">VEGL.IA · QUEM VELA CUIDA.</p>
+      </div>
+    </div>
+
+    <div class="signature" style="color: var(--cream); opacity: 0.6;">RRevela © 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 17 · CLOSING ============ -->
+<section class="slide slide-bg-black">
+  <div class="cover-logo">
+    Vegl<span class="dot-mark"></span><span class="ia-text">ia</span><sup>®</sup>
+  </div>
+  <div style="position: absolute; bottom: 60px; left: 0; right: 0; text-align: center; color: var(--cream); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6;">
+    Quem vela cuida
+  </div>
+  <div style="position: absolute; bottom: 16px; left: 80px; color: var(--cream); font-size: 11px; opacity: 0.5;">RRevela © 2026 · Mood Board v1.0</div>
+</section>
+
+</div>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prev">←</button>
+  <div class="nav-counter" id="counter">01 / 19</div>
+  <button class="nav-btn" id="next">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const counter = document.getElementById('counter');
+  const total = slides.length;
+  let current = 0;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function show(i) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    counter.textContent = `${pad(i + 1)} / ${pad(total)}`;
+    prev.disabled = i === 0;
+    next.disabled = i === total - 1;
+    current = i;
+  }
+
+  prev.addEventListener('click', () => current > 0 && show(current - 1));
+  next.addEventListener('click', () => current < total - 1 && show(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); current < total - 1 && show(current + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); current > 0 && show(current - 1); }
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(total - 1);
+  });
+
+  show(0);
+</script>
+
+</body>
+</html>

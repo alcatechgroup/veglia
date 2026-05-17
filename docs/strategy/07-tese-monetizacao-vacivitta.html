@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitetura de Monetização Vacivita — RRevela</title>
+<style>
+:root {
+  --azul-profundo:#1E3A8A; --azul-royal:#2E4FC4; --azul-vivido:#3458D6;
+  --azul-claro:#5B8EE2; --verde-vac:#5DD3A8; --verde-escuro:#1FA374;
+  --verde-mint:#B6F0D7; --bg-light:#F2F6FF; --texto-dark:#0B1A40;
+  --texto-medio:#4B5A82; --texto-claro:#8392B5; --borda:#E2E9F8;
+  --rr-indigo:#1A1F4F; --rr-indigo2:#2D3578; --rr-gold:#C9A96E;
+  --alerta:#E94B5C; --footer-bg:#12184A; --footer-text:#4A5A88;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0f2e;font-family:'Inter',system-ui,sans-serif;overflow:hidden;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.stage{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;position:relative}
+.deck{width:min(100vw, calc(100vh * 16/9));height:min(100vh, calc(100vw * 9/16));position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;font-size:calc(min(100vw, calc(100vh*16/9)) / 72)}
+.slide.active{display:flex}
+
+/* brand pills */
+.pills{display:flex;align-items:center;gap:.6em;padding:.55em .6em .4em;flex-shrink:0}
+.pill-rr{background:var(--rr-indigo);color:#fff;font-weight:700;letter-spacing:.12em;font-size:.85em;padding:.22em .7em}
+.pill-vac{background:transparent;color:var(--texto-dark);font-weight:700;letter-spacing:.12em;font-size:.85em;padding:.22em .7em;border:1.5px solid var(--azul-claro)}
+.pill-vac.on-dark{color:#fff;border-color:var(--verde-vac)}
+.pill-x{color:var(--texto-claro);font-size:.8em}
+.pill-x.on-dark{color:#aaa}
+
+/* footer */
+.footer{height:7.5%;background:var(--footer-bg);display:flex;align-items:center;padding:0 1em;flex-shrink:0;margin-top:auto}
+.footer span{color:var(--footer-text);font-size:.75em;flex:1;text-align:center}
+.footer .pg{flex:0 0 auto;color:var(--footer-text);font-size:.75em;margin-left:.5em}
+
+/* overline label */
+.overline{font-size:.75em;font-weight:700;letter-spacing:.22em;color:var(--azul-profundo);margin-bottom:.3em}
+.overline.gold{color:var(--rr-gold)}
+
+/* card */
+.card{background:#fff;border:1px solid var(--borda);border-radius:3px;position:relative;overflow:hidden}
+.card .accent{position:absolute;left:0;top:0;bottom:0;width:.45em;background:var(--azul-royal)}
+.card-body{padding:.5em .7em .5em 1.1em}
+
+/* dark slide */
+.dark-slide{background:var(--rr-indigo)}
+.dark-slide::before{content:'';position:absolute;right:-8%;top:-20%;width:40%;padding-bottom:40%;border-radius:50%;background:rgba(31,163,116,.12);pointer-events:none}
+.dark-slide::after{content:'';position:absolute;left:-8%;bottom:-10%;width:38%;padding-bottom:38%;border-radius:50%;background:rgba(31,163,116,.06);pointer-events:none}
+
+/* controls */
+.controls{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);display:flex;gap:.6rem;z-index:100}
+.btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:.4rem .9rem;border-radius:4px;cursor:pointer;font-size:.85rem;backdrop-filter:blur(4px);transition:background .15s}
+.btn:hover{background:rgba(255,255,255,.22)}
+.slide-counter{background:rgba(10,15,46,.7);border:1px solid rgba(255,255,255,.15);color:#aaa;padding:.4rem .9rem;border-radius:4px;font-size:.85rem;min-width:4rem;text-align:center}
+
+/* progress */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--verde-vac);transition:width .3s;z-index:200}
+
+/* utilities */
+.bold{font-weight:700}
+.green{color:var(--verde-vac)}
+.gold{color:var(--rr-gold)}
+.muted{color:var(--texto-claro)}
+.red{color:var(--alerta)}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="prog"></div>
+
+<div class="stage">
+<div class="deck" id="deck">
+
+<!-- SLIDE 1 CAPA -->
+<div class="slide dark-slide active" id="s1">
+  <div class="pills" style="padding:.55em .6em .4em">
+    <span class="pill-rr">RREVELA</span>
+    <span class="pill-x on-dark">×</span>
+    <span class="pill-vac on-dark">VACIVITTA</span>
+  </div>
+  <div style="flex:1;display:flex;padding:1em 1.2em .4em;gap:1em">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div style="font-size:3.4em;font-weight:800;color:#fff;line-height:1.12;margin-bottom:.4em">
+        Arquitetura de<br><span style="color:var(--verde-vac)">Monetização Vacivita</span>
+      </div>
+      <div style="font-size:1.3em;color:#8da8d8;margin-bottom:1.2em">Mini franquias de vacinas em clínicas médicas</div>
+      <div style="width:3.5em;height:2.5px;background:var(--rr-gold);margin-bottom:1em"></div>
+      <div style="font-size:1em;color:#6680aa;margin-bottom:1.2em">Documento para discussão estratégica interna</div>
+      <div style="background:rgba(30,42,112,.6);border:1px solid rgba(93,211,168,.3);border-left:3px solid var(--verde-vac);padding:.7em 1em;font-size:.95em;color:#8da8d8;line-height:1.5">
+        <span style="color:var(--verde-vac);font-weight:700">@ceo →</span> Orientando @po, @dev, @designer e @ux — Modelo revisado com Método CAM/PAM · Tese produzida pela RRevela como parte do deal 20% outcome-based sobre licenciamentos Vacivitta destravados com IA.
+      </div>
+    </div>
+    <div style="width:22%;display:flex;flex-direction:column;gap:.8em;justify-content:center">
+      <div style="background:rgba(31,163,116,.18);border:1px solid var(--verde-escuro);padding:1.2em;text-align:center">
+        <div style="font-size:3em;font-weight:800;color:var(--verde-vac)">20%</div>
+        <div style="font-size:.85em;color:#8da8d8;margin-top:.2em">outcome-based RRevela</div>
+      </div>
+      <div style="background:rgba(30,42,112,.5);border:1px solid #3b4baa;padding:1.2em;text-align:center">
+        <div style="font-size:2.4em;font-weight:800;color:var(--rr-gold)">R$ 120k</div>
+        <div style="font-size:.85em;color:#8da8d8;margin-top:.2em">ticket de entrada + recorrência</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">1 / 15</span></div>
+</div>
+
+<!-- SLIDE 2 TESE CENTRAL -->
+<div class="slide dark-slide" id="s2">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x on-dark">×</span><span class="pill-vac on-dark">VACIVITTA</span></div>
+  <div style="flex:1;padding:0 1.2em .5em;display:flex;flex-direction:column;justify-content:center;gap:.9em">
+    <div class="overline gold">A TESE CENTRAL</div>
+    <div style="font-size:2.8em;font-weight:800;color:#fff;line-height:1.15">O negócio não é vacina.</div>
+    <div style="font-size:2.8em;font-weight:800;color:var(--verde-vac);line-height:1.15;margin-bottom:.3em">É infraestrutura plugável de imunização.</div>
+    <div style="background:#0d3d24;border:1px solid var(--verde-escuro);border-left:4px solid var(--verde-vac);padding:.8em 1em;font-size:1.05em;line-height:1.5;color:#a0c8b0">
+      <span style="color:var(--verde-vac);font-weight:700">Tese central:&nbsp;</span>A Vacivita não deve ser pensada como uma vendedora de franquias de R$ 120 mil. Esse é apenas o pedágio de entrada. A verdadeira arquitetura está em transformar clínicas médicas em pontos permanentes de imunização, relacionamento e recorrência familiar/corporativa.
+    </div>
+    <div style="background:#1e2870;border:1px solid #3b4baa;padding:.7em 1em;font-size:1em;line-height:1.55;color:#8899cc">
+      A clínica já tem o que uma loja de vacina isolada precisa construir do zero: <strong style="color:#fff">confiança, tráfego qualificado, indicação médica, prontuário, relacionamento e recorrência.</strong> A Vacivita monetiza a camada que faltava: operação vacinal pronta e lucrativa.
+    </div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">2 / 15</span></div>
+</div>
+
+<!-- SLIDE 3 SUMÁRIO -->
+<div class="slide" id="s3" style="background:var(--bg-light)">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .2em">
+    <div class="overline">SUMÁRIO EXECUTIVO</div>
+    <div style="font-size:1.8em;font-weight:700;color:var(--texto-dark)">Os 5 pontos-chave da tese</div>
+  </div>
+  <div style="flex:1;padding:.3em 1.2em;display:flex;flex-direction:column;gap:.42em">
+    <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body" style="display:flex;align-items:center;gap:.8em;height:100%"><span style="font-size:1.3em;font-weight:800;color:var(--verde-escuro);min-width:1.8em">01</span><div><strong style="color:var(--azul-profundo)">Produto real:&nbsp;</strong><span style="color:var(--texto-medio)">O negócio não é vacina. É infraestrutura plugável de imunização dentro de clínicas médicas.</span></div></div></div>
+    <div class="card" style="flex:1"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body" style="display:flex;align-items:center;gap:.8em;height:100%"><span style="font-size:1.3em;font-weight:800;color:var(--verde-escuro);min-width:1.8em">02</span><div><strong style="color:var(--azul-profundo)">Taxa vs. recorrência:&nbsp;</strong><span style="color:var(--texto-medio)">A taxa de R$ 120 mil é importante, mas insuficiente. O valor real está na receita recorrente por unidade instalada.</span></div></div></div>
+    <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body" style="display:flex;align-items:center;gap:.8em;height:100%"><span style="font-size:1.3em;font-weight:800;color:var(--verde-escuro);min-width:1.8em">03</span><div><strong style="color:var(--azul-profundo)">Múltiplas camadas:&nbsp;</strong><span style="color:var(--texto-medio)">A Vacivita pode monetizar royalties, abastecimento, tecnologia, campanhas, compliance, clube familiar e vacinação corporativa.</span></div></div></div>
+    <div class="card" style="flex:1"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body" style="display:flex;align-items:center;gap:.8em;height:100%"><span style="font-size:1.3em;font-weight:800;color:var(--verde-escuro);min-width:1.8em">04</span><div><strong style="color:var(--azul-profundo)">Ativo já existe:&nbsp;</strong><span style="color:var(--texto-medio)">A clínica tem fluxo, confiança, prontuário e recorrência. A Vacivita captura esse valor com método, marca e performance.</span></div></div></div>
+    <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body" style="display:flex;align-items:center;gap:.8em;height:100%"><span style="font-size:1.3em;font-weight:800;color:var(--verde-escuro);min-width:1.8em">05</span><div><strong style="color:var(--azul-profundo)">Métrica certa:&nbsp;</strong><span style="color:var(--texto-medio)">Não maximizar franquias vendidas. Maximizar receita mensal média por clínica Vacivita instalada.</span></div></div></div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">3 / 15</span></div>
+</div>
+
+<!-- SLIDE 4 ANTES × DEPOIS -->
+<div class="slide" id="s4" style="background:#fff">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .2em">
+    <div class="overline">MODELO ATUAL vs. MODELO IDEAL</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">De franquia de R$ 120 mil para plataforma de monetização</div>
+  </div>
+  <div style="flex:1;padding:.3em 1.2em;display:flex;gap:.8em">
+    <div style="flex:1;background:#fafafe;border:1px solid var(--borda);padding:.8em .9em;display:flex;flex-direction:column;gap:.45em">
+      <div style="font-size:.7em;font-weight:700;letter-spacing:.15em;color:var(--alerta)">ANTES — PENSAMENTO LIMITADO</div>
+      <div style="font-size:1.15em;font-weight:700;color:var(--texto-dark)">"Vamos vender mini franquias de R$ 120 mil."</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:.32em">
+        <div style="color:var(--texto-medio);font-size:.95em">✕&nbsp; Receita de venda única</div>
+        <div style="color:var(--texto-medio);font-size:.95em">✕&nbsp; Crescimento por novas unidades</div>
+        <div style="color:var(--texto-medio);font-size:.95em">✕&nbsp; Pressão constante por expansão</div>
+        <div style="color:var(--texto-medio);font-size:.95em">✕&nbsp; Franqueado passivo</div>
+        <div style="color:var(--texto-medio);font-size:.95em">✕&nbsp; Sem recorrência garantida</div>
+        <div style="color:var(--texto-medio);font-size:.95em">✕&nbsp; Taxa única, modelo frágil</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;font-size:2em;font-weight:800;color:var(--verde-escuro)">→</div>
+    <div style="flex:1;background:#f0faf6;border:1px solid var(--verde-escuro);border-left:4px solid var(--verde-escuro);padding:.8em .9em;display:flex;flex-direction:column;gap:.45em">
+      <div style="font-size:.7em;font-weight:700;letter-spacing:.15em;color:var(--verde-escuro)">DEPOIS — PENSAMENTO CORRETO</div>
+      <div style="font-size:1.15em;font-weight:700;color:var(--texto-dark)">"Construir rede de pontos de imunização com receita contínua."</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:.32em">
+        <div style="color:var(--verde-escuro);font-size:.95em">✓&nbsp; Receita recorrente por unidade</div>
+        <div style="color:var(--verde-escuro);font-size:.95em">✓&nbsp; Royalty, supply, tecnologia</div>
+        <div style="color:var(--verde-escuro);font-size:.95em">✓&nbsp; Campanhas e clube familiar</div>
+        <div style="color:var(--verde-escuro);font-size:.95em">✓&nbsp; Vacinação corporativa local</div>
+        <div style="color:var(--verde-escuro);font-size:.95em">✓&nbsp; Plataforma de dados vacinais</div>
+        <div style="color:var(--verde-escuro);font-size:.95em">✓&nbsp; Múltiplas camadas de valor</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">4 / 15</span></div>
+</div>
+
+<!-- SLIDE 5 NÚCLEOS DE VALOR -->
+<div class="slide" id="s5" style="background:var(--bg-light)">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .2em">
+    <div class="overline">NÚCLEOS DE VALOR</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">5 problemas inevitáveis que a Vacivita resolve</div>
+  </div>
+  <div style="flex:1;padding:.25em 1.2em;display:flex;flex-direction:column;gap:.35em">
+    <div style="display:flex;gap:.5em;flex:1.05">
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-size:.7em;font-weight:700;color:var(--azul-royal)">01</div><div style="font-weight:700;color:var(--azul-profundo);margin:.15em 0 .2em">Imunização Familiar</div><div style="font-size:.88em;color:var(--texto-medio)">Famílias esquecem ou não sabem quais vacinas tomar.</div><div style="font-size:.8em;font-weight:700;color:var(--azul-royal);margin-top:.3em">Segurança / Alívio</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-profundo)"></div><div class="card-body"><div style="font-size:.7em;font-weight:700;color:var(--azul-profundo)">02</div><div style="font-weight:700;color:var(--azul-profundo);margin:.15em 0 .2em">Prevenção Médica Integrada</div><div style="font-size:.88em;color:var(--texto-medio)">Médico identifica risco, mas clínica não captura a vacinação.</div><div style="font-size:.8em;font-weight:700;color:var(--azul-profundo);margin-top:.3em">Segurança</div></div></div>
+    </div>
+    <div style="display:flex;gap:.5em;flex:1">
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body"><div style="font-size:.7em;font-weight:700;color:var(--verde-escuro)">03</div><div style="font-weight:700;color:var(--azul-profundo);margin:.15em 0 .2em">Conveniência em Saúde</div><div style="font-size:.88em;color:var(--texto-medio)">Paciente não quer procurar outro lugar para se vacinar.</div><div style="font-size:.8em;font-weight:700;color:var(--verde-escuro);margin-top:.3em">Alívio</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-vivido)"></div><div class="card-body"><div style="font-size:.7em;font-weight:700;color:var(--azul-vivido)">04</div><div style="font-weight:700;color:var(--azul-profundo);margin:.15em 0 .2em">Receita Adicional para Clínicas</div><div style="font-size:.88em;color:var(--texto-medio)">Clínica tem fluxo e pacientes mas monetiza pouco.</div><div style="font-size:.8em;font-weight:700;color:var(--azul-vivido);margin-top:.3em">Conquista</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--rr-gold)"></div><div class="card-body"><div style="font-size:.7em;font-weight:700;color:var(--rr-gold)">05</div><div style="font-weight:700;color:var(--azul-profundo);margin:.15em 0 .2em">Compliance e Operação Vacinal</div><div style="font-size:.88em;color:var(--texto-medio)">Clínicas querem vacinar mas não operam com segurança sanitária.</div><div style="font-size:.8em;font-weight:700;color:var(--rr-gold);margin-top:.3em">Segurança</div></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">5 / 15</span></div>
+</div>
+
+<!-- SLIDE 6 LINHAS DE RECEITA -->
+<div class="slide" id="s6" style="background:#fff">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .2em">
+    <div class="overline">ARQUITETURA DE RECEITA</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">5 linhas atuais · 15 linhas ocultas identificadas</div>
+  </div>
+  <div style="flex:1;padding:.25em 1.2em;display:flex;gap:.7em;min-height:0">
+    <div class="card" style="flex:1;overflow:hidden"><div class="accent" style="background:var(--azul-claro)"></div>
+      <div style="padding:.5em .7em .5em 1.1em;display:flex;flex-direction:column;height:100%;gap:.3em">
+        <div style="font-size:.7em;font-weight:700;letter-spacing:.12em;color:var(--azul-profundo)">LINHAS ATUAIS</div>
+        <div style="display:flex;flex-direction:column;gap:.28em;flex:1">
+          <div style="background:#f4f6ff;border:1px solid var(--borda);padding:.3em .5em"><div style="font-weight:700;font-size:.9em;color:var(--azul-profundo)">Taxa de franquia / implantação</div><div style="font-size:.8em;color:var(--texto-medio)">R$ 120 mil por unidade. Alto ticket, mas venda única.</div></div>
+          <div style="background:#f4f6ff;border:1px solid var(--borda);padding:.3em .5em"><div style="font-weight:700;font-size:.9em;color:var(--azul-profundo)">Venda de vacinas ao paciente final</div><div style="font-size:.8em;color:var(--texto-medio)">Direta, compartilhada ou pelo franqueado.</div></div>
+          <div style="background:#f4f6ff;border:1px solid var(--borda);padding:.3em .5em"><div style="font-weight:700;font-size:.9em;color:var(--azul-profundo)">Margem sobre abastecimento</div><div style="font-size:.8em;color:var(--texto-medio)">Linha crítica se a Vacivita centralizar compras.</div></div>
+          <div style="background:#f4f6ff;border:1px solid var(--borda);padding:.3em .5em"><div style="font-weight:700;font-size:.9em;color:var(--azul-profundo)">Treinamento inicial da equipe</div><div style="font-size:.8em;color:var(--texto-medio)">Se embutido na taxa, pode estar submonetizado.</div></div>
+          <div style="background:#f4f6ff;border:1px solid var(--borda);padding:.3em .5em"><div style="font-weight:700;font-size:.9em;color:var(--azul-profundo)">Licenciamento da marca e método</div><div style="font-size:.8em;color:var(--texto-medio)">Precisa virar recorrência, não só taxa inicial.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="flex:1.1;background:#f6fff9;overflow:hidden"><div class="accent" style="background:var(--verde-escuro)"></div>
+      <div style="padding:.5em .7em .5em 1.1em;display:flex;flex-direction:column;height:100%;gap:.25em">
+        <div style="font-size:.7em;font-weight:700;letter-spacing:.12em;color:var(--verde-escuro)">LINHAS OCULTAS (15 identificadas)</div>
+        <div style="display:flex;flex-direction:column;gap:.22em;flex:1;font-size:.9em;color:var(--texto-medio)">
+          <div>→ Royalty mensal da unidade</div><div>→ Fee de tecnologia / prontuário vacinal</div>
+          <div>→ Clube de vacinação familiar (assinatura)</div><div>→ Campanhas sazonais (influenza, dengue, HPV)</div>
+          <div>→ Vacinação corporativa via clínicas parceiras</div><div>→ Assinatura de compliance sanitário</div>
+          <div>→ Universidade Vacivita (treinamentos)</div><div>→ Compra centralizada de imunizantes</div>
+          <div>→ Marketing local para franqueados</div><div>→ Vacinação domiciliar premium</div>
+          <div style="color:var(--verde-escuro);font-style:italic;font-size:.85em;margin-top:.1em">+ 5 linhas adicionais na análise completa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin:.2em 1.2em .15em;background:#fff8ed;border:1px solid #f4a623;padding:.28em .7em;font-size:.8em;color:#a06010;font-style:italic">
+    ⚠ Leitura CAM: o maior erro é entregar tecnologia, suporte e campanhas dentro da taxa sem criar recorrência.
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">6 / 15</span></div>
+</div>
+
+<!-- SLIDE 7 GBB FRANQUEADOS -->
+<div class="slide" id="s7" style="background:var(--bg-light)">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">MODELO GBB — FRANQUEADOS</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">Good · Better · Best para clínicas médicas</div>
+    <div style="font-size:.9em;color:var(--texto-medio)">O foco comercial deve ser empurrar para o Better, com o Best ancorando valor.</div>
+  </div>
+  <div style="flex:1;padding:.2em 1.2em;display:flex;gap:.6em;min-height:0">
+    <!-- GOOD -->
+    <div style="flex:1;background:#fff;border:1px solid var(--borda);display:flex;flex-direction:column;overflow:hidden">
+      <div style="background:var(--azul-claro);color:#fff;text-align:center;padding:.3em;font-weight:700;letter-spacing:.18em;font-size:.82em">GOOD</div>
+      <div style="padding:.55em .7em;flex:1;display:flex;flex-direction:column;gap:.3em">
+        <div style="font-weight:700;font-size:1.1em;color:var(--texto-dark)">Mini Unidade</div>
+        <div style="font-size:1.8em;font-weight:800;color:var(--azul-profundo)">R$ 120.000</div>
+        <div style="font-size:.82em;color:var(--texto-claro);font-style:italic;margin-bottom:.3em">Clínicas pequenas e médias</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Implantação básica</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Marca e método</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Treinamento inicial</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Acesso ao fornecedor</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Entrada segura</div>
+      </div>
+    </div>
+    <!-- BETTER -->
+    <div style="flex:1;background:var(--azul-royal);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 4px 18px rgba(46,79,196,.35)">
+      <div style="background:var(--azul-profundo);color:var(--verde-vac);text-align:center;padding:.3em;font-weight:700;font-size:.82em">BETTER ★ RECOMENDADO</div>
+      <div style="padding:.55em .7em;flex:1;display:flex;flex-direction:column;gap:.3em">
+        <div style="font-weight:700;font-size:1.1em;color:#fff">Unidade Performance</div>
+        <div style="font-size:1.8em;font-weight:800;color:var(--verde-vac)">R$ 160k – 220k</div>
+        <div style="font-size:.82em;color:#a0c0e8;font-style:italic;margin-bottom:.3em">Clínicas com alto fluxo</div>
+        <div style="font-size:.88em;color:var(--verde-vac)">✓ Tudo do Good</div>
+        <div style="font-size:.88em;color:#d0e8ff">✓ Software e prontuário vacinal</div>
+        <div style="font-size:.88em;color:#d0e8ff">✓ Marketing local incluso</div>
+        <div style="font-size:.88em;color:#d0e8ff">✓ Suporte comercial</div>
+        <div style="font-size:.88em;color:#d0e8ff">✓ Campanhas prontas</div>
+      </div>
+    </div>
+    <!-- BEST -->
+    <div style="flex:1;background:#fff8ed;border:1px solid var(--rr-gold);display:flex;flex-direction:column;overflow:hidden">
+      <div style="background:var(--rr-gold);color:var(--rr-indigo);text-align:center;padding:.3em;font-weight:700;letter-spacing:.18em;font-size:.82em">BEST</div>
+      <div style="padding:.55em .7em;flex:1;display:flex;flex-direction:column;gap:.3em">
+        <div style="font-weight:700;font-size:1.1em;color:var(--texto-dark)">Hub Regional</div>
+        <div style="font-size:1.8em;font-weight:800;color:var(--rr-indigo)">R$ 300k+</div>
+        <div style="font-size:.82em;color:var(--texto-claro);font-style:italic;margin-bottom:.3em">Redes e grupos médicos</div>
+        <div style="font-size:.88em;color:var(--rr-gold)">→ Tudo do Better</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Exclusividade territorial</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Vacinação corporativa</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Campanhas premium</div>
+        <div style="font-size:.88em;color:var(--texto-medio)">→ Consultoria de expansão</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">7 / 15</span></div>
+</div>
+
+<!-- SLIDE 8 GBB PACIENTE -->
+<div class="slide" id="s8" style="background:#fff">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">GBB PACIENTE + POTENCIAL DE RECORRÊNCIA</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">Do paciente avulso ao clube recorrente</div>
+  </div>
+  <div style="padding:.2em 1.2em;display:flex;gap:.55em">
+    <div style="flex:1;background:var(--azul-claro);padding:.7em;box-shadow:0 3px 10px rgba(0,0,0,.1)"><div style="font-size:.72em;font-weight:700;letter-spacing:.15em;color:var(--verde-vac)">GOOD</div><div style="font-weight:700;color:#fff;font-size:1.1em;margin:.2em 0">Vacina Avulsa</div><div style="font-size:.88em;color:#ccdff5">Aplicação individual, sem vínculo.</div></div>
+    <div style="flex:1;background:var(--azul-royal);padding:.7em;box-shadow:0 3px 10px rgba(0,0,0,.12)"><div style="font-size:.72em;font-weight:700;letter-spacing:.15em;color:var(--verde-vac)">BETTER</div><div style="font-weight:700;color:#fff;font-size:1.1em;margin:.2em 0">Pacote Ciclo de Vida</div><div style="font-size:.88em;color:#c0d0f0">Infantil, gestante, idoso, viajante.</div></div>
+    <div style="flex:1;background:var(--rr-gold);padding:.7em;box-shadow:0 3px 10px rgba(0,0,0,.1)"><div style="font-size:.72em;font-weight:700;letter-spacing:.15em;color:var(--rr-indigo)">BEST</div><div style="font-weight:700;color:var(--rr-indigo);font-size:1.1em;margin:.2em 0">Clube Premium Familiar</div><div style="font-size:.88em;color:#7a5820">Carteira monitorada, lembretes, prioridade, atendimento domiciliar.</div></div>
+  </div>
+  <div style="margin:.35em 1.2em;background:#0d3d24;border:1px solid var(--verde-escuro);border-left:4px solid var(--verde-vac);padding:.55em .9em;font-size:.92em;color:#a0c8b0;line-height:1.5">
+    <strong style="color:var(--verde-vac)">Melhor recorrência:&nbsp;</strong>Não é vender vacina. É vender gestão vacinal contínua: monitorar o que cada pessoa precisa tomar, quando precisa e qual é o próximo risco prevenível.
+  </div>
+  <div style="padding:.2em 1.2em">
+    <div style="font-size:.7em;font-weight:700;letter-spacing:.15em;color:var(--azul-profundo);margin-bottom:.4em">4 FATORES DE RECORRÊNCIA NATURAL</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.35em">
+      <div style="background:var(--bg-light);border:1px solid var(--borda);padding:.3em .6em;font-size:.88em"><strong style="color:var(--azul-profundo)">Calendário por idade:&nbsp;</strong><span style="color:var(--texto-medio)">Necessidade de acompanhamento contínuo.</span></div>
+      <div style="background:var(--bg-light);border:1px solid var(--borda);padding:.3em .6em;font-size:.88em"><strong style="color:var(--azul-profundo)">Reforços e doses futuras:&nbsp;</strong><span style="color:var(--texto-medio)">Agendamento, lembrete e retorno garantido.</span></div>
+      <div style="background:var(--bg-light);border:1px solid var(--borda);padding:.3em .6em;font-size:.88em"><strong style="color:var(--azul-profundo)">Sazonalidade:&nbsp;</strong><span style="color:var(--texto-medio)">Campanhas anuais e maior demanda periódica.</span></div>
+      <div style="background:var(--bg-light);border:1px solid var(--borda);padding:.3em .6em;font-size:.88em"><strong style="color:var(--azul-profundo)">Mudança de risco:&nbsp;</strong><span style="color:var(--texto-medio)">Viagens, gestação, envelhecimento, surtos.</span></div>
+    </div>
+  </div>
+  <div class="footer" style="margin-top:auto"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">8 / 15</span></div>
+</div>
+
+<!-- SLIDE 9 SPIN-OFFS -->
+<div class="slide" id="s9" style="background:var(--bg-light)">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">POTENCIAL DE SPIN-OFF</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">7 linhas de negócio que a plataforma pode gerar</div>
+  </div>
+  <div style="flex:1;padding:.2em 1.2em;display:flex;flex-direction:column;gap:.35em;min-height:0">
+    <div style="display:flex;gap:.45em;flex:1">
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-weight:700;color:var(--azul-profundo);font-size:.95em">Vacivita Tech</div><div style="font-size:.8em;color:var(--texto-medio);margin:.15em 0">SaaS de carteira vacinal, CRM, alertas e campanhas.</div><div style="display:inline-block;border:1px solid var(--azul-royal);padding:.08em .35em;font-size:.7em;font-weight:700;color:var(--azul-royal)">ALTO</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body"><div style="font-weight:700;color:var(--azul-profundo);font-size:.95em">Vacivita Club</div><div style="font-size:.8em;color:var(--texto-medio);margin:.15em 0">Clube de vacinação familiar. Recorrência direta no paciente.</div><div style="display:inline-block;border:1px solid var(--verde-escuro);padding:.08em .35em;font-size:.7em;font-weight:700;color:var(--verde-escuro)">ALTÍSSIMO</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-weight:700;color:var(--azul-profundo);font-size:.95em">Vacivita Corporate</div><div style="font-size:.8em;color:var(--texto-medio);margin:.15em 0">Vacinação empresarial. Alto volume e cross-sell.</div><div style="display:inline-block;border:1px solid var(--azul-royal);padding:.08em .35em;font-size:.7em;font-weight:700;color:var(--azul-royal)">ALTO</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-claro)"></div><div class="card-body"><div style="font-weight:700;color:var(--azul-profundo);font-size:.95em">Vacivita Home</div><div style="font-size:.8em;color:var(--texto-medio);margin:.15em 0">Vacinação domiciliar premium. Upsell de conveniência.</div><div style="display:inline-block;border:1px solid var(--azul-claro);padding:.08em .35em;font-size:.7em;font-weight:700;color:var(--azul-claro)">MÉDIO/ALTO</div></div></div>
+    </div>
+    <div style="display:flex;gap:.45em;flex:1;padding:0 7%">
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-claro)"></div><div class="card-body"><div style="font-weight:700;color:var(--azul-profundo);font-size:.95em">Vacivita Academy</div><div style="font-size:.8em;color:var(--texto-medio);margin:.15em 0">Treinamento e certificação para clínicas.</div><div style="display:inline-block;border:1px solid var(--azul-claro);padding:.08em .35em;font-size:.7em;font-weight:700;color:var(--azul-claro)">MÉDIO/ALTO</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-weight:700;color:var(--azul-profundo);font-size:.95em">Vacivita Compliance</div><div style="font-size:.8em;color:var(--texto-medio);margin:.15em 0">Auditoria sanitária, POPs e implantação.</div><div style="display:inline-block;border:1px solid var(--azul-royal);padding:.08em .35em;font-size:.7em;font-weight:700;color:var(--azul-royal)">ALTO</div></div></div>
+      <div class="card" style="flex:1"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-weight:700;color:var(--azul-profundo);font-size:.95em">Vacivita Supply</div><div style="font-size:.8em;color:var(--texto-medio);margin:.15em 0">Central de compras, logística e distribuição.</div><div style="display:inline-block;border:1px solid var(--azul-royal);padding:.08em .35em;font-size:.7em;font-weight:700;color:var(--azul-royal)">ALTO</div></div></div>
+    </div>
+    <div style="background:#0d3d24;border:1px solid var(--verde-escuro);padding:.28em .8em;font-size:.8em;color:var(--verde-vac)">★ Vacivita Club é o spin-off mais promissor: cria vínculo direto, recorrente e cumulativo com pacientes e famílias, reduzindo dependência da clínica como único canal.</div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">9 / 15</span></div>
+</div>
+
+<!-- SLIDE 10 DENSIDADE CAM -->
+<div class="slide" id="s10" style="background:#fff">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">DENSIDADE DE MONETIZAÇÃO</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">Alta densidade latente · baixa densidade capturada</div>
+  </div>
+  <div style="flex:1;padding:.2em 1.2em;display:flex;gap:.7em;min-height:0">
+    <div style="flex:1;display:flex;flex-direction:column;gap:.02em">
+      <div style="font-size:.7em;font-weight:700;letter-spacing:.12em;color:var(--texto-claro);margin-bottom:.2em">DIAGNÓSTICO DE POTENCIAL (MÉTODO CAM)</div>
+      <div style="display:flex;flex-direction:column;gap:0;flex:1">
+        <div style="display:flex;align-items:center;padding:.28em .5em;background:var(--bg-light);border:1px solid var(--borda)"><span style="flex:1;font-size:.88em;color:var(--texto-medio)">Núcleos identificados</span><strong style="color:var(--azul-profundo)">5</strong></div>
+        <div style="display:flex;align-items:center;padding:.28em .5em;border:1px solid var(--borda);border-top:none"><span style="flex:1;font-size:.88em;color:var(--texto-medio)">Linhas atuais prováveis</span><strong style="color:var(--azul-profundo)">5</strong></div>
+        <div style="display:flex;align-items:center;padding:.28em .5em;background:var(--bg-light);border:1px solid var(--borda);border-top:none"><span style="flex:1;font-size:.88em;color:var(--texto-medio)">Linhas ocultas identificadas</span><strong style="color:var(--azul-profundo)">15</strong></div>
+        <div style="display:flex;align-items:center;padding:.28em .5em;border:1px solid var(--borda);border-top:none"><span style="flex:1;font-size:.88em;color:var(--texto-medio)">Mecanismos latentes</span><strong style="color:var(--azul-profundo)">30+</strong></div>
+        <div style="display:flex;align-items:center;padding:.28em .5em;background:var(--bg-light);border:1px solid var(--borda);border-top:none"><span style="flex:1;font-size:.88em;color:var(--texto-medio)">Recorrências possíveis</span><strong style="color:var(--azul-profundo)">7</strong></div>
+        <div style="display:flex;align-items:center;padding:.28em .5em;border:1px solid var(--borda);border-top:none"><span style="flex:1;font-size:.88em;color:var(--texto-medio)">GBB aplicável</span><strong style="color:var(--azul-profundo);font-size:.82em">Sim, múltiplas linhas</strong></div>
+        <div style="display:flex;align-items:center;padding:.28em .5em;background:var(--bg-light);border:1px solid var(--borda);border-top:none"><span style="flex:1;font-size:.88em;color:var(--texto-medio)">Spin-offs possíveis</span><strong style="color:var(--azul-profundo)">7</strong></div>
+      </div>
+    </div>
+    <div style="flex:1.1;display:flex;flex-direction:column;gap:.45em">
+      <div style="font-size:.7em;font-weight:700;letter-spacing:.12em;color:var(--texto-claro);margin-bottom:.05em">CONFIGURAÇÃO CAM — NÍVEIS DE MONETIZAÇÃO</div>
+      <div style="background:#fff0f2;border:1.5px solid var(--alerta);border-left:4px solid var(--alerta);padding:.55em .8em"><div style="font-size:.88em;color:var(--texto-medio)">Só R$ 120k + venda de vacina</div><div style="font-weight:700;color:var(--alerta);font-size:1.1em">Submonetizado</div></div>
+      <div style="background:#eef3ff;border:1.5px solid var(--azul-royal);border-left:4px solid var(--azul-royal);padding:.55em .8em"><div style="font-size:.88em;color:var(--texto-medio)">+ Royalty, supply, tecnologia e campanhas</div><div style="font-weight:700;color:var(--azul-royal);font-size:1.1em">Estrategista / Arquiteto</div></div>
+      <div style="background:#f0faf6;border:1.5px solid var(--verde-escuro);border-left:4px solid var(--verde-escuro);padding:.55em .8em"><div style="font-size:.88em;color:var(--texto-medio)">+ Clube, SaaS, Corporate e Hub Regional</div><div style="font-weight:700;color:var(--verde-escuro);font-size:1.1em">Arquiteto / Lendário</div></div>
+    </div>
+  </div>
+  <div style="margin:.2em 1.2em;background:var(--rr-indigo);padding:.4em .8em;font-size:.85em">
+    <strong style="color:var(--rr-gold)">Posicionamento recomendado:&nbsp;</strong><span style="color:#8899cc">"Franquia" parece unidade. "Infraestrutura" parece plataforma. A Vacivita deve se posicionar como a infraestrutura de imunização plugável para clínicas médicas.</span>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">10 / 15</span></div>
+</div>
+
+<!-- SLIDE 11 RECOMENDAÇÕES -->
+<div class="slide" id="s11" style="background:var(--bg-light)">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">RECOMENDAÇÕES DE MONETIZAÇÃO</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">6 movimentos para maximizar receita por unidade</div>
+  </div>
+  <div style="flex:1;padding:.2em 1.2em;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:.35em;min-height:0">
+    <div class="card"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-size:.68em;font-weight:700;color:var(--azul-claro);letter-spacing:.1em">11.1</div><div style="font-weight:700;color:var(--texto-dark);font-size:.95em;margin:.1em 0 .15em">Vender arquitetura em camadas</div><div style="font-size:.82em;color:var(--texto-medio)">O foco deve ser empurrar para o Better, com o Best ancorando valor.</div></div></div>
+    <div class="card"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body"><div style="font-size:.68em;font-weight:700;color:var(--verde-vac);letter-spacing:.1em">11.2</div><div style="font-weight:700;color:var(--texto-dark);font-size:.95em;margin:.1em 0 .15em">Implantar royalty híbrido</div><div style="font-size:.82em;color:var(--texto-medio)">Fixo mínimo + variável sobre faturamento. Protege de unidades fracas e captura upside de unidades fortes.</div></div></div>
+    <div class="card"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-size:.68em;font-weight:700;color:var(--azul-claro);letter-spacing:.1em">11.3</div><div style="font-weight:700;color:var(--texto-dark);font-size:.95em;margin:.1em 0 .15em">Criar o Vacivita Club</div><div style="font-size:.82em;color:var(--texto-medio)">O paciente que entra pela clínica vira cliente recorrente da rede. Assinatura mensal ou anual por família.</div></div></div>
+    <div class="card"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body"><div style="font-size:.68em;font-weight:700;color:var(--verde-vac);letter-spacing:.1em">11.4</div><div style="font-weight:700;color:var(--texto-dark);font-size:.95em;margin:.1em 0 .15em">Criar calendário comercial anual</div><div style="font-size:.82em;color:var(--texto-medio)">Vacina tem momento. Influenza, dengue, HPV, volta às aulas. Momento é mecanismo de monetização.</div></div></div>
+    <div class="card"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body"><div style="font-size:.68em;font-weight:700;color:var(--azul-claro);letter-spacing:.1em">11.5</div><div style="font-weight:700;color:var(--texto-dark);font-size:.95em;margin:.1em 0 .15em">Médicos como canal de ativação</div><div style="font-size:.82em;color:var(--texto-medio)">Scripts e protocolos com compliance. Recomendação médica legítima convertida em receita estruturada.</div></div></div>
+    <div class="card"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body"><div style="font-size:.68em;font-weight:700;color:var(--verde-vac);letter-spacing:.1em">11.6</div><div style="font-weight:700;color:var(--texto-dark);font-size:.95em;margin:.1em 0 .15em">Central de performance do franqueado</div><div style="font-size:.82em;color:var(--texto-medio)">Sem dados, é franqueadora operacional. Com dados, vira plataforma. Dashboard, métricas, conversão.</div></div></div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">11 / 15</span></div>
+</div>
+
+<!-- SLIDE 12 PLANO DE AÇÃO -->
+<div class="slide" id="s12" style="background:#fff">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">PLANO DE AÇÃO PRÁTICO</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">4 fases para virar plataforma de monetização vacinal</div>
+  </div>
+  <div style="flex:1;padding:.2em 1.2em;display:flex;gap:.5em;min-height:0">
+    <div style="flex:1;display:flex;flex-direction:column">
+      <div style="background:var(--azul-claro);color:#fff;text-align:center;padding:.22em;font-size:.78em;font-weight:700;letter-spacing:.12em">FASE 01</div>
+      <div class="card" style="flex:1;border-top:none;border-radius:0"><div class="accent" style="background:var(--azul-claro)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;gap:.22em"><div style="font-weight:700;font-size:.92em;color:var(--texto-dark)">Arquitetura do Modelo</div><div style="font-size:.78em;color:var(--texto-medio);font-style:italic">Sair de "franquia de R$120k" para "plataforma de monetização vacinal".</div><div style="font-size:.8em;color:var(--texto-medio)">→ Desenhar GBB: Good, Better, Best<br>→ Separar taxa, royalty, supply<br>→ Contrato de recorrência obrigatório<br>→ Tese de valor para a clínica<br>→ Mapear compliance por estado</div></div></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column">
+      <div style="background:var(--azul-profundo);color:#fff;text-align:center;padding:.22em;font-size:.78em;font-weight:700;letter-spacing:.12em">FASE 02</div>
+      <div class="card" style="flex:1;border-top:none;border-radius:0"><div class="accent" style="background:var(--azul-profundo)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;gap:.22em"><div style="font-weight:700;font-size:.92em;color:var(--texto-dark)">Playbook de Unidade</div><div style="font-size:.78em;color:var(--texto-medio);font-style:italic">Provar que a clínica consegue vender vacina todos os meses.</div><div style="font-size:.8em;color:var(--texto-medio)">→ Script recepção e enfermagem<br>→ Script para médico<br>→ Jornada do paciente<br>→ Calendário de campanhas<br>→ Dashboard de performance</div></div></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column">
+      <div style="background:var(--verde-escuro);color:#fff;text-align:center;padding:.22em;font-size:.78em;font-weight:700;letter-spacing:.12em">FASE 03</div>
+      <div class="card" style="flex:1;border-top:none;border-radius:0"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;gap:.22em"><div style="font-weight:700;font-size:.92em;color:var(--texto-dark)">Ativar Linhas Recorrentes</div><div style="font-size:.78em;color:var(--texto-medio);font-style:italic">Fazer cada unidade gerar receita contínua para a Vacivita.</div><div style="font-size:.8em;color:var(--texto-medio)">→ Royalty mensal e fee de tech<br>→ Margem de supply<br>→ Campanhas mensais<br>→ Clube familiar<br>→ Corporativo local</div></div></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column">
+      <div style="background:var(--rr-gold);color:var(--rr-indigo);text-align:center;padding:.22em;font-size:.78em;font-weight:700;letter-spacing:.12em">FASE 04</div>
+      <div class="card" style="flex:1;border-top:none;border-radius:0"><div class="accent" style="background:var(--rr-gold)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;gap:.22em"><div style="font-weight:700;font-size:.92em;color:var(--texto-dark)">Pilotos de Alto Aprendizado</div><div style="font-size:.78em;color:var(--texto-medio);font-style:italic">Começar onde o problema inevitável é mais forte.</div><div style="font-size:.8em;color:var(--texto-medio)">→ Pediatria: alto calendário<br>→ Clínica de família: base ampla<br>→ Geriatria / preventiva<br>→ Métricas de validação<br>→ Expandir modelos validados</div></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">12 / 15</span></div>
+</div>
+
+<!-- SLIDE 13 FOCO ESTRATÉGICO -->
+<div class="slide" id="s13" style="background:var(--bg-light)">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">APONTAMENTO DE FOCO</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">O que priorizar em cada dimensão do negócio</div>
+  </div>
+  <div style="flex:1;padding:.2em 1.2em;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:.4em;min-height:0">
+    <div class="card"><div class="accent" style="background:var(--azul-royal)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;justify-content:space-between"><div><div style="font-size:.68em;font-weight:700;letter-spacing:.1em;color:var(--azul-royal);margin-bottom:.2em">FOCO COMERCIAL</div><div style="font-size:.85em;color:var(--texto-dark);margin-bottom:.3em">Priorizar clínicas: alto fluxo, pediatria, família, gestantes, idosos, medicina preventiva, dono com mentalidade empresarial, base recorrente de pacientes.</div></div><div style="background:#fff5f0;border-radius:2px;padding:.25em .4em;font-size:.8em"><strong style="color:var(--alerta)">Não:&nbsp;</strong><span style="color:var(--texto-medio)">Vender para clínica que só quer "mais uma salinha".</span></div></div></div>
+    <div class="card"><div class="accent" style="background:var(--verde-escuro)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;justify-content:space-between"><div><div style="font-size:.68em;font-weight:700;letter-spacing:.1em;color:var(--verde-escuro);margin-bottom:.2em">FOCO DE MONETIZAÇÃO</div><div style="font-size:.85em;color:var(--texto-dark);margin-bottom:.3em">A prioridade não é maximizar franquias vendidas. É maximizar receita mensal média por clínica Vacivita instalada.</div></div><div style="background:#fff5f0;border-radius:2px;padding:.25em .4em;font-size:.8em"><strong style="color:var(--alerta)">Não:&nbsp;</strong><span style="color:var(--texto-medio)">Crescimento por volume que não gera MRR desde o primeiro mês.</span></div></div></div>
+    <div class="card"><div class="accent" style="background:var(--azul-vivido)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;justify-content:space-between"><div><div style="font-size:.68em;font-weight:700;letter-spacing:.1em;color:var(--azul-vivido);margin-bottom:.2em">FOCO DE PRODUTO</div><div style="font-size:.85em;color:var(--texto-dark);margin-bottom:.3em">O produto é operação vacinal pronta, segura e lucrativa: marca + método + treinamento + supply + tecnologia + campanhas + compliance.</div></div><div style="background:#fff5f0;border-radius:2px;padding:.25em .4em;font-size:.8em"><strong style="color:var(--alerta)">Não:&nbsp;</strong><span style="color:var(--texto-medio)">Posicionar como distribuidor de imunizantes.</span></div></div></div>
+    <div class="card"><div class="accent" style="background:var(--rr-gold)"></div><div class="card-body" style="height:100%;display:flex;flex-direction:column;justify-content:space-between"><div><div style="font-size:.68em;font-weight:700;letter-spacing:.1em;color:var(--rr-gold);margin-bottom:.2em">FOCO ESTRATÉGICO</div><div style="font-size:.85em;color:var(--texto-dark);margin-bottom:.3em">Construir rede em que cada clínica seja ponto de aplicação, relacionamento, venda familiar, venda corporativa, fonte de dados e unidade recorrente.</div></div><div style="background:#fff5f0;border-radius:2px;padding:.25em .4em;font-size:.8em"><strong style="color:var(--alerta)">Não:&nbsp;</strong><span style="color:var(--texto-medio)">Construir rede de salas de vacina. Construir plataforma de imunização distribuída.</span></div></div></div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">13 / 15</span></div>
+</div>
+
+<!-- SLIDE 14 TOP 5 -->
+<div class="slide" id="s14" style="background:#fff">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x">×</span><span class="pill-vac">VACIVITTA</span></div>
+  <div style="padding:.3em 1.2em .15em">
+    <div class="overline">TOP 5 LINHAS COM MAIOR POTENCIAL</div>
+    <div style="font-size:1.7em;font-weight:700;color:var(--texto-dark)">Ranking por impacto financeiro e estratégico</div>
+  </div>
+  <div style="flex:1;padding:.2em 1.2em;display:flex;flex-direction:column;gap:.3em;justify-content:center">
+    <div style="display:flex;align-items:center;background:var(--rr-indigo);padding:.45em .7em;gap:.7em;box-shadow:0 2px 8px rgba(0,0,0,.15)"><span style="font-size:2em;font-weight:800;color:var(--rr-gold);min-width:1.4em;text-align:center">1</span><div style="flex:1"><div style="font-weight:700;color:var(--rr-gold);font-size:1.05em">Royalty + Supply Recorrente</div><div style="font-size:.8em;color:var(--verde-mint)">Receita previsível por unidade. A espinha dorsal financeira do modelo.</div></div><div style="background:var(--rr-gold);padding:.22em .8em;font-size:.8em;font-weight:700;color:var(--rr-indigo)">Previsibilidade</div></div>
+    <div style="display:flex;align-items:center;background:var(--verde-escuro);padding:.45em .7em;gap:.7em;box-shadow:0 2px 8px rgba(0,0,0,.1)"><span style="font-size:2em;font-weight:800;color:var(--verde-vac);min-width:1.4em;text-align:center">2</span><div style="flex:1"><div style="font-weight:700;color:#fff;font-size:1.05em">Vacivita Club Familiar</div><div style="font-size:.8em;color:var(--verde-mint)">Recorrência direta no paciente final. Independe de novas franquias.</div></div><div style="background:rgba(93,211,168,.2);border:1px solid var(--verde-vac);padding:.22em .8em;font-size:.8em;font-weight:700;color:var(--verde-vac)">Recorrência</div></div>
+    <div style="display:flex;align-items:center;background:var(--azul-royal);padding:.45em .7em;gap:.7em;box-shadow:0 2px 8px rgba(0,0,0,.1)"><span style="font-size:2em;font-weight:800;color:#fff;min-width:1.4em;text-align:center">3</span><div style="flex:1"><div style="font-weight:700;color:#fff;font-size:1.05em">GBB de Franquia — Hub Regional</div><div style="font-size:.8em;color:#c0d0f0">Aumenta ticket inicial e captura redes médicas e grupos regionais.</div></div><div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:.22em .8em;font-size:.8em;font-weight:700;color:#fff">Alto ticket</div></div>
+    <div style="display:flex;align-items:center;background:var(--azul-vivido);padding:.45em .7em;gap:.7em;box-shadow:0 2px 8px rgba(0,0,0,.1)"><span style="font-size:2em;font-weight:800;color:#fff;min-width:1.4em;text-align:center">4</span><div style="flex:1"><div style="font-weight:700;color:#fff;font-size:1.05em">Campanhas Sazonais Padronizadas</div><div style="font-size:.8em;color:#c0d0f0">Monetiza momento e urgência. Baixo custo, alto impacto comercial.</div></div><div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:.22em .8em;font-size:.8em;font-weight:700;color:#fff">Sazonalidade</div></div>
+    <div style="display:flex;align-items:center;background:var(--azul-claro);padding:.45em .7em;gap:.7em;box-shadow:0 2px 8px rgba(0,0,0,.1)"><span style="font-size:2em;font-weight:800;color:#fff;min-width:1.4em;text-align:center">5</span><div style="flex:1"><div style="font-weight:700;color:#fff;font-size:1.05em">Vacivita Corporate</div><div style="font-size:.8em;color:#c0d0f0">Alto volume, bom cross-sell e expansão do relacionamento local.</div></div><div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:.22em .8em;font-size:.8em;font-weight:700;color:#fff">Volume B2B</div></div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · 2026</span><span class="pg">14 / 15</span></div>
+</div>
+
+<!-- SLIDE 15 SÍNTESE FINAL -->
+<div class="slide dark-slide" id="s15">
+  <div class="pills"><span class="pill-rr">RREVELA</span><span class="pill-x on-dark">×</span><span class="pill-vac on-dark">VACIVITTA</span></div>
+  <div style="flex:1;padding:.3em 1.2em .4em;display:flex;flex-direction:column;gap:.55em;justify-content:center">
+    <div class="overline gold">SÍNTESE PROVOCADORA</div>
+    <div style="display:flex;flex-direction:column;gap:.3em">
+      <div style="background:#1e2870;border:1px solid var(--alerta);border-left:4px solid var(--alerta);padding:.5em .9em;display:flex;gap:1em;align-items:center"><div style="flex:1"><div style="font-size:.85em;color:#a0b0d0">Vender franquias de R$ 120 mil</div><div style="font-weight:700;color:var(--alerta)">Cresce, mas depende sempre de novas vendas.</div></div><span style="font-size:1.6em;color:var(--alerta)">→</span></div>
+      <div style="background:#1e2870;border:1px solid var(--azul-claro);border-left:4px solid var(--azul-claro);padding:.5em .9em;display:flex;gap:1em;align-items:center"><div style="flex:1"><div style="font-size:.85em;color:#a0b0d0">Criar rede com royalty e supply</div><div style="font-weight:700;color:var(--azul-claro)">Ganha previsibilidade e escala.</div></div><span style="font-size:1.6em;color:var(--azul-claro)">→→</span></div>
+      <div style="background:#1e2870;border:1px solid var(--verde-vac);border-left:4px solid var(--verde-vac);padding:.5em .9em;display:flex;gap:1em;align-items:center"><div style="flex:1"><div style="font-size:.85em;color:#a0b0d0">Virar plataforma de imunização</div><div style="font-weight:700;color:var(--verde-vac)">Constrói ecossistema de alto valor.</div></div><span style="font-size:1.6em;color:var(--verde-vac)">→→→</span></div>
+    </div>
+    <div style="background:#0d3d24;border:1.5px solid var(--verde-vac);border-left:4px solid var(--verde-vac);padding:.7em 1em">
+      <div style="font-size:.7em;font-weight:700;letter-spacing:.18em;color:var(--verde-vac);margin-bottom:.35em">CONCLUSÃO</div>
+      <div style="font-size:1.25em;font-weight:700;color:#fff;line-height:1.3;margin-bottom:.3em">A Vacivita não deve ser uma franqueadora de salas de vacina.</div>
+      <div style="font-size:1.25em;font-weight:700;color:var(--verde-vac);line-height:1.3;margin-bottom:.4em">Deve ser a arquitetura nacional de monetização da imunização dentro de clínicas médicas.</div>
+      <div style="font-size:.82em;color:#4a8a6a;font-style:italic">Análise RRevela × Vacivitta — Método CAM/PAM | 2026</div>
+    </div>
+  </div>
+  <div class="footer"><span>RRevela × Vacivitta · Arquitetura de Monetização · Documento Estratégico Interno · 2026</span><span class="pg">15 / 15</span></div>
+</div>
+
+</div><!-- /deck -->
+</div><!-- /stage -->
+
+<div class="controls">
+  <button class="btn" onclick="go(-1)">‹ Anterior</button>
+  <span class="slide-counter" id="counter">1 / 15</span>
+  <button class="btn" onclick="go(1)">Próximo ›</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
+
+function show(n) {
+  slides[cur].classList.remove('active');
+  cur = (n + total) % total;
+  slides[cur].classList.add('active');
+  document.getElementById('counter').textContent = (cur+1) + ' / ' + total;
+  document.getElementById('prog').style.width = ((cur+1)/total*100) + '%';
+}
+
+function go(d) { show(cur + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') go(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(-1);
+});
+
+// click to advance (not on buttons)
+document.querySelector('.deck').addEventListener('click', e => {
+  if (!e.target.closest('.controls')) go(1);
+});
+
+// initial progress
+document.getElementById('prog').style.width = (1/total*100) + '%';
+</script>
+</body>
+</html>

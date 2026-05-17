@@ -140,6 +140,7 @@ function VideoPreviewModal({ modulo, onClose }: VideoPreviewModalProps) {
           moduleId={modulo.id}
           moduleTitle={modulo.titulo}
           uid="rh-preview"
+          companyId=""
           previewMode={true}
         />
 

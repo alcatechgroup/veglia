@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegl.ia — Command Center · Migração para Claude Code</title>
+<style>
+  :root {
+    --twilight: #1E2A5E;
+    --twilight-deep: #141B3F;
+    --mint: #5DD3A8;
+    --mint-soft: #B8EBD6;
+    --mint-deep: #0D6B47;
+    --champagne: #C9A96E;
+    --champagne-soft: #F0E5CB;
+    --cream: #FAF7F2;
+    --paper: #FFFEFB;
+    --charcoal: #2A2D3A;
+    --gray-soft: #6B6F7E;
+    --gray-line: #E5E2DA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--cream);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    color: var(--charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 80px 56px 120px; }
+
+  .top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 28px; border-bottom: 1px solid var(--gray-line); margin-bottom: 64px;
+  }
+  .brand { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray-soft); font-weight: 500; }
+  .brand strong { color: var(--twilight); font-weight: 600; }
+  .meta { font-size: 12px; color: var(--gray-soft); text-align: right; letter-spacing: 0.04em; }
+  .meta span { display: block; }
+
+  .hero { margin-bottom: 80px; }
+  .eyebrow {
+    display: inline-block; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mint-deep); font-weight: 600;
+    padding: 6px 14px; background: var(--mint-soft); border-radius: 100px; margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 60px; line-height: 1.05; font-weight: 700;
+    color: var(--twilight); letter-spacing: -0.02em; margin-bottom: 24px;
+  }
+  h1 em { font-style: normal; color: var(--mint); }
+  .lead {
+    font-size: 18px; color: var(--gray-soft); max-width: 720px; line-height: 1.6;
+  }
+
+  section { margin-bottom: 80px; }
+  .sec-num {
+    font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--champagne); letter-spacing: 0.15em;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-size: 36px; color: var(--twilight); font-weight: 600;
+    letter-spacing: -0.015em; margin-bottom: 20px; line-height: 1.15;
+  }
+  h2 + p.sec-lead { font-size: 17px; color: var(--gray-soft); max-width: 740px; margin-bottom: 32px; }
+  h3 { font-size: 22px; color: var(--twilight); font-weight: 600; margin: 28px 0 12px; letter-spacing: -0.01em; }
+  h4 { font-size: 14px; color: var(--charcoal); font-weight: 600; margin: 20px 0 8px; letter-spacing: 0.02em; }
+  p { margin-bottom: 14px; font-size: 15px; }
+  p.muted { color: var(--gray-soft); font-size: 14px; line-height: 1.7; }
+
+  .card {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 18px; padding: 28px; margin-bottom: 16px;
+  }
+  .card.dark { background: var(--twilight); color: var(--cream); border: none; }
+  .card.dark p { color: rgba(250, 247, 242, 0.85); }
+  .card.mint { background: linear-gradient(135deg, var(--mint-soft), #DCF5EB); border: 1px solid var(--mint); }
+
+  /* Pull quote */
+  .pull-quote {
+    font-size: 26px; line-height: 1.4; color: var(--twilight); font-weight: 500;
+    padding: 32px 0; max-width: 880px;
+    border-top: 2px solid var(--mint); border-bottom: 2px solid var(--mint);
+    margin: 32px 0;
+  }
+  .pull-quote em { color: var(--mint); font-style: normal; font-weight: 700; }
+
+  /* Tree */
+  .tree {
+    background: var(--twilight-deep); color: var(--cream);
+    border-radius: 14px; padding: 32px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; line-height: 1.85; margin: 24px 0; overflow-x: auto;
+  }
+  .tree .dir { color: var(--mint); font-weight: 600; }
+  .tree .file { color: rgba(250, 247, 242, 0.85); }
+  .tree .comment { color: var(--champagne); font-style: italic; }
+  .tree .new { color: #FFD66B; }
+
+  /* Cmd table */
+  .cmd-table {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 14px; overflow: hidden; margin: 24px 0;
+  }
+  .cmd-row {
+    display: grid; grid-template-columns: 240px 1fr;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--gray-line);
+    align-items: start;
+  }
+  .cmd-row:last-child { border-bottom: none; }
+  .cmd-name {
+    font-family: "JetBrains Mono", monospace; font-size: 13px;
+    color: var(--mint-deep); font-weight: 700;
+  }
+  .cmd-desc { font-size: 14px; color: var(--charcoal); line-height: 1.5; }
+
+  /* Agent grid */
+  .agent-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 24px 0;
+  }
+  .agent-card {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 16px; padding: 24px;
+    border-top: 4px solid var(--mint);
+  }
+  .agent-handle {
+    font-family: "JetBrains Mono", monospace; font-size: 14px; font-weight: 700;
+    color: var(--twilight); margin-bottom: 8px;
+  }
+  .agent-name { font-size: 15px; color: var(--twilight); font-weight: 600; margin-bottom: 6px; }
+  .agent-desc { font-size: 13px; color: var(--gray-soft); line-height: 1.55; }
+
+  /* Status badge */
+  .status-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin: 32px 0;
+  }
+  .status {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 14px; padding: 20px;
+    border-left: 4px solid;
+  }
+  .status.done { border-left-color: var(--mint); }
+  .status.now { border-left-color: var(--champagne); }
+  .status.next { border-left-color: var(--gray-soft); }
+  .status-label {
+    font-size: 11px; color: var(--gray-soft); letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 6px; font-weight: 600;
+  }
+  .status.done .status-label { color: var(--mint-deep); }
+  .status.now .status-label { color: var(--champagne); }
+  .status-title { font-size: 15px; color: var(--twilight); font-weight: 700; margin-bottom: 8px; }
+  .status-detail { font-size: 12.5px; color: var(--gray-soft); line-height: 1.6; }
+
+  /* Code block */
+  .codeblock {
+    background: var(--twilight-deep); color: var(--cream);
+    border-radius: 12px; padding: 24px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12.5px; line-height: 1.85;
+    margin: 16px 0; overflow-x: auto;
+  }
+  .codeblock .cmd { color: var(--mint); font-weight: 600; }
+  .codeblock .arg { color: rgba(250, 247, 242, 0.85); }
+  .codeblock .comment { color: var(--champagne); font-style: italic; }
+
+  /* Final CTA */
+  .cta-final {
+    background: linear-gradient(135deg, var(--twilight), var(--twilight-deep));
+    color: var(--cream); border-radius: 24px; padding: 56px 48px; margin-top: 56px;
+    text-align: center;
+  }
+  .cta-final h2 { color: var(--cream); }
+  .cta-final .accent { color: var(--mint); }
+  .cta-final p { color: rgba(250, 247, 242, 0.85); max-width: 620px; margin: 14px auto; }
+  .cta-action {
+    display: inline-block; margin-top: 20px;
+    padding: 14px 32px; background: var(--mint); color: var(--twilight-deep);
+    border-radius: 100px; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  footer {
+    margin-top: 64px; padding-top: 24px;
+    border-top: 1px solid var(--gray-line);
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--gray-soft);
+  }
+
+  @media (max-width: 800px) {
+    .wrap { padding: 48px 24px; }
+    h1 { font-size: 38px; }
+    .agent-grid, .status-row { grid-template-columns: 1fr; }
+    .cmd-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand"><strong>Vegl.ia</strong> · Command Center</div>
+    <div class="meta">
+      <span>Migração para Claude Code</span>
+      <span>09 maio 2026</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <span class="eyebrow">Transição operacional · Pronta</span>
+    <h1>O command center<br>está <em>vivo</em>.</h1>
+    <p class="lead">
+      Toda a inteligência produzida no projeto Vegl.ia — estratégia, design, conteúdo, decisões — agora vive em um único lugar versionado, junto com o código que vamos escrever. Claude Code é o ambiente. GitHub é o cofre. Firebase é a infra. Hora de executar a Fase 1.
+    </p>
+  </div>
+
+  <!-- Section 01: O que é -->
+  <section>
+    <div class="sec-num">01 · O QUE É</div>
+    <h2>Um único lugar. Três tipos de conteúdo.</h2>
+
+    <div class="pull-quote">
+      "Documentos, código e decisões na mesma raiz. Quando o dev abre o repo, ele vê o roadmap. Quando o CEO abre a pasta, ele vê o código. <em>Mesmo cérebro, mesma mão.</em>"
+    </div>
+
+    <p class="muted">
+      O command center é a pasta <code>veglia-platform/</code> — futuramente o repositório GitHub <code>veglia/veglia-platform</code>. Dentro dele convivem três camadas que normalmente ficam separadas: documentos estratégicos (.html, .pdf, .docx), conteúdo educacional (.docx) e código de produção (.tsx, .ts). A vantagem: todo membro do time tem acesso ao contexto inteiro a qualquer momento — sem perguntar onde está o último brandbook ou qual era a decisão sobre o Firebase.
+    </p>
+  </section>
+
+  <!-- Section 02: Status -->
+  <section>
+    <div class="sec-num">02 · STATUS DA INFRAESTRUTURA</div>
+    <h2>O que já está pronto · O que vem agora</h2>
+
+    <div class="status-row">
+      <div class="status done">
+        <div class="status-label">✓ Concluído</div>
+        <div class="status-title">Repositório GitHub</div>
+        <div class="status-detail">Org <code>veglia</code> criada · repo <code>veglia-platform</code> ativo · Rodolfo, Fábio e Thiago como owners</div>
+      </div>
+      <div class="status done">
+        <div class="status-label">✓ Concluído</div>
+        <div class="status-title">Projeto Firebase</div>
+        <div class="status-detail">Projeto <code>veglia</code> criado · Firestore inicializado · plano Blaze a confirmar</div>
+      </div>
+      <div class="status done">
+        <div class="status-label">✓ Concluído</div>
+        <div class="status-title">Command Center</div>
+        <div class="status-detail">55+ documentos migrados · CLAUDE.md mestre · sub-agents · slash commands</div>
+      </div>
+      <div class="status now">
+        <div class="status-label">◐ Próximo passo</div>
+        <div class="status-title">Vincular repo ao command center</div>
+        <div class="status-detail">Push da pasta veglia-platform/ para o GitHub. Deve rodar primeiro <code>git init</code> + commit inicial.</div>
+      </div>
+      <div class="status now">
+        <div class="status-label">◐ Próximo passo</div>
+        <div class="status-title">Configurar Firebase CLI</div>
+        <div class="status-detail">Vincular projeto local ao Firebase via <code>firebase use veglia</code>. Definir Storage, Hosting, Functions, Auth.</div>
+      </div>
+      <div class="status next">
+        <div class="status-label">→ Sprint 1</div>
+        <div class="status-title">Iniciar app web</div>
+        <div class="status-detail">Vite + React + TypeScript em <code>apps/web/</code>. Primeiro deploy em <code>staging.vegl.ia</code>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 03: Estrutura -->
+  <section>
+    <div class="sec-num">03 · ESTRUTURA DO REPOSITÓRIO</div>
+    <h2>Mapa do que está onde</h2>
+
+    <div class="tree">
+<span class="dir">veglia-platform/</span>
+├── <span class="file">CLAUDE.md</span>                     <span class="comment">memória persistente do projeto</span>
+├── <span class="file">README.md</span>                     <span class="comment">guia de uso</span>
+│
+├── <span class="dir">.claude/</span>
+│   ├── <span class="dir">agents/</span>                    <span class="comment">sub-agents @ceo @dev @comunicacao @edu</span>
+│   ├── <span class="dir">commands/</span>                  <span class="comment">slash commands customizados</span>
+│   └── <span class="dir">settings/</span>                  <span class="comment">configuração e permissões</span>
+│
+├── <span class="dir">docs/</span>
+│   ├── <span class="dir">strategy/</span>                  <span class="comment">7 documentos estratégicos</span>
+│   │   ├── <span class="file">01-roadmap-estrategico-produto.pdf</span>
+│   │   ├── <span class="file">02-briefing-tese-expandida.html</span>
+│   │   ├── <span class="file">03-roadmap-operacional-30dias.html</span>
+│   │   ├── <span class="file">04-arquitetura-prototipo.html</span>
+│   │   ├── <span class="file">05-tese-expandida-resumo.docx</span>
+│   │   ├── <span class="file">06-analise-edtech-original.docx</span>
+│   │   └── <span class="file">07-tese-monetizacao-vacivitta.html|.pptx</span>
+│   │
+│   ├── <span class="dir">product/</span>                   <span class="comment">spec das 22 funcionalidades F01–F22</span>
+│   ├── <span class="dir">design/</span>                    <span class="comment">brandbook · iconografia · landing · MVP</span>
+│   ├── <span class="dir">communication/</span>             <span class="comment">manifestos · prompts · UX writing</span>
+│   └── <span class="dir">operations/</span>                <span class="comment">term sheet · scripts</span>
+│
+├── <span class="dir">content/</span>                       <span class="comment">conteúdo educacional versionado</span>
+│   ├── <span class="dir">lei-15377/</span>                 <span class="comment">4 módulos validados Dra. Amanda</span>
+│   ├── <span class="dir">nr-1/</span>                      <span class="comment">2 módulos NR-1</span>
+│   └── <span class="dir">roteiros/</span>                  <span class="comment">12 vídeos audiovisual</span>
+│
+├── <span class="dir new">apps/web/</span>                  <span class="comment">React + Vite (Sprint 1)</span>
+├── <span class="dir new">packages/</span>                  <span class="comment">design system · shared · firebase</span>
+├── <span class="dir new">functions/</span>                 <span class="comment">Cloud Functions Node 20</span>
+└── <span class="dir">assets/</span>                        <span class="comment">imagens · brand</span>
+    </div>
+
+    <p class="muted">
+      Pastas marcadas em <span style="color:#FFD66B">amarelo</span> serão preenchidas no Sprint 1 — começam vazias.
+    </p>
+  </section>
+
+  <!-- Section 04: Slash commands -->
+  <section>
+    <div class="sec-num">04 · SLASH COMMANDS</div>
+    <h2>Atalhos para ações recorrentes</h2>
+    <p class="sec-lead">
+      Cinco comandos custom já configurados em <code>.claude/commands/</code>. Use no Claude Code com <code>/</code> no início do prompt.
+    </p>
+
+    <div class="cmd-table">
+      <div class="cmd-row">
+        <div class="cmd-name">/sprint-status</div>
+        <div class="cmd-desc">Relatório do progresso do sprint atual nas três frentes (CEO, Dev, Comunicação). Lê CLAUDE.md, verifica git log e estado do código, compara planejado vs realizado.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/briefing-equipe [agente]</div>
+        <div class="cmd-desc">Gera briefing semanal por agente do xquads (po, estrategista, dev, designer, edu, copy, etc.) ou para todos. Inclui entregas, dependências e critério de pronto.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/content-semana</div>
+        <div class="cmd-desc">Calendário editorial completo da semana para LinkedIn (Vegl.ia + Rodolfo) e Instagram. Posts prontos para colar com headline, corpo, CTA, hashtags.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/decisao-ceo [decisão]</div>
+        <div class="cmd-desc">Registra nova decisão estratégica diretamente no CLAUDE.md. Movimenta de "pendente" para "tomada" e analisa o que destrava + risco oculto.</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/feature-spec F##</div>
+        <div class="cmd-desc">Abre o spec de uma das 22 funcionalidades (F01 a F22) com camada, fase, monetização, KPIs e status atual no projeto.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 05: Sub-agents -->
+  <section>
+    <div class="sec-num">05 · SUB-AGENTS</div>
+    <h2>Quatro especialistas · Um chamado</h2>
+    <p class="sec-lead">
+      Sub-agents configurados em <code>.claude/agents/</code> — espelhos calibrados dos xquads relevantes para a Vegl.ia. Invoque com <code>@nome</code>.
+    </p>
+
+    <div class="agent-grid">
+      <div class="agent-card">
+        <div class="agent-handle">@ceo</div>
+        <div class="agent-name">Strategic Advisor</div>
+        <div class="agent-desc">Decisões estratégicas, parcerias, captação, prioridades. Aplica viability check (mercado, modelo, portfolio, fit Rodolfo) e devolve verdict 🟢🟡🔴⚫ com próximo movimento concreto.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-handle">@dev</div>
+        <div class="agent-name">Tech Lead</div>
+        <div class="agent-desc">Implementação técnica. Stack fechada (React + Firebase + YouTube). Multi-tenant por padrão. Cloud Functions para regra de negócio. Conventional commits. Foco no demo do dia 30.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-handle">@comunicacao</div>
+        <div class="agent-name">Voz Pública</div>
+        <div class="agent-desc">Copy, posts, landing, UX writing, pitch decks. Manifesto "Quem vela, cuida." Tom didático e quente. Lei 15.377 como gatilho de mercado. Vacivitta sempre como base.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-handle">@edu</div>
+        <div class="agent-name">Designer Instrucional</div>
+        <div class="agent-desc">Trilhas, microlearning, quizzes, gamificação. Dual percurso (Colaborador + Gestor RH). Adaptativo via diagnóstico inicial. Certificação SHA-256 auditável. WCAG 2.1 AA.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 06: Comandos para conectar tudo -->
+  <section>
+    <div class="sec-num">06 · CONECTAR REPO LOCAL → GITHUB → FIREBASE</div>
+    <h2>Próximos comandos para você rodar</h2>
+    <p class="sec-lead">
+      Você já criou o repo GitHub, projeto Firebase e Firestore. Agora vinculamos a estrutura local do command center a tudo isso. Comandos abaixo, em ordem.
+    </p>
+
+    <h3>Passo 1 · Inicializar Git localmente</h3>
+    <div class="codeblock">
+<span class="comment"># Entrar na pasta do command center</span>
+<span class="cmd">cd</span> <span class="arg">veglia-platform</span>
+
+<span class="comment"># Inicializar git</span>
+<span class="cmd">git init</span>
+<span class="cmd">git branch -M main</span>
+
+<span class="comment"># Criar .gitignore inicial</span>
+<span class="cmd">echo</span> <span class="arg">"node_modules/
+.env
+.env.local
+dist/
+.firebase/
+.DS_Store
+.turbo/" > .gitignore</span>
+
+<span class="comment"># Primeiro commit com toda a base estratégica</span>
+<span class="cmd">git add</span> <span class="arg">.</span>
+<span class="cmd">git commit -m</span> <span class="arg">"chore: initial command center with docs, content, and brand assets"</span>
+    </div>
+
+    <h3>Passo 2 · Conectar ao GitHub</h3>
+    <div class="codeblock">
+<span class="comment"># Vincular ao repo remoto</span>
+<span class="cmd">git remote add origin</span> <span class="arg">git@github.com:veglia/veglia-platform.git</span>
+
+<span class="comment"># Push inicial</span>
+<span class="cmd">git push -u origin main</span>
+    </div>
+
+    <h3>Passo 3 · Configurar Firebase CLI</h3>
+    <div class="codeblock">
+<span class="comment"># Login no Firebase (abre browser)</span>
+<span class="cmd">firebase login</span>
+
+<span class="comment"># Vincular pasta local ao projeto Firebase</span>
+<span class="cmd">firebase use --add veglia</span>
+
+<span class="comment"># Inicializar features (escolher: Firestore, Functions, Hosting, Storage)</span>
+<span class="cmd">firebase init</span>
+
+<span class="comment"># Resposta a perguntas:</span>
+<span class="comment"># Use existing project: veglia</span>
+<span class="comment"># Firestore: rules em firestore.rules / indexes em firestore.indexes.json</span>
+<span class="comment"># Functions: TypeScript / install dependencies / Node 20</span>
+<span class="comment"># Hosting: public = apps/web/dist · SPA: yes · auto build with GitHub: yes</span>
+<span class="comment"># Storage: rules em storage.rules</span>
+    </div>
+
+    <h3>Passo 4 · Iniciar app web (Vite + React)</h3>
+    <div class="codeblock">
+<span class="comment"># Criar app na pasta apps/web</span>
+<span class="cmd">npm create vite@latest</span> <span class="arg">apps/web -- --template react-ts</span>
+<span class="cmd">cd</span> <span class="arg">apps/web</span>
+<span class="cmd">npm install</span>
+
+<span class="comment"># Adicionar Firebase + libs essenciais</span>
+<span class="cmd">npm install</span> <span class="arg">firebase react-router-dom @tanstack/react-query</span>
+<span class="cmd">npm install -D</span> <span class="arg">tailwindcss postcss autoprefixer @types/node</span>
+
+<span class="comment"># Setup Tailwind</span>
+<span class="cmd">npx tailwindcss init -p</span>
+
+<span class="comment"># Setup shadcn/ui</span>
+<span class="cmd">npx shadcn-ui@latest init</span>
+
+<span class="comment"># Voltar para raiz</span>
+<span class="cmd">cd ../..</span>
+
+<span class="comment"># Primeiro commit do app</span>
+<span class="cmd">git add</span> <span class="arg">apps/web</span>
+<span class="cmd">git commit -m</span> <span class="arg">"feat(web): bootstrap React + Vite + TypeScript app"</span>
+<span class="cmd">git push</span>
+    </div>
+
+    <h3>Passo 5 · Configurar GitHub Actions (CI/CD)</h3>
+    <div class="codeblock">
+<span class="comment"># Criar pasta de workflows</span>
+<span class="cmd">mkdir -p</span> <span class="arg">.github/workflows</span>
+
+<span class="comment"># GitHub Actions de auto-deploy ao Firebase Hosting</span>
+<span class="comment"># (script firebase deploy --only hosting + auth via service account)</span>
+
+<span class="comment"># Pedir ao Claude Code:</span>
+<span class="cmd">@dev</span> <span class="arg">configurar GitHub Actions para deploy automático no Firebase Hosting (staging em PR, prod em merge para main)</span>
+    </div>
+  </section>
+
+  <!-- Section 07: Como usar daqui pra frente -->
+  <section>
+    <div class="sec-num">07 · COMO USAR DAQUI PRA FRENTE</div>
+    <h2>O ritmo no Claude Code</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Manhã</h3>
+      <p class="muted">
+        Abrir o repo no Claude Code. Rodar <code>/sprint-status</code> para entender estado do dia. Decidir 1-2 tarefas para fechar antes do almoço.
+      </p>
+
+      <h3>Durante o dia</h3>
+      <p class="muted">
+        Invocar <code>@dev</code> para implementação. Invocar <code>@comunicacao</code> para qualquer texto público. Invocar <code>@ceo</code> quando bater dúvida estratégica. Cada agente já carrega o contexto completo via CLAUDE.md.
+      </p>
+
+      <h3>Final do dia</h3>
+      <p class="muted">
+        Commit das mudanças. Se houve decisão estratégica, rodar <code>/decisao-ceo</code> para registrá-la. Push para o GitHub.
+      </p>
+
+      <h3>Sexta-feira</h3>
+      <p class="muted">
+        Checkpoint semanal de 30min com Fábio e Thiago. Antes da reunião, rodar <code>/sprint-status</code> e enviar o relatório para os sócios. Reunião curta, decisões claras, próxima semana destravada.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <div class="cta-final">
+    <h2>Repositório vivo. <span class="accent">Equipe sincronizada.</span></h2>
+    <p>
+      O command center está pronto. GitHub criado. Firebase ativo. Sub-agents configurados. Slash commands prontos. CLAUDE.md mestre carregado. Hora de abrir o Claude Code, dar o primeiro <code>git push</code> e começar a Fase 1.
+    </p>
+    <div class="cta-action">claude veglia-platform/</div>
+  </div>
+
+  <footer>
+    <span>Vegl.ia · Command Center · v1.0</span>
+    <span>RRevela × Vacivitta · Powered by Alcatech.ia · 09 maio 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

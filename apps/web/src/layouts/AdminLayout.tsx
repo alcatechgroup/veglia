@@ -2,29 +2,44 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 const NAV = [
-  { to: "/admin", label: "Visão Geral", icon: "⬡", end: true },
-  { to: "/admin/roadmap", label: "Roadmap", icon: "◈" },
-  { to: "/admin/sprint", label: "Sprint 1", icon: "◎" },
-  { to: "/admin/materiais", label: "Materiais", icon: "◻" },
-  { to: "/admin/decisoes", label: "Decisões", icon: "◆" },
-  { to: "/admin/historico", label: "Memória", icon: "◑" },
-  { to: "/admin/roteiros",     label: "Roteiros",     icon: "▶" },
-  { to: "/admin/comunicacao", label: "Comunicação",  icon: "◐" },
-  { to: "/admin/pitch",       label: "Pitch VR",      icon: "◇" },
-  { to: "/admin/conteudo",   label: "Conteudo",      icon: "▷" },
+  // Estrategia
+  { to: "/admin", label: "Visao Geral", icon: "⬡", end: true, group: "Estrategia" },
+  { to: "/admin/roadmap", label: "Roadmap", icon: "◈", group: "Estrategia" },
+  { to: "/admin/sprint", label: "Sprint 1", icon: "◎", group: "Estrategia" },
+  { to: "/admin/decisoes", label: "Decisoes", icon: "◆", group: "Estrategia" },
+  { to: "/admin/historico", label: "Memoria", icon: "◑", group: "Estrategia" },
+  // Conteudo
+  { to: "/admin/materiais", label: "Materiais", icon: "◻", group: "Conteudo" },
+  { to: "/admin/roteiros", label: "Roteiros", icon: "▶", group: "Conteudo" },
+  { to: "/admin/comunicacao", label: "Comunicacao", icon: "◐", group: "Conteudo" },
+  { to: "/admin/conteudo", label: "Video IDs", icon: "▷", group: "Conteudo" },
+  { to: "/admin/canal", label: "Canal Saude", icon: "◎", group: "Conteudo" },
+  // Plataforma
+  { to: "/admin/pitch", label: "Pitch VR", icon: "◇", group: "Plataforma" },
+  { to: "/admin/white-label", label: "White Label", icon: "◈", group: "Plataforma" },
+  { to: "/admin/epidemiologia", label: "Epidemiologia", icon: "◎", group: "Plataforma" },
+  { to: "/admin/marketplace", label: "Marketplace", icon: "◐", group: "Plataforma" },
+  { to: "/admin/beneficios", label: "Beneficios", icon: "◻", group: "Plataforma" },
+  { to: "/admin/analytics", label: "Analytics", icon: "◆", group: "Plataforma" },
 ];
 
 const BREADCRUMB: Record<string, string> = {
-  "/admin":               "Visão Geral",
-  "/admin/roadmap":       "Roadmap",
-  "/admin/sprint":        "Sprint 1",
-  "/admin/materiais":     "Materiais",
-  "/admin/decisoes":      "Decisões",
-  "/admin/historico":     "Memória",
-  "/admin/roteiros":      "Roteiros",
-  "/admin/comunicacao":   "Comunicação",
-  "/admin/pitch":         "Pitch VR",
-  "/admin/conteudo":     "Conteudo",
+  "/admin": "Visao Geral",
+  "/admin/roadmap": "Roadmap",
+  "/admin/sprint": "Sprint 1",
+  "/admin/materiais": "Materiais",
+  "/admin/decisoes": "Decisoes",
+  "/admin/historico": "Memoria",
+  "/admin/roteiros": "Roteiros",
+  "/admin/comunicacao": "Comunicacao",
+  "/admin/pitch": "Pitch VR",
+  "/admin/conteudo": "Video IDs",
+  "/admin/canal": "Canal Saude",
+  "/admin/white-label": "White Label",
+  "/admin/epidemiologia": "Epidemiologia",
+  "/admin/marketplace": "Marketplace",
+  "/admin/beneficios": "Beneficios",
+  "/admin/analytics": "Analytics",
 };
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -52,24 +67,31 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <p className="text-xs text-white/30 mt-1 font-serif italic">Command Center</p>
         </div>
 
-        {/* Nav */}
-        <nav className="flex flex-col gap-1">
-          {NAV.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                  isActive
-                    ? "bg-[#5DD3A8]/15 text-[#5DD3A8] font-medium"
-                    : "text-white/45 hover:text-white/80 hover:bg-white/5"
-                }`
-              }
-            >
-              <span className="text-base leading-none">{item.icon}</span>
-              {item.label}
-            </NavLink>
+        {/* Nav com grupos */}
+        <nav className="flex flex-col gap-0.5 overflow-y-auto">
+          {["Estrategia", "Conteudo", "Plataforma"].map((group) => (
+            <div key={group} className="mb-2">
+              <p className="text-[10px] text-white/20 px-3 py-1 uppercase tracking-wide">
+                {group}
+              </p>
+              {NAV.filter((item) => item.group === group).map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={"end" in item ? item.end : undefined}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                      isActive
+                        ? "bg-[#5DD3A8]/15 text-[#5DD3A8] font-medium"
+                        : "text-white/45 hover:text-white/80 hover:bg-white/5"
+                    }`
+                  }
+                >
+                  <span className="text-base leading-none">{item.icon}</span>
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
 

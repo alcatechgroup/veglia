@@ -150,6 +150,17 @@ veglia-platform/
 | 28 | firebase.json reestruturado para array multi-site + rewrite /acesso adicionado | Executada 2026-05-16 | firebase.json |
 | 29 | Dark/light theme toggle na landing page com persistência localStorage | Executada 2026-05-16 | apps/web/public/landing.html |
 | 30 | Deploy Firebase Hosting realizado com sucesso | Executada 2026-05-16 | https://veglia-6e734.web.app |
+| 31 | Sprints 2–4 implementados: F06 CertificacaoEmpresa, F07 AdminCanal, F14 WL boot, F16 NotificationBell, F18 AdminMarketplace, F19 AdminBeneficios, F21 Analytics | Executada 2026-05-16 | apps/web/src/pages/ · functions/src/index.ts |
+| 32 | AppLayout sidebar expandido com secoes Saude, Engajamento, Ferramentas RH + NotificationBell com badge de nao-lidas | Executada 2026-05-16 | apps/web/src/layouts/AppLayout.tsx |
+| 33 | AdminLayout reorganizado em grupos Estrategia/Conteudo/Plataforma. Novos itens: Canal, Marketplace, Beneficios, Analytics | Executada 2026-05-16 | apps/web/src/layouts/AdminLayout.tsx |
+| 34 | Cloud Function generateCompanyCertificate: PDF+SHA-256, score minimo 40, idempotente company_id+year | Executada 2026-05-16 | functions/src/index.ts |
+| 35 | White Label boot: CSS variables aplicadas em main.tsx antes do render React | Executada 2026-05-16 | apps/web/src/main.tsx |
+| 31 | F01 Compliance: ComplianceDashboard + ComplianceVacinacao + ComplianceTreinamentos + ComplianceRelatorio entregues | Executada 2026-05-16 | /app/compliance, /app/compliance/vacinacao, /app/compliance/treinamentos, /app/compliance/relatorio |
+| 32 | F01 Cloud Functions: checkComplianceAlerts (cron diário) + syncComplianceScore (onWrite) + calculatePreventiveScore (onCall) adicionadas | Executada 2026-05-16 | functions/src/index.ts |
+| 33 | F02 DiagnosticoColaborador: questionário 12 perguntas, score 0–100, risk_flags, 3+ recomendações, persistência Firestore health_assessments/{uid}, reavaliação 90 dias | Executada 2026-05-16 | /app/diagnostico |
+| 34 | F13 IndicePreventivo: dashboard 4 dimensões, score ao vivo, histórico ISPC, impacto financeiro estimado | Executada 2026-05-16 | /app/indice |
+| 35 | AppLayout sidebar reestruturada: seções Compliance, Educação, Indicadores, Gestão para RH | Executada 2026-05-16 | apps/web/src/layouts/AppLayout.tsx |
+| 36 | App.tsx: rotas /app/compliance/*, /app/diagnostico, /app/indice adicionadas; PassaportePublico removido (bug de undefined import) | Executada 2026-05-16 | apps/web/src/App.tsx |
 
 ## 6. Decisões pendentes
 
@@ -262,4 +273,4 @@ Ou invoque diretamente os sub-agents:
 
 ---
 
-**Última atualização:** 2026-05-16 · Fase ativa: T1 MVP · Sprint: Semana 2 de 12.
+**Última atualização:** 2026-05-16 · Fase ativa: T1 MVP · Sprint: Semana 2 de 12 · Build: 197 módulos, zero erros TypeScript.

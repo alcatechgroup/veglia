@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegl.ia — Briefing da Equipe · Tese Expandida</title>
+<style>
+  :root {
+    --twilight: #1E2A5E;
+    --twilight-deep: #141B3F;
+    --mint: #5DD3A8;
+    --mint-soft: #B8EBD6;
+    --mint-deep: #0D6B47;
+    --champagne: #C9A96E;
+    --champagne-soft: #F0E5CB;
+    --cream: #FAF7F2;
+    --paper: #FFFEFB;
+    --charcoal: #2A2D3A;
+    --gray-soft: #6B6F7E;
+    --gray-line: #E5E2DA;
+    --red-soft: #FFE5E5;
+    --red-deep: #B91C1C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--cream);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", sans-serif;
+    color: var(--charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 80px 56px 120px; }
+
+  /* Top */
+  .top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 28px; border-bottom: 1px solid var(--gray-line);
+    margin-bottom: 64px;
+  }
+  .brand { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray-soft); font-weight: 500; }
+  .brand strong { color: var(--twilight); font-weight: 600; }
+  .meta { font-size: 12px; color: var(--gray-soft); text-align: right; letter-spacing: 0.04em; }
+  .meta span { display: block; }
+
+  /* Hero */
+  .hero { margin-bottom: 96px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mint-deep); font-weight: 600;
+    padding: 6px 14px; background: var(--mint-soft); border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 64px; line-height: 1.05; font-weight: 700;
+    color: var(--twilight); letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  h1 em { font-style: normal; color: var(--mint); }
+  .lead {
+    font-size: 19px; color: var(--gray-soft);
+    max-width: 760px; line-height: 1.6;
+  }
+
+  /* Section */
+  section { margin-bottom: 96px; }
+  .sec-num {
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-size: 12px; color: var(--champagne); letter-spacing: 0.15em;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-size: 38px; color: var(--twilight); font-weight: 600;
+    letter-spacing: -0.015em; margin-bottom: 20px; line-height: 1.15;
+  }
+  h2 + p.sec-lead { font-size: 17px; color: var(--gray-soft); max-width: 780px; margin-bottom: 40px; }
+
+  h3 { font-size: 22px; color: var(--twilight); font-weight: 600; margin: 32px 0 12px; letter-spacing: -0.01em; }
+  h4 { font-size: 14px; color: var(--charcoal); font-weight: 600; margin: 24px 0 8px; letter-spacing: 0.02em; }
+
+  p { margin-bottom: 16px; font-size: 15.5px; }
+  p.muted { color: var(--gray-soft); font-size: 14px; line-height: 1.7; }
+
+  /* Cards */
+  .card {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 18px; padding: 32px;
+    margin-bottom: 20px;
+  }
+  .card.dark {
+    background: var(--twilight); color: var(--cream); border: none;
+  }
+  .card.dark h3, .card.dark h4 { color: var(--mint); }
+  .card.dark p { color: rgba(250, 247, 242, 0.85); }
+  .card.dark p.muted { color: rgba(250, 247, 242, 0.7); }
+  .card.mint { background: linear-gradient(135deg, var(--mint-soft), #DCF5EB); border: 1px solid var(--mint); }
+  .card.champagne { background: var(--champagne-soft); border: 1px solid var(--champagne); }
+
+  /* Pull quote */
+  .pull-quote {
+    font-size: 28px; line-height: 1.4; color: var(--twilight); font-weight: 500;
+    padding: 40px 0; max-width: 900px;
+    border-top: 2px solid var(--mint); border-bottom: 2px solid var(--mint);
+    margin: 40px 0;
+  }
+  .pull-quote em { color: var(--mint); font-style: normal; font-weight: 700; }
+
+  /* Stats */
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    margin: 32px 0;
+  }
+  .stat {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 14px; padding: 24px;
+  }
+  .stat-label { font-size: 11px; color: var(--gray-soft); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .stat-value { font-size: 32px; color: var(--twilight); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .stat-trend { font-size: 13px; color: var(--mint-deep); margin-top: 6px; font-weight: 500; }
+
+  /* Layer Map */
+  .layer-stack {
+    background: var(--twilight-deep); border-radius: 20px;
+    padding: 40px; color: var(--cream); margin: 32px 0;
+  }
+  .layer {
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 24px; padding: 24px 0;
+    border-bottom: 1px dashed rgba(93, 211, 168, 0.25);
+  }
+  .layer:last-child { border-bottom: none; }
+  .layer-head {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .layer-num {
+    font-family: "JetBrains Mono", monospace; font-size: 11px;
+    color: var(--champagne); letter-spacing: 0.18em; font-weight: 600;
+  }
+  .layer-name { font-size: 18px; color: var(--mint); font-weight: 600; }
+  .layer-fn { font-size: 12px; color: rgba(250, 247, 242, 0.6); }
+  .layer-features {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .feat-chip {
+    background: rgba(93, 211, 168, 0.08);
+    border: 1px solid rgba(93, 211, 168, 0.35);
+    border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; color: var(--cream);
+  }
+  .feat-chip strong { color: var(--mint); margin-right: 6px; }
+  .feat-chip.mvp { background: rgba(93, 211, 168, 0.18); border-color: var(--mint); }
+
+  /* Phase Timeline */
+  .timeline {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin: 40px 0;
+  }
+  .phase {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 16px; padding: 24px; position: relative;
+  }
+  .phase.mvp { background: var(--mint-soft); border-color: var(--mint); }
+  .phase-tag {
+    font-size: 10px; color: var(--gray-soft); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 8px; font-weight: 600;
+  }
+  .phase.mvp .phase-tag { color: var(--mint-deep); }
+  .phase-name { font-size: 18px; color: var(--twilight); font-weight: 700; margin-bottom: 4px; }
+  .phase-time { font-size: 12px; color: var(--gray-soft); margin-bottom: 14px; }
+  .phase-features { font-size: 13px; line-height: 1.8; color: var(--charcoal); }
+  .phase-mrr { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--gray-line); font-size: 12px; color: var(--gray-soft); }
+  .phase-mrr strong { color: var(--twilight); display: block; font-size: 16px; }
+
+  /* Briefing card */
+  .brief-card {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 18px; padding: 32px; margin-bottom: 16px;
+    border-left: 4px solid var(--mint);
+  }
+  .brief-handle {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    color: var(--twilight); background: var(--mint-soft);
+    padding: 4px 12px; border-radius: 100px; font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .brief-title { font-size: 22px; color: var(--twilight); font-weight: 600; margin-bottom: 16px; }
+  .brief-task { font-size: 14px; color: var(--charcoal); padding: 8px 0; padding-left: 20px; position: relative; }
+  .brief-task::before {
+    content: ""; position: absolute; left: 0; top: 17px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--mint);
+  }
+  .deadline { font-size: 12px; color: var(--champagne); font-weight: 600; margin-top: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* Decision */
+  .decision {
+    background: var(--paper);
+    border-left: 4px solid var(--champagne);
+    border-radius: 4px 14px 14px 4px;
+    padding: 24px 28px; margin: 16px 0;
+  }
+  .decision .label {
+    font-size: 11px; color: var(--champagne); letter-spacing: 0.15em;
+    text-transform: uppercase; font-weight: 700; margin-bottom: 8px;
+  }
+  .decision .question { font-size: 18px; color: var(--twilight); font-weight: 600; margin-bottom: 10px; }
+  .decision .recommendation { font-size: 14px; color: var(--charcoal); line-height: 1.7; }
+  .decision .recommendation strong { color: var(--mint-deep); }
+
+  /* Pricing tiers */
+  .tier-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin: 32px 0;
+  }
+  .tier {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 16px; padding: 24px; text-align: center;
+  }
+  .tier.featured { background: var(--twilight); color: var(--cream); border-color: var(--twilight); }
+  .tier-name { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-soft); font-weight: 700; margin-bottom: 8px; }
+  .tier.featured .tier-name { color: var(--mint); }
+  .tier-price { font-size: 28px; color: var(--twilight); font-weight: 700; margin-bottom: 4px; }
+  .tier.featured .tier-price { color: var(--cream); }
+  .tier-size { font-size: 12px; color: var(--gray-soft); margin-bottom: 16px; }
+  .tier.featured .tier-size { color: rgba(250, 247, 242, 0.7); }
+  .tier-includes { font-size: 12px; color: var(--charcoal); line-height: 1.7; }
+  .tier.featured .tier-includes { color: rgba(250, 247, 242, 0.85); }
+
+  /* Final CTA */
+  .cta-final {
+    background: linear-gradient(135deg, var(--twilight), var(--twilight-deep));
+    color: var(--cream); border-radius: 24px; padding: 64px 56px; margin-top: 64px;
+    text-align: center;
+  }
+  .cta-final h2 { color: var(--cream); }
+  .cta-final .accent { color: var(--mint); }
+  .cta-final p { color: rgba(250, 247, 242, 0.85); max-width: 640px; margin: 16px auto; }
+  .cta-action {
+    display: inline-block; margin-top: 24px;
+    padding: 16px 36px; background: var(--mint); color: var(--twilight-deep);
+    border-radius: 100px; font-weight: 700; font-size: 14px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 80px; padding-top: 28px;
+    border-top: 1px solid var(--gray-line);
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--gray-soft); letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 768px) {
+    .wrap { padding: 48px 28px; }
+    h1 { font-size: 40px; }
+    .stat-row, .timeline, .tier-grid { grid-template-columns: 1fr 1fr; }
+    .layer { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top -->
+  <div class="top">
+    <div class="brand"><strong>Vegl.ia</strong> · Briefing executivo da equipe</div>
+    <div class="meta">
+      <span>Tese expandida do produto</span>
+      <span>09 maio 2026 · CEO @ceo</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="eyebrow">Tese expandida · Validada</span>
+    <h1>Vegl.ia não é uma <em>edtech</em>.<br>É infraestrutura de prevenção.</h1>
+    <p class="lead">
+      Os documentos que Rodolfo subiu nesta tarde redefinem o escopo do produto. Não estamos construindo uma plataforma de cursos — estamos construindo o sistema operacional preventivo corporativo do Brasil. 22 funcionalidades em 6 camadas. R$ 35k de MRR no T1, R$ 900k+ no T4. Este briefing distribui o trabalho para a equipe @xquads.
+    </p>
+  </div>
+
+  <!-- Section 01: Mudança de tese -->
+  <section>
+    <div class="sec-num">01 · MUDANÇA DE TESE</div>
+    <h2>O que muda — e o que se mantém</h2>
+    <p class="sec-lead">
+      O MVP em 90 dias permanece intacto. O que muda é a moldura: cada decisão do MVP precisa ser tomada já considerando que ela é a fundação de um ecossistema que cobrirá da entrada do colaborador (diagnóstico) até o moat de longo prazo (dados epidemiológicos nacionais).
+    </p>
+
+    <div class="pull-quote">
+      "A Vegl.ia mistura <em>healthtech + edtech + wellness + IA + dados + corporate health + behavioral science</em>. Isso é muito maior do que aparenta inicialmente."
+    </div>
+
+    <div class="card mint">
+      <h3 style="margin-top:0;">As três camadas de leitura</h3>
+      <p class="muted">
+        <strong>Visível ao cliente B2B (RH e gestor):</strong> compliance Lei 15.377 + treinamento NR-1 + dashboard de equipe. É o que vende. É o que faturamos no T1.
+      </p>
+      <p class="muted">
+        <strong>Visível ao colaborador (CLT):</strong> diagnóstico, calculadora vacinal, jornadas de vida, passaporte digital, gamificação, central familiar. É o que retém. É o que constrói LTV.
+      </p>
+      <p class="muted">
+        <strong>Invisível mas estratégico:</strong> base de dados de comportamento preventivo + IA preditiva + marketplace + dados epidemiológicos. É o moat. É o que justifica valuation de healthtech, não de LMS.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Funcionalidades</div>
+        <div class="stat-value">22</div>
+        <div class="stat-trend">Em 6 camadas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Fases de execução</div>
+        <div class="stat-value">4</div>
+        <div class="stat-trend">12 meses</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">MRR T4 alvo</div>
+        <div class="stat-value">R$ 900k+</div>
+        <div class="stat-trend">↑ 25× vs T1</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Empresas T4</div>
+        <div class="stat-value">1.000+</div>
+        <div class="stat-trend">80k+ colaboradores</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 02: Mapa das 22 features -->
+  <section>
+    <div class="sec-num">02 · ARQUITETURA DO PRODUTO</div>
+    <h2>22 funcionalidades em 6 camadas</h2>
+    <p class="sec-lead">
+      Camadas superiores dependem das inferiores para funcionar. Não dá para entregar IA Preventiva (camada 3) antes do Diagnóstico (camada 1) ou de ter dados (gerados pelas trilhas da camada 4). Esta ordem não é estética — é dependência operacional real.
+    </p>
+
+    <div class="layer-stack">
+      <div class="layer">
+        <div class="layer-head">
+          <div class="layer-num">CAMADA 01</div>
+          <div class="layer-name">Entrada</div>
+          <div class="layer-fn">Diagnóstico e personalização</div>
+        </div>
+        <div class="layer-features">
+          <span class="feat-chip mvp"><strong>F02</strong> Diagnóstico Preventivo Inicial</span>
+          <span class="feat-chip mvp"><strong>F04</strong> Calculadora Calendário Vacinal</span>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-head">
+          <div class="layer-num">CAMADA 02</div>
+          <div class="layer-name">Experiência</div>
+          <div class="layer-fn">Retenção e vínculo emocional</div>
+        </div>
+        <div class="layer-features">
+          <span class="feat-chip"><strong>F08</strong> Jornadas de Vida</span>
+          <span class="feat-chip"><strong>F10</strong> Passaporte de Saúde Digital</span>
+          <span class="feat-chip"><strong>F14</strong> Plataforma Multi-Saúde</span>
+          <span class="feat-chip"><strong>F16</strong> Central de Saúde Familiar</span>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-head">
+          <div class="layer-num">CAMADA 03</div>
+          <div class="layer-name">Inteligência</div>
+          <div class="layer-fn">Personalização e dados</div>
+        </div>
+        <div class="layer-features">
+          <span class="feat-chip"><strong>F12</strong> IA Preventiva Personalizada</span>
+          <span class="feat-chip"><strong>F17</strong> Concierge Preventiva Digital</span>
+          <span class="feat-chip"><strong>F18</strong> Integração com Wearables</span>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-head">
+          <div class="layer-num">CAMADA 04</div>
+          <div class="layer-name">Corporativo</div>
+          <div class="layer-fn">Receita B2B e compliance</div>
+        </div>
+        <div class="layer-features">
+          <span class="feat-chip mvp"><strong>F01</strong> Compliance em Saúde</span>
+          <span class="feat-chip mvp"><strong>F03</strong> SIPAT Automática</span>
+          <span class="feat-chip mvp"><strong>F05</strong> Índice Preventivo</span>
+          <span class="feat-chip"><strong>F07</strong> Universidade White Label</span>
+          <span class="feat-chip"><strong>F11</strong> Certificação Empresas</span>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-head">
+          <div class="layer-num">CAMADA 05</div>
+          <div class="layer-name">Engajamento</div>
+          <div class="layer-fn">Adesão e recorrência</div>
+        </div>
+        <div class="layer-features">
+          <span class="feat-chip mvp"><strong>F06</strong> Motor de Campanhas</span>
+          <span class="feat-chip"><strong>F09</strong> Gamificação Corporativa</span>
+          <span class="feat-chip"><strong>F15</strong> Ecossistema de Benefícios</span>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-head">
+          <div class="layer-num">CAMADA 06</div>
+          <div class="layer-name">Expansão</div>
+          <div class="layer-fn">Escala e moat competitivo</div>
+        </div>
+        <div class="layer-features">
+          <span class="feat-chip"><strong>F13</strong> Canal de Conteúdo Médico</span>
+          <span class="feat-chip"><strong>F19</strong> Marketplace de Saúde</span>
+          <span class="feat-chip"><strong>F20</strong> IA Preditiva</span>
+          <span class="feat-chip"><strong>F21</strong> Dados Epidemiológicos</span>
+          <span class="feat-chip"><strong>F22</strong> Expansão Física Inteligente</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="muted" style="text-align:center; padding-top: 8px;">Chips em mint sólido = features do MVP (T1, primeiros 90 dias)</p>
+  </section>
+
+  <!-- Section 03: Roadmap -->
+  <section>
+    <div class="sec-num">03 · TRAJETÓRIA DE 12 MESES</div>
+    <h2>Quatro fases · Crescimento composto</h2>
+    <p class="sec-lead">
+      A lógica do roadmap: entrar rápido com compliance (dor obrigatória), gerar dados e usuários ativos, monetizar camadas progressivamente mais valiosas. Cada fase termina com KPIs auditáveis.
+    </p>
+
+    <div class="timeline">
+      <div class="phase mvp">
+        <div class="phase-tag">T1 · MVP</div>
+        <div class="phase-name">Fundação</div>
+        <div class="phase-time">Mês 1–3</div>
+        <div class="phase-features">
+          F01 Compliance · F02 Diagnóstico · F03 SIPAT · F04 Calculadora · F05 Índice · F06 Campanhas
+        </div>
+        <div class="phase-mrr">
+          <strong>R$ 35k MRR</strong>
+          50 empresas · 2.000 colaboradores · NPS &gt;50
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-tag">T2 · Fase 2</div>
+        <div class="phase-name">Diferenciação</div>
+        <div class="phase-time">Mês 4–6</div>
+        <div class="phase-features">
+          F07 White Label · F08 Jornadas · F09 Gamificação · F10 Passaporte · F11 Certificação · F12 IA · F13 Canal · F14 Multi-Saúde
+        </div>
+        <div class="phase-mrr">
+          <strong>R$ 120k MRR</strong>
+          150 empresas · 8.000 colaboradores · NPS &gt;60
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-tag">T3 · Fase 3</div>
+        <div class="phase-name">Escala</div>
+        <div class="phase-time">Mês 7–9</div>
+        <div class="phase-features">
+          F15 Benefícios · F16 Familiar · F17 Concierge · F18 Wearables · F19 Marketplace
+        </div>
+        <div class="phase-mrr">
+          <strong>R$ 350k MRR</strong>
+          400 empresas · 25.000 colaboradores · NPS &gt;65
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-tag">T4 · Fase 4</div>
+        <div class="phase-name">Moat</div>
+        <div class="phase-time">Mês 10–12+</div>
+        <div class="phase-features">
+          F20 IA Preditiva · F21 Dados Epidemiológicos · F22 Expansão Física Inteligente
+        </div>
+        <div class="phase-mrr">
+          <strong>R$ 900k+ MRR</strong>
+          1.000+ empresas · 80.000+ colaboradores · NPS &gt;70
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 04: Estrutura de Receita -->
+  <section>
+    <div class="sec-num">04 · ARQUITETURA DE RECEITA</div>
+    <h2>Modelo multicamada · LTV maximizado</h2>
+    <p class="sec-lead">
+      Compliance é a porta de entrada. Mas o LTV é construído por camadas: assinatura B2B + upsell de funcionalidades + B2C individual + marketplace + dados premium. Cinco linhas de crescimento independentes.
+    </p>
+
+    <div class="tier-grid">
+      <div class="tier">
+        <div class="tier-name">Starter</div>
+        <div class="tier-price">R$ 299</div>
+        <div class="tier-size">Até 50 col. · /mês</div>
+        <div class="tier-includes">Vegl.ia Core · Dashboard básico · Suporte chat</div>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Compliance</div>
+        <div class="tier-price">R$ 799</div>
+        <div class="tier-size">51–250 col. · /mês</div>
+        <div class="tier-includes">Core + NR-1 · SIPAT · Dashboard completo</div>
+      </div>
+      <div class="tier featured">
+        <div class="tier-name">Professional</div>
+        <div class="tier-price">R$ 1.800</div>
+        <div class="tier-size">251–1.000 col. · /mês</div>
+        <div class="tier-includes">Tudo + Multi-Saúde · IA v1 · CS dedicado · Certificação</div>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Enterprise</div>
+        <div class="tier-price">R$ 5–20k</div>
+        <div class="tier-size">1.000+ ou White Label · /mês</div>
+        <div class="tier-includes">Customizado · IA v2 · API · CS + Implementação</div>
+      </div>
+    </div>
+
+    <div class="card champagne">
+      <h3 style="margin-top:0;">Receitas complementares</h3>
+      <p class="muted">
+        <strong>Certificação Vegl.ia:</strong> R$ 2.000–8.000/empresa/ano (selo bronze · prata · ouro).<br>
+        <strong>Marketplace:</strong> 15–30% de comissão sobre transações de especialistas parceiros.<br>
+        <strong>B2C individual:</strong> R$ 29–99/mês (jornadas, passaporte, central familiar).<br>
+        <strong>Analytics Premium:</strong> R$ 500–2.000/mês adicional (IA Preditiva + Dados Epidemiológicos).<br>
+        <strong>Lead Vacivitta:</strong> calculadora vacinal e campanhas geram leads para vacinação corporativa presencial.<br>
+        <strong>White Label Setup:</strong> R$ 3.000–10.000 + mensalidade recorrente (VR, Alelo, Ticket).
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 05: Briefings da equipe -->
+  <section>
+    <div class="sec-num">05 · DISTRIBUIÇÃO DE TRABALHO · @XQUADS</div>
+    <h2>Briefing por agente da equipe</h2>
+    <p class="sec-lead">
+      Cada agente recebe seu pacote de entregas para os próximos 14 dias. Tudo conversa entre si — não trabalhamos em silos. Reuniões síncronas semanais para destravar dependências.
+    </p>
+
+    <!-- @po -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-po</span>
+      <div class="brief-title">Backlog estruturado para Sprint 1</div>
+      <p class="muted">Dono do produto. Traduz as 22 funcionalidades do roadmap em user stories acionáveis para o time técnico. Garante que o MVP entregue F01–F06 sem feature creep.</p>
+      <div class="brief-task">Quebrar F01–F06 em user stories com critérios de aceite para Sprint 1</div>
+      <div class="brief-task">Definir personas: Colaborador CLT · Gestor RH · Admin Master · Admin Carrier (VR)</div>
+      <div class="brief-task">Mapear jornada do colaborador (do convite por email até primeiro certificado)</div>
+      <div class="brief-task">Mapear jornada do gestor RH (do onboarding até relatório MTE)</div>
+      <div class="brief-task">Definir matriz RICE para priorização micro dentro do MVP</div>
+      <div class="brief-task">Especificar critérios de "pronto" do MVP (Definition of Done)</div>
+      <div class="deadline">Entrega: 14 dias · Formato: backlog em Notion + matriz no Figma</div>
+    </div>
+
+    <!-- @estrategista -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-estrategista</span>
+      <div class="brief-title">Análise competitiva e positioning</div>
+      <p class="muted">Valida a tese expandida contra players reais do mercado. Identifica onde Vegl.ia já tem moat, onde precisa construir, onde está vulnerável.</p>
+      <div class="brief-task">Mapear concorrentes diretos por camada (compliance, edtech B2B, healthtech, dashboard RH)</div>
+      <div class="brief-task">Avaliar Conjur, ContaAzul, Alura, Rocketseat, Gympass, Wellhub no contexto de Lei 15.377</div>
+      <div class="brief-task">Validar TAM/SAM/SOM com dados públicos (RFB · IBGE · ANS)</div>
+      <div class="brief-task">Documentar 5 movimentos defensivos (o que faríamos se um incumbent entrar)</div>
+      <div class="brief-task">Preparar 1 slide-killer para o pitch da VR e dos sócios</div>
+      <div class="deadline">Entrega: 10 dias · Formato: dossiê PDF + canvas estratégico</div>
+    </div>
+
+    <!-- @planning -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-planning</span>
+      <div class="brief-title">Modelo financeiro · 22 linhas de receita</div>
+      <p class="muted">Constrói o P&L plurianual com as 4 linhas core de assinatura + 6 linhas complementares. Identifica unit economics (CAC, LTV, payback) por linha.</p>
+      <div class="brief-task">Modelar P&L mensal de 24 meses com curva de aquisição realista</div>
+      <div class="brief-task">Calcular CAC e LTV por canal: White Label VR · vendas direta · B2C orgânico</div>
+      <div class="brief-task">Projetar caixa mensal — quando cruzamos break-even? Precisamos de captação?</div>
+      <div class="brief-task">Sensibilidade: cenário base · pessimista (atraso 3 meses) · otimista (VR + Alelo no T1)</div>
+      <div class="brief-task">Estrutura de pro-labore dos 3 sócios e quando ela ativa</div>
+      <div class="deadline">Entrega: 10 dias · Formato: planilha XLSX + 3 cenários</div>
+    </div>
+
+    <!-- @techlead -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-techlead</span>
+      <div class="brief-title">Revisão da arquitetura Firebase para 22 features</div>
+      <p class="muted">A arquitetura Firebase + GitHub + YouTube embedded foi desenhada para o MVP. Agora precisamos validar que ela escala até a Fase 4 sem reescrita. Onde ela quebra?</p>
+      <div class="brief-task">Auditar modelo Firestore — escala para 80k+ colaboradores e dados de wearables?</div>
+      <div class="brief-task">Decidir: Firestore monolítico ou BigQuery a partir do T2 para analytics?</div>
+      <div class="brief-task">Especificar contratos de API para integração VR (Fase 2) e wearables (Fase 3)</div>
+      <div class="brief-task">Avaliar custo de Cloud Functions vs Cloud Run em escala T3+</div>
+      <div class="brief-task">Definir stack de IA: Claude API + RAG vs modelo customizado (TensorFlow)</div>
+      <div class="brief-task">Stack de OCR para upload de carteira vacinal (Document AI vs Tesseract)</div>
+      <div class="deadline">Entrega: 14 dias · Formato: ADRs (Architecture Decision Records) no GitHub</div>
+    </div>
+
+    <!-- @dev -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-dev</span>
+      <div class="brief-title">Setup do repositório e MVP funcional Sprint 1</div>
+      <p class="muted">Inicia execução. Setup do monorepo, Firebase, CI/CD, e implementação das primeiras user stories assim que @po destravar.</p>
+      <div class="brief-task">Setup do monorepo veglia-platform no GitHub (apps/web, packages, functions)</div>
+      <div class="brief-task">Configurar projeto Firebase Blaze: Auth, Firestore, Storage, Hosting, Functions</div>
+      <div class="brief-task">CI/CD via GitHub Actions: deploy automático staging em PR, prod em merge</div>
+      <div class="brief-task">Boilerplate React + Vite + Tailwind + shadcn/ui + design system Linecraft</div>
+      <div class="brief-task">Componente <code>VegliaPlayer</code> (YouTube IFrame + tracking Firestore)</div>
+      <div class="brief-task">Implementar Auth multi-tenant com custom claims (role + company_id)</div>
+      <div class="deadline">Entrega: 14 dias · Formato: branches feature/* + PRs revisados</div>
+    </div>
+
+    <!-- @designer -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-designer</span>
+      <div class="brief-title">UI da plataforma · 6 telas core do MVP</div>
+      <p class="muted">Aplica o brandbook Vegl.ia (Twilight + Mint + Champagne, Linecraft icons) nas primeiras telas funcionais. Sistema de design vivo no Figma.</p>
+      <div class="brief-task">Telas: Login · Dashboard Colaborador · Player de Trilha · Quiz · Certificado · Dashboard RH</div>
+      <div class="brief-task">Estados: vazio · loading · sucesso · erro · sem permissão</div>
+      <div class="brief-task">Tema White Label: variáveis CSS para troca de logo + cor primária</div>
+      <div class="brief-task">Mobile-first responsive (PWA instalável)</div>
+      <div class="brief-task">Validar acessibilidade WCAG 2.1 AA (contraste, foco, leitor de tela)</div>
+      <div class="deadline">Entrega: 14 dias · Formato: Figma com componentes vinculados</div>
+    </div>
+
+    <!-- @edu -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-edu</span>
+      <div class="brief-title">Re-arquitetura das trilhas considerando F02 e F12</div>
+      <p class="muted">As 6 trilhas existentes precisam ser revistas considerando o Diagnóstico Preventivo (F02) e a IA Personalizada (F12). Trilha não pode ser linear igual para todos — precisa adaptar ao score do colaborador.</p>
+      <div class="brief-task">Mapear como o resultado do Diagnóstico (F02) reordena trilhas recomendadas</div>
+      <div class="brief-task">Definir gatilhos de spaced repetition por perfil (alto risco vs baixo risco)</div>
+      <div class="brief-task">Estruturar microlearning B2B: conteúdo modular de 5–8min por unidade</div>
+      <div class="brief-task">Especificar quizzes adaptativos (dificuldade ajusta ao desempenho)</div>
+      <div class="brief-task">Validar trilha NR-1 com Dra. Amanda — psicossocial precisa cuidado extra</div>
+      <div class="deadline">Entrega: 14 dias · Formato: matriz de trilhas + flowchart</div>
+    </div>
+
+    <!-- @copy -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-copy</span>
+      <div class="brief-title">UX writing · onboarding · pitch deck Vegl.ia</div>
+      <p class="muted">Voz da marca aplicada na plataforma. Microcopy nas 6 telas, sequência de onboarding por email, pitch deck para apresentar à VR.</p>
+      <div class="brief-task">Microcopy de todos os CTAs, mensagens vazias, erros, confirmações</div>
+      <div class="brief-task">Sequência de 5 emails de onboarding (boas-vindas → primeiro certificado)</div>
+      <div class="brief-task">Pitch deck Vegl.ia 12 slides: problema · solução · mercado · produto · time · ask</div>
+      <div class="brief-task">Roteiros das 8 primeiras postagens LinkedIn da Dra. Amanda como autoridade</div>
+      <div class="deadline">Entrega: 10 dias · Formato: docs + deck + planilha de copy</div>
+    </div>
+
+    <!-- @vendas -->
+    <div class="brief-card">
+      <span class="brief-handle">@xquads-vendas + Fábio</span>
+      <div class="brief-title">Pipeline de 10 empresas-piloto</div>
+      <p class="muted">Fábio comanda o comercial. Identificar e fechar as 10 empresas-piloto do Sprint 3, idealmente do ecossistema Vacivitta + rede do Fábio (Top Formaturas).</p>
+      <div class="brief-task">Lista de 30 empresas-alvo (5–500 colaboradores) com tomador de decisão</div>
+      <div class="brief-task">Pitch comercial de 12 minutos com demo do MVP (gravação + ao vivo)</div>
+      <div class="brief-task">Proposta-piloto: 60 dias gratuitos em troca de feedback estruturado</div>
+      <div class="brief-task">Setup de CRM (HubSpot Free ou Pipedrive) com pipeline de oportunidades</div>
+      <div class="brief-task">Iniciar conversa estratégica com VR (relacionamento Rodolfo) sobre White Label</div>
+      <div class="deadline">Entrega: 21 dias · Meta: 10 cartas de intenção assinadas</div>
+    </div>
+  </section>
+
+  <!-- Section 06: Decisões CEO -->
+  <section>
+    <div class="sec-num">06 · DECISÕES CEO PARA ESTA SEMANA</div>
+    <h2>O que precisa de mim agora</h2>
+    <p class="sec-lead">
+      A equipe não pode avançar nestes pontos sem alinhamento dos sócios. Recomendação clara em cada um — depende só de aprovar ou rejeitar.
+    </p>
+
+    <div class="decision">
+      <div class="label">Decisão 01 · Foco do MVP</div>
+      <div class="question">Mantemos o MVP em F01–F06 ou ampliamos?</div>
+      <div class="recommendation">
+        <strong>Recomendação: manter rigorosamente F01–F06.</strong> A tentação de incluir Gamificação (F09) e Jornadas (F08) já no MVP é real e errada. Sem dados gerados pelas trilhas core, gamificação fica artificial e Jornadas ficam pobres. Disciplina vale mais que abrangência.
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="label">Decisão 02 · Captação na Fase 2</div>
+      <div class="question">Bootstrapped até quando? Captamos no T2 ou T3?</div>
+      <div class="recommendation">
+        <strong>Recomendação: bootstrapped até T2 com R$ 120k MRR provado, captação rodada seed no T3.</strong> O ativo "MRR + dados de 8.000 colaboradores + Dra. Amanda + relação VR" justifica valuation seed muito maior do que captar agora. Skin in the game dos 3 sócios já é a captação inicial.
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="label">Decisão 03 · Estrutura de produção audiovisual</div>
+      <div class="question">Internalizar produção dos vídeos ou contratar produtora externa?</div>
+      <div class="recommendation">
+        <strong>Recomendação: produtora externa freelance dedicada por 90 dias.</strong> Sócios não devem ser gargalo de produção. Contratar produtor + cinegrafista + editor freelance, R$ 25–35k pelo pacote dos 12 vídeos do roteiro. Dra. Amanda só precisa entregar pauta + presença.
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="label">Decisão 04 · Paywall e gratuidade estratégica</div>
+      <div class="question">Diagnóstico (F02) e Calculadora Vacinal (F04) gratuitos para sempre?</div>
+      <div class="recommendation">
+        <strong>Recomendação: sim, permanentemente gratuitos para individuais.</strong> São motores de aquisição B2C que geram leads para Vacivitta presencial. Custo computacional irrisório, ROI em geração de demanda muito alto. Para empresa, entram embutidos no plano Compliance.
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="label">Decisão 05 · Apresentação à VR</div>
+      <div class="question">Quando aproximamos a VR para conversa de White Label?</div>
+      <div class="recommendation">
+        <strong>Recomendação: agendar reunião exploratória em 30 dias com MVP demo (mesmo que parcial).</strong> Show, don't tell. VR precisa ver protótipo funcional, não slide de tese. Rodolfo já tem relacionamento — usar para abrir conversa estratégica, não pedir contrato.
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 07: Próximo movimento -->
+  <section>
+    <div class="sec-num">07 · DIAGNÓSTICO ESTRATÉGICO CEO</div>
+    <h2>O que está realmente em jogo</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Diagnóstico</h3>
+      <p>
+        Os 22 documentos não são features adicionais — são a <strong>moldura completa</strong> que faltava para entender o que estamos construindo. Vegl.ia agora tem narrativa para fundo de venture capital de healthtech, não para fundo de edtech. Isso muda valuation, muda perfil de talento que atrai, muda tese de captação. O MVP de 90 dias permanece intocado, mas a forma como falamos dele muda — não é "uma plataforma de cursos" e sim "a primeira pedra de um sistema operacional preventivo corporativo".
+      </p>
+
+      <h3>Risco oculto</h3>
+      <p>
+        O risco real <strong>não é técnico nem competitivo</strong> — é de <strong>foco</strong>. Com 22 features mapeadas e narrativa expandida, é muito tentador começar a vender feature da Fase 3 antes de ter a Fase 1 pronta. Cada conversa com cliente ou investidor vai ser uma armadilha: "vocês fazem wearables?", "marketplace de médicos?". A resposta correta nos próximos 90 dias é <strong>"isso vem na Fase 3, no momento estamos focados em destravar compliance Lei 15.377"</strong>. Disciplina narrativa é o que mata projetos ambiciosos. Vamos defender o MVP.
+      </p>
+
+      <h3>Decisão recomendada</h3>
+      <p>
+        🟢 <strong>AVANÇAR — com nova clareza estratégica.</strong> O briefing está distribuído. Em 14 dias temos backlog estruturado, modelo financeiro plurianual, arquitetura validada, primeiras telas no Figma e código fluindo no GitHub. Em 30 dias temos demo do MVP para mostrar à VR. Em 90 dias temos os 50 clientes pilotos rodando. O caminho é claro — falta só executar.
+      </p>
+
+      <h3 style="color: var(--champagne);">A pergunta que você deveria estar fazendo</h3>
+      <p style="color: var(--champagne); font-size: 17px; font-style: italic;">
+        "Com a tese expandida, faz sentido a Vegl.ia continuar 33,33% × 3 — ou esta empresa precisa de cap table preparado para captação seed no T3 já desde o term sheet inicial?"
+      </p>
+      <p class="muted">
+        Se o objetivo é captar no T3, vale ajustar o term sheet agora prevendo opções (pool ESOP de 10–15%) e cláusulas anti-dilution. Mais barato e simples acertar agora do que renegociar com investidor olhando.
+      </p>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <div class="cta-final">
+    <h2>Equipe briefada. <span class="accent">Hora de executar.</span></h2>
+    <p>
+      Cada agente sabe o que entregar nos próximos 14 dias. Reunião síncrona semanal para destravar dependências. Em 30 dias, demo do MVP para a VR.
+    </p>
+    <div class="cta-action">Vamos trabalhar.</div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>Vegl.ia · Briefing executivo · v1.0</span>
+    <span>RRevela × Vacivitta · Powered by Alcatech.ia · 09 maio 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

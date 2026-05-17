@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Vegl.ia · In-Company VaciVitta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-navy: #0B2545;
+    --twilight: #1A3A5C;
+    --mint: #5DD3A8;
+    --mint-dim: #3aab83;
+    --champagne: #C9A96E;
+    --warm-white: #FBF8F1;
+    --surface: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--deep-navy);
+    width: 1920px; height: 1080px;
+    overflow: hidden; position: fixed;
+    color: var(--warm-white);
+  }
+  .header {
+    height: 60px; width: 100%;
+    background: rgba(26,58,92,0.95); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 28px; gap: 12px;
+    position: fixed; top: 0; left: 0; z-index: 100; backdrop-filter: blur(12px);
+  }
+  .logo { font-size: 20px; font-weight: 800; color: var(--mint); letter-spacing: -0.5px; }
+  .logo span { color: var(--champagne); }
+  .header-divider { width: 1px; height: 24px; background: var(--border); margin: 0 8px; }
+  .vacivitta-logo { display: flex; align-items: center; gap: 8px; }
+  .vacivitta-v { width: 28px; height: 28px; }
+  .vacivitta-name { font-size: 13px; font-weight: 700; color: var(--mint); }
+  .header-subtitle { font-size: 13px; color: rgba(255,255,255,0.5); }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: rgba(255,255,255,0.4); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(93,211,168,0.2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--mint); border: 1.5px solid rgba(93,211,168,0.3); }
+  .sidebar {
+    width: 220px; height: calc(100vh - 60px); background: var(--twilight);
+    border-right: 1px solid var(--border); position: fixed; left: 0; top: 60px;
+    padding: 24px 0; display: flex; flex-direction: column; gap: 4px;
+  }
+  .nav-section { padding: 0 12px 8px; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.25); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; margin: 0 8px; border-radius: 8px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); cursor: pointer; }
+  .nav-item.active { background: rgba(93,211,168,0.12); color: var(--mint); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .sidebar-footer { margin-top: auto; padding: 16px; }
+  .powered-badge { background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); border-radius: 8px; padding: 10px 12px; font-size: 9px; font-weight: 700; color: var(--champagne); text-transform: uppercase; letter-spacing: 1px; line-height: 1.6; }
+  .main { margin-left: 220px; margin-top: 60px; padding: 32px; height: calc(100vh - 60px); overflow: hidden; display: flex; flex-direction: column; gap: 24px; }
+  /* WIZARD */
+  .wizard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 32px; flex-shrink: 0; }
+  .wizard-steps { display: flex; align-items: center; gap: 0; }
+  .step { display: flex; align-items: center; gap: 12px; position: relative; }
+  .step-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .step-done .step-circle { background: var(--mint); color: var(--deep-navy); }
+  .step-active .step-circle { background: rgba(93,211,168,0.15); border: 2px solid var(--mint); color: var(--mint); box-shadow: 0 0 16px rgba(93,211,168,0.3); }
+  .step-inactive .step-circle { background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.3); }
+  .step-label { font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .step-done .step-label { color: var(--mint); }
+  .step-active .step-label { color: var(--warm-white); }
+  .step-inactive .step-label { color: rgba(255,255,255,0.3); }
+  .step-sub { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+  .step-active .step-sub { color: rgba(255,255,255,0.5); }
+  .step-connector { flex: 1; height: 2px; margin: 0 12px; min-width: 80px; }
+  .connector-done { background: var(--mint); }
+  .connector-inactive { background: rgba(255,255,255,0.1); }
+  /* CONTENT */
+  .content-row { display: flex; gap: 24px; flex: 1; }
+  /* FORM */
+  .form-area { flex: 0 0 60%; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+  .form-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: -12px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-label { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7); }
+  .form-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--warm-white); font-family: 'Inter', sans-serif; outline: none; }
+  .form-input-active { border-color: rgba(93,211,168,0.4); background: rgba(93,211,168,0.04); }
+  .form-row { display: flex; gap: 16px; }
+  .form-row .form-group { flex: 1; }
+  /* CALENDAR MINI */
+  .cal-wrap { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .cal-month { font-size: 12px; font-weight: 600; color: var(--warm-white); }
+  .cal-nav { display: flex; gap: 8px; }
+  .cal-nav-btn { width: 22px; height: 22px; border-radius: 4px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 10px; color: rgba(255,255,255,0.5); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-day-head { text-align: center; font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.25); padding: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .cal-day { text-align: center; padding: 5px 4px; font-size: 11px; color: rgba(255,255,255,0.5); border-radius: 4px; cursor: pointer; }
+  .cal-day.past { color: rgba(255,255,255,0.2); }
+  .cal-day.today { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
+  .cal-day.selected { background: var(--mint); color: var(--deep-navy); font-weight: 700; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+  /* TURNO TOGGLE */
+  .turno-group { display: flex; gap: 10px; }
+  .turno-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; cursor: pointer; }
+  .turno-btn.selected { background: rgba(93,211,168,0.15); border: 1.5px solid rgba(93,211,168,0.5); color: var(--mint); }
+  .turno-btn.idle { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); }
+  textarea.form-input { resize: none; height: 72px; }
+  .btn-primary-full { width: 100%; background: var(--mint); color: var(--deep-navy); padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  /* SUMMARY CARD */
+  .summary-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .summary-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--champagne); }
+  .summary-item { display: flex; flex-direction: column; gap: 2px; }
+  .summary-item-label { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.8px; }
+  .summary-item-value { font-size: 14px; font-weight: 600; color: var(--warm-white); }
+  .summary-item-value.highlight { color: var(--mint); }
+  .summary-divider { height: 1px; background: linear-gradient(90deg, var(--mint), transparent); opacity: 0.3; }
+  .responsavel-block { display: flex; align-items: center; gap: 12px; }
+  .responsavel-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(93,211,168,0.15); border: 1.5px solid rgba(93,211,168,0.3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--mint); flex-shrink: 0; }
+  .responsavel-info { flex: 1; }
+  .responsavel-name { font-size: 13px; font-weight: 600; }
+  .responsavel-crm { font-size: 11px; color: rgba(255,255,255,0.35); font-family: 'JetBrains Mono', monospace; }
+  .response-time { background: rgba(93,211,168,0.08); border: 1px solid rgba(93,211,168,0.15); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 8px; }
+  .response-time svg { color: var(--mint); flex-shrink: 0; }
+  .vacivitta-badge { background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.25); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
+  .vacivitta-badge-text { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--champagne); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">Vegl<span>.</span>ia</div>
+  <div class="header-divider"></div>
+  <div class="vacivitta-logo">
+    <!-- V duplo VaciVitta SVG -->
+    <svg class="vacivitta-v" viewBox="0 0 28 28" fill="none">
+      <path d="M2 5 L9 21 L14 10 L19 21 L26 5" stroke="#5DD3A8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="vacivitta-name">VaciVitta</div>
+  </div>
+  <div class="header-divider"></div>
+  <div style="display:flex;flex-direction:column;">
+    <div style="font-size:14px;font-weight:600;color:var(--warm-white);">Solicitar Campanha In-Company</div>
+    <div class="header-subtitle">Agendamento direto com equipe VaciVitta</div>
+  </div>
+  <div class="header-right">
+    <span class="nav-link">Suporte</span>
+    <div class="avatar">RH</div>
+  </div>
+</header>
+
+<nav class="sidebar">
+  <div class="nav-section">Principal</div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Visão Geral
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+    Colaboradores
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Trilhas
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Convites
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+    Relatório
+  </div>
+  <div class="nav-section" style="margin-top:16px;">Saúde</div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Calendário Vacinal
+  </div>
+  <div class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    In-Company VaciVitta
+  </div>
+  <div class="sidebar-footer">
+    <div class="powered-badge">Powered by<br>VaciVitta</div>
+  </div>
+</nav>
+
+<main class="main">
+  <!-- WIZARD -->
+  <div class="wizard">
+    <div class="wizard-steps">
+      <div class="step step-done">
+        <div class="step-circle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div class="step-label">Tipo de Campanha</div>
+          <div class="step-sub">Influenza 2026</div>
+        </div>
+      </div>
+      <div class="step-connector connector-done"></div>
+      <div class="step step-done">
+        <div class="step-circle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div class="step-label">Colaboradores</div>
+          <div class="step-sub">45 selecionados</div>
+        </div>
+      </div>
+      <div class="step-connector connector-done"></div>
+      <div class="step step-active">
+        <div class="step-circle">3</div>
+        <div>
+          <div class="step-label">Agendamento</div>
+          <div class="step-sub">Data e local</div>
+        </div>
+      </div>
+      <div class="step-connector connector-inactive"></div>
+      <div class="step step-inactive">
+        <div class="step-circle">4</div>
+        <div>
+          <div class="step-label">Confirmação</div>
+          <div class="step-sub">Revisar e enviar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content-row">
+    <!-- FORM -->
+    <div class="form-area">
+      <div class="form-row">
+        <div class="form-group" style="flex:1.2">
+          <div class="form-label">Data da campanha</div>
+          <div class="cal-wrap">
+            <div class="cal-header">
+              <div class="cal-month">Maio 2026</div>
+              <div class="cal-nav">
+                <div class="cal-nav-btn">‹</div>
+                <div class="cal-nav-btn">›</div>
+              </div>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-day-head">Dom</div><div class="cal-day-head">Seg</div><div class="cal-day-head">Ter</div><div class="cal-day-head">Qua</div><div class="cal-day-head">Qui</div><div class="cal-day-head">Sex</div><div class="cal-day-head">Sáb</div>
+              <div class="cal-day past"></div><div class="cal-day past"></div><div class="cal-day past"></div><div class="cal-day past"></div><div class="cal-day past">1</div><div class="cal-day past">2</div><div class="cal-day past">3</div>
+              <div class="cal-day past">4</div><div class="cal-day past">5</div><div class="cal-day past">6</div><div class="cal-day past">7</div><div class="cal-day past">8</div><div class="cal-day past">9</div><div class="cal-day past">10</div>
+              <div class="cal-day past">11</div><div class="cal-day today">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div><div class="cal-day">16</div><div class="cal-day">17</div>
+              <div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day"><div class="selected">20</div></div><div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div>
+              <div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div><div class="cal-day">31</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="flex:1">
+          <div class="form-label">Turno preferencial</div>
+          <div class="turno-group">
+            <div class="turno-btn selected">Manha ✓</div>
+            <div class="turno-btn idle">Tarde</div>
+            <div class="turno-btn idle">Integral</div>
+          </div>
+          <div style="margin-top:12px;">
+            <div class="form-label" style="margin-bottom:8px;">Endereço de aplicacao</div>
+            <div class="form-input form-input-active" style="font-size:13px;padding:12px 14px;background:rgba(93,211,168,0.04);border-color:rgba(93,211,168,0.3);">Rua das Flores, 300 — São Paulo, SP</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Observacoes (opcional)</div>
+        <textarea class="form-input" placeholder="Ex.: horário de pico do refeitório, colaboradores com mobilidade reduzida, necessidade de sala privativa..."></textarea>
+      </div>
+      <button class="btn-primary-full">
+        Confirmar Agendamento
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-card">
+      <div class="summary-title">Resumo da Solicitacao</div>
+
+      <div class="summary-item">
+        <div class="summary-item-label">Tipo de Campanha</div>
+        <div class="summary-item-value highlight">Campanha Influenza 2026</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-label">Colaboradores</div>
+        <div class="summary-item-value">45 pessoas</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-label">Estimativa de Investimento</div>
+        <div class="summary-item-value" style="color:var(--champagne);font-size:18px;font-weight:800;letter-spacing:-0.5px;">R$ 3.150<span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.35);"> est.</span></div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-label">Empresa</div>
+        <div class="summary-item-value">Empresa Demo Ltda.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-label">Data Selecionada</div>
+        <div class="summary-item-value highlight">20 de maio de 2026 · Manha</div>
+      </div>
+
+      <div class="summary-divider"></div>
+
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.4);">Responsavel VaciVitta</div>
+      <div class="responsavel-block">
+        <div class="responsavel-avatar">AC</div>
+        <div class="responsavel-info">
+          <div class="responsavel-name">Dra. Amanda Conde</div>
+          <div class="responsavel-crm">CRM 12345-SP · Diretora Medica</div>
+        </div>
+      </div>
+
+      <div class="response-time">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Resposta em ate 24 horas uteis
+      </div>
+
+      <div class="vacivitta-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M2 4 L8 18 L12 9 L16 18 L22 4" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="vacivitta-badge-text">Powered by VaciVitta</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

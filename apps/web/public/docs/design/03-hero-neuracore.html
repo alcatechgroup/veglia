@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegl.ia — Hero v2 · NeuraCore Style</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* paleta oficial · Opção 3: Twilight Blue + Mint Vacivitta */
+    --sky-bg: #C9DCE8;
+    --sky-bg-2: #D8E5EE;
+    --vegl-deep: #1A3A5C;        /* Twilight Blue · primária */
+    --vegl-deeper: #0B2545;      /* Deep Navy · profundidade */
+    --vegl-mid: #2E5078;
+    --mint-vacivitta: #5DD3A8;   /* Mint Vacivitta · ".ia" */
+    --mint-deep: #2DA67D;
+    --champagne: #C9A96E;        /* Acento · ponto do logo */
+    --warm-cream: #F4EDE0;
+    --black: #000000;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0a;
+    color: var(--vegl-deep);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--mint-vacivitta); color: var(--vegl-deep); }
+
+  /* ============ HERO STAGE ============ */
+  .stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(ellipse at 30% 30%, var(--sky-bg-2) 0%, var(--sky-bg) 60%, #B8CFDD 100%);
+    overflow: hidden;
+  }
+
+  /* very subtle film grain */
+  .stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.04) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ============ TOP NAV ============ */
+  .top-nav {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    right: 0;
+    padding: 0 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .vegl-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--vegl-deep);
+    letter-spacing: -0.5px;
+  }
+
+  .vegl-logo-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--vegl-deep);
+    position: relative;
+  }
+
+  .vegl-logo-mark::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 1.5px solid var(--mint-vacivitta);
+  }
+
+  .vegl-logo-text {
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+
+  .vegl-logo-text .dot {
+    color: var(--champagne);
+    font-weight: 900;
+  }
+
+  .vegl-logo-text .ai {
+    color: var(--mint-vacivitta);
+    font-weight: 800;
+  }
+
+  .top-menu {
+    display: flex;
+    gap: 56px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--vegl-deep);
+  }
+
+  .top-menu a { text-decoration: none; color: inherit; cursor: pointer; }
+  .top-menu a:hover { color: var(--vegl-mid); }
+
+  /* ============ CENTRAL FIGURE ============ */
+  .figure-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -54%);
+    width: 540px;
+    height: 540px;
+    z-index: 2;
+  }
+
+  /* Abstract human silhouette / shield representing "guarded health" */
+  .figure-circle {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 35%, #F2D9C2 0%, #E8C7A8 35%, transparent 36%),
+      radial-gradient(circle at 50% 70%, var(--vegl-deep) 0%, var(--vegl-deep) 32%, transparent 33%),
+      radial-gradient(circle at 50% 50%, var(--sky-bg-2) 0%, transparent 70%);
+    filter: blur(0.5px);
+  }
+
+  /* simulate a portrait with abstract shapes */
+  .figure-portrait {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portrait-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* annotation lines + labels */
+  .annotation {
+    position: absolute;
+    z-index: 5;
+    color: var(--vegl-deep);
+  }
+
+  .ann-circle {
+    width: 56px;
+    height: 56px;
+    border: 1.5px solid var(--white);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(26, 58, 92, 0.1);
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(2px);
+  }
+
+  .ann-line {
+    height: 1px;
+    background: var(--white);
+    position: relative;
+  }
+
+  .ann-line::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--white);
+    border-radius: 50%;
+    right: -3px;
+    top: -2.5px;
+  }
+
+  .ann-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--vegl-deep);
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+  }
+
+  /* annotation 1 — top right */
+  .ann-1 {
+    top: 35%;
+    right: 16%;
+  }
+
+  .ann-1 .ann-label-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .ann-1 .ann-line {
+    width: 80px;
+  }
+
+  /* annotation 2 — bottom right */
+  .ann-2 {
+    top: 56%;
+    right: 14%;
+  }
+
+  .ann-2 .ann-label-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .ann-2 .ann-line {
+    width: 100px;
+  }
+
+  /* annotation 3 — left insert (rectangle inset) */
+  .ann-insert {
+    position: absolute;
+    top: 28%;
+    left: 12%;
+    width: 200px;
+    height: 130px;
+    border: 1.5px solid var(--white);
+    border-radius: 4px;
+    background:
+      radial-gradient(circle at 50% 50%, var(--vegl-deep) 0%, var(--vegl-deep) 18%, transparent 20%),
+      radial-gradient(circle at 50% 50%, #F2D9C2 0%, #E8C7A8 50%, transparent 60%);
+    z-index: 5;
+    overflow: hidden;
+  }
+
+  .ann-insert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 80px;
+    height: 1px;
+    background: var(--white);
+  }
+
+  /* ============ METRIC OVERLAY (top-left over figure) ============ */
+  .metric-overlay {
+    position: absolute;
+    bottom: 22%;
+    left: 8%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 6;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--vegl-deep);
+    letter-spacing: 0.2px;
+  }
+
+  .metric-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--vegl-deep);
+    position: relative;
+  }
+
+  .metric-icon::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--mint-vacivitta);
+  }
+
+  .metric-divider {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--vegl-deep);
+  }
+
+  /* ============ CHUNKED TYPOGRAPHY ============ */
+  .chunked-headline {
+    position: absolute;
+    bottom: 8%;
+    left: 0;
+    right: 0;
+    padding: 0 56px;
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  .chunked-line {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: clamp(120px, 16vw, 240px);
+    line-height: 0.88;
+    letter-spacing: -8px;
+    display: block;
+    white-space: nowrap;
+  }
+
+  .chunked-line.shifted-1 { padding-left: 0; }
+  .chunked-line.shifted-2 { padding-left: 18%; margin-top: -10px; }
+
+  .chunk-1 { color: var(--vegl-deep); }
+  .chunk-2 { color: var(--champagne); }
+  .chunk-3 { color: var(--mint-vacivitta); }
+  .chunk-4 { color: var(--black); }
+
+  /* ============ SUBTITLE ============ */
+  .hero-subtitle {
+    position: absolute;
+    bottom: 56px;
+    left: 56px;
+    max-width: 360px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--vegl-deep);
+    z-index: 5;
+    font-weight: 500;
+  }
+
+  .hero-subtitle::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--mint-vacivitta);
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+    margin-bottom: 2px;
+  }
+
+  /* ============ BIG ASTERISK ============ */
+  .big-asterisk {
+    position: absolute;
+    bottom: 30%;
+    right: -2%;
+    z-index: 4;
+    font-family: 'Inter', sans-serif;
+    font-size: 320px;
+    font-weight: 900;
+    line-height: 0.7;
+    color: var(--white);
+    user-select: none;
+  }
+
+  /* ============ FOOTER NOTE ============ */
+  .footer-note {
+    position: absolute;
+    bottom: 32px;
+    right: 56px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--vegl-deep);
+    opacity: 0.6;
+    z-index: 6;
+  }
+
+  /* ============ SVG PORTRAIT (abstract figure of a person) ============ */
+  .portrait-stylized {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1100px) {
+    .figure-stage { width: 360px; height: 360px; }
+    .ann-insert { width: 130px; height: 90px; left: 4%; }
+    .big-asterisk { font-size: 200px; }
+    .top-menu { gap: 24px; font-size: 11px; }
+    .chunked-line { font-size: clamp(60px, 11vw, 120px); letter-spacing: -4px; }
+    .top-nav { padding: 0 24px; }
+    .hero-subtitle { left: 24px; bottom: 32px; }
+    .chunked-headline { padding: 0 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <div class="vegl-logo">
+      <div class="vegl-logo-mark"></div>
+      <span class="vegl-logo-text">vegl<span class="dot">.</span><span class="ai">ia</span></span>
+    </div>
+    <nav class="top-menu">
+      <a>Plataforma</a>
+      <a>Compliance</a>
+      <a>Cases</a>
+      <a>Para RH</a>
+    </nav>
+  </div>
+
+  <!-- CENTRAL FIGURE STAGE -->
+  <div class="figure-stage">
+    <!-- abstract illustrated portrait via SVG: a stylized profile/avatar suggestive of "professional being protected" -->
+    <svg class="portrait-stylized" viewBox="0 0 540 540" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bgGlow" cx="50%" cy="40%">
+          <stop offset="0%" stop-color="#D8E5EE" />
+          <stop offset="100%" stop-color="transparent" />
+        </radialGradient>
+        <linearGradient id="hairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#3E5871" />
+          <stop offset="100%" stop-color="#1A3A5C" />
+        </linearGradient>
+        <linearGradient id="skinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#F2D9C2" />
+          <stop offset="100%" stop-color="#D9B393" />
+        </linearGradient>
+        <linearGradient id="shirtGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FFFFFF" />
+          <stop offset="100%" stop-color="#E8E2D5" />
+        </linearGradient>
+      </defs>
+
+      <!-- atmospheric glow -->
+      <circle cx="270" cy="220" r="270" fill="url(#bgGlow)" opacity="0.6"/>
+
+      <!-- shoulders / shirt -->
+      <path d="M 80 540 Q 120 410 270 400 Q 420 410 460 540 Z" fill="url(#shirtGrad)"/>
+
+      <!-- neck -->
+      <rect x="240" y="320" width="60" height="90" rx="12" fill="url(#skinGrad)"/>
+
+      <!-- head/face shape -->
+      <ellipse cx="270" cy="240" rx="125" ry="150" fill="url(#skinGrad)"/>
+
+      <!-- hair (stylized waves) -->
+      <path d="M 145 200 Q 130 100 230 80 Q 270 70 310 80 Q 410 100 395 200 Q 410 130 360 110 Q 310 95 270 100 Q 230 95 180 110 Q 130 130 145 200 Z" fill="url(#hairGrad)"/>
+      <path d="M 145 200 Q 142 240 155 280 Q 145 230 150 200 Z" fill="url(#hairGrad)"/>
+      <path d="M 395 200 Q 398 240 385 280 Q 395 230 390 200 Z" fill="url(#hairGrad)"/>
+
+      <!-- eyes (subtle) -->
+      <ellipse cx="225" cy="240" rx="8" ry="5" fill="#1A3A5C" opacity="0.85"/>
+      <ellipse cx="315" cy="240" rx="8" ry="5" fill="#1A3A5C" opacity="0.85"/>
+
+      <!-- eyebrows -->
+      <path d="M 210 218 Q 225 213 240 218" stroke="#1A3A5C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 300 218 Q 315 213 330 218" stroke="#1A3A5C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+      <!-- nose hint -->
+      <path d="M 270 250 Q 268 275 265 290 Q 270 295 280 290" stroke="#B89880" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+      <!-- subtle smile -->
+      <path d="M 245 305 Q 270 320 295 305" stroke="#A66B58" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+      <!-- collar of shirt -->
+      <path d="M 240 410 Q 270 430 300 410 L 290 460 L 250 460 Z" fill="#FFFFFF"/>
+      <path d="M 240 410 L 230 470" stroke="#E0DACC" stroke-width="1.5" fill="none"/>
+      <path d="M 300 410 L 310 470" stroke="#E0DACC" stroke-width="1.5" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- ANNOTATIONS over figure -->
+  <!-- Insert showing detail (eye/face zoom) -->
+  <div class="ann-insert">
+    <div style="position: absolute; bottom: 8px; left: 10px; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--white); text-shadow: 0 0 4px rgba(0,0,0,0.5);">vigília · 24/7</div>
+  </div>
+
+  <!-- Annotation 1 — top right -->
+  <div class="annotation ann-1">
+    <div class="ann-label-wrap">
+      <div class="ann-line"></div>
+      <div class="ann-label">vigília ativa</div>
+    </div>
+  </div>
+
+  <!-- Annotation circle on figure (eye area, top-right of face) -->
+  <div class="annotation" style="top: 42%; left: 60%; z-index: 6;">
+    <div class="ann-circle"></div>
+  </div>
+
+  <!-- Annotation 2 — bottom right -->
+  <div class="annotation ann-2">
+    <div class="ann-label-wrap">
+      <div class="ann-line"></div>
+      <div class="ann-label">cuidado preventivo</div>
+    </div>
+  </div>
+
+  <!-- Annotation rectangle (smile area) -->
+  <div class="annotation" style="top: 56%; left: 47%; z-index: 6;">
+    <div style="width: 80px; height: 28px; border: 1.5px solid var(--white); border-radius: 3px;"></div>
+  </div>
+
+  <!-- METRIC OVERLAY -->
+  <div class="metric-overlay">
+    <span style="font-weight: 600;">compliance:</span>
+    <div class="metric-icon"></div>
+    <span style="font-weight: 600;">98%</span>
+    <div class="metric-divider"></div>
+    <span style="font-weight: 600;">status: protegido</span>
+  </div>
+
+  <!-- BIG ASTERISK -->
+  <div class="big-asterisk">∗</div>
+
+  <!-- CHUNKED HEADLINE -->
+  <div class="chunked-headline">
+    <span class="chunked-line shifted-1">
+      <span class="chunk-1">QUEM</span><span class="chunk-2"> VELA</span>
+    </span>
+    <span class="chunked-line shifted-2">
+      <span class="chunk-3">CU</span><span class="chunk-4">IDA</span><span class="chunk-2">∗</span>
+    </span>
+  </div>
+
+  <!-- SUBTITLE -->
+  <div class="hero-subtitle">
+    Plataforma de Compliance Preventivo Corporativo<br>
+    para empresas que precisam cumprir a Lei 15.377/2026<br>
+    e cuidar da saúde dos seus funcionários.
+  </div>
+
+  <!-- FOOTER NOTE -->
+  <div class="footer-note">
+    <span style="color: var(--vegl-deep);">vegl.ia®</span>
+    <span style="margin: 0 10px; color: var(--mint-deep);">×</span>
+    <span style="color: var(--mint-deep);">parte do ecossistema Vacivitta</span>
+  </div>
+
+</div>
+
+</body>
+</html>

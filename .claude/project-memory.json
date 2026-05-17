@@ -1,0 +1,903 @@
+{
+  "$schema": "https://veglia.ai/schemas/project-memory.v1.json",
+  "version": "1.0.0",
+  "exported_at": "2026-05-09",
+  "exported_by": "claude-opus-4-7",
+  "project": {
+    "name": "Vegl.ia",
+    "legal_name": "a definir (joint venture tripartite)",
+    "tagline": "Quem vela, cuida.",
+    "manifesto": "O guardião da saúde de seus funcionários. O app de bolso do RH, para quem zela e agora precisa vigiar.",
+    "thesis_short": "Plataforma B2B de Compliance Preventivo Corporativo ancorada na Lei 15.377/2026.",
+    "thesis_expanded": "Vegl.ia não é uma edtech tradicional nem um LMS. É a infraestrutura de um ecossistema operacional de prevenção contínua, combinando healthtech + edtech + wellness + IA + dados + corporate health + behavioral science. Mistura compliance + educação + IA + dados + vacinação presencial em um único ecossistema com operação própria.",
+    "current_stage": "T1 MVP · Sprint 1",
+    "active_window": "2026-05-09 → 2026-06-09",
+    "category": "B2B SaaS · HealthTech · Corporate Compliance",
+    "country": "Brasil",
+    "powered_by": "Vacivitta Saúde Integrada",
+    "founded_via": "Joint venture entre RRevela (Rodolfo) + Top Formaturas (Fábio) + Vacivitta (Thiago)"
+  },
+  "context": {
+    "regulatory_trigger": {
+      "primary": "Lei 15.377/2026",
+      "description": "Lei trabalhista brasileira de 2026 que cria obrigação de compliance preventivo corporativo para 5 milhões de empresas no Brasil",
+      "secondary": ["NR-1 (GRO/PGR + riscos psicossociais)", "Lei 14.831/2024"]
+    },
+    "ecosystem_vacivitta": {
+      "description": "Não é apenas uma rede de vacinação — é um ecossistema com 4 pilares interconectados",
+      "pillars": [
+        {
+          "id": 1,
+          "name": "VaciVitta",
+          "function": "Operação · campanhas de vacinação",
+          "status": "Estabelecido (rebranding 2026 · 2 V maiúsculos em mint)",
+          "age": "10 anos de operação"
+        },
+        {
+          "id": 2,
+          "name": "Vegl.ia",
+          "function": "Educação · compliance corporativo",
+          "status": "Em construção (parceria RRevela)",
+          "previous_name": "Vitta Academy"
+        },
+        {
+          "id": 3,
+          "name": "Dra. Amanda Conde Perez Fernandes",
+          "function": "Autoridade científica · diretora médica Vacivitta",
+          "credentials": "Pediatra · Neonatologista · Nutrologia · Membro SBIm"
+        },
+        {
+          "id": 4,
+          "name": "Vitta Plus",
+          "function": "Recorrência · benefícios",
+          "status": "Existente ou em roadmap"
+        }
+      ]
+    },
+    "ownership": {
+      "structure": "Tripartite igualitária",
+      "equity_split": {
+        "Rodolfo Nascimento": 33.33,
+        "Fábio": 33.33,
+        "Thiago": 33.33
+      },
+      "vesting": "4 anos / cliff 1 ano",
+      "deadlock_prevention": "Tie-breaker via voto do CEO em decisões ordinárias; unanimidade 3/3 em decisões estratégicas",
+      "term_sheet_clause_07": "Receitas adjacentes do negócio (vacinas e outras que surgirem) entram como linhas extras do negócio",
+      "esop_pool": "Recomendado 10–15% para captação T3 (decisão pendente)"
+    },
+    "people": [
+      {
+        "name": "Rodolfo Nascimento",
+        "role": "CEO · Tech Lead · Estratégia",
+        "background": "CEO Alcatech.ia · Founder RRevela · 14 anos executivo · 2 exits · Autor 'Não Peça Licença' e 'IAgora'",
+        "covers": ["Arquitetura técnica", "Decisões societárias", "Captação", "Autoridade", "Mentor Rumo.IA"]
+      },
+      {
+        "name": "Fábio",
+        "role": "Comercial · Relacionamento",
+        "background": "CEO Top Formaturas há 20 anos",
+        "covers": ["Pipeline B2B", "Parcerias com carriers (VR, Alelo, Ticket)", "Base de médicos RRevela"]
+      },
+      {
+        "name": "Thiago",
+        "role": "Operação · Saúde",
+        "covers": ["Integração Vacivitta", "Operação ecossistema", "Relacionamento Dra. Amanda"]
+      },
+      {
+        "name": "Dra. Amanda Conde Perez Fernandes",
+        "role": "Diretora Médica Vacivitta · Autoridade Científica Vegl.ia",
+        "credentials": "Pediatra · Neonatologista · Especialista em Nutrologia · Membro SBIm",
+        "covers": ["Validação de conteúdo médico", "Presença pública (vídeos, posts)", "Autoridade técnica da marca"]
+      }
+    ],
+    "business_model": {
+      "type": "B2B SaaS multicamada",
+      "gtm_strategy": "White Label B2B2B via HR carriers",
+      "anchor_partner": "VR (relacionamento Rodolfo)",
+      "secondary_partners": ["Alelo", "Ticket", "Sólides", "TOTVS RH", "LG"],
+      "pricing_model": "Setup fee + revenue share + assinatura escalável por porte",
+      "outcome_based": true
+    },
+    "rrevela": {
+      "type": "PJ separada · Veículo de deals performance-based",
+      "alcatech_relation": "Alcatech.ia fora operacionalmente da RRevela",
+      "deal_with_vacivitta": "20% outcome-based sobre licenciamentos 'Seja Vacivitta' destravados com IA"
+    }
+  },
+  "decisions": {
+    "made": [
+      {
+        "id": "D01",
+        "decision": "MVP estrito em F01–F06 (Compliance, Diagnóstico, SIPAT, Calculadora, Índice, Motor de Campanhas)",
+        "approved_at": "2026-05-09",
+        "approved_by": "@ceo",
+        "document": "docs/strategy/02-briefing-tese-expandida.html",
+        "rationale": "Disciplina narrativa é o que mata projetos ambiciosos. F08 (Jornadas) e F09 (Gamificação) sem dados gerados por trilhas core ficam artificiais."
+      },
+      {
+        "id": "D02",
+        "decision": "Stack Firebase + GitHub + YouTube embedded",
+        "approved_at": "2026-05-09",
+        "approved_by": "@ceo + @techlead",
+        "document": "docs/strategy/04-arquitetura-prototipo.html",
+        "rationale": "Velocidade de protótipo, custo previsível, escalabilidade real sem DevOps dedicado. YouTube zero custo de banda em escala."
+      },
+      {
+        "id": "D03",
+        "decision": "Equity 33,33% × 3 igualitária com vesting 4/1",
+        "approved_at": "2026-05-08",
+        "approved_by": "Sociedade",
+        "document": "docs/operations/Veglia_TermSheet.pdf"
+      },
+      {
+        "id": "D04",
+        "decision": "Cláusula 07 do term sheet: receitas adjacentes (vacinas e outras) entram como linhas extras do negócio",
+        "approved_at": "2026-05-08",
+        "approved_by": "Sociedade",
+        "document": "docs/operations/Veglia_TermSheet.pdf"
+      },
+      {
+        "id": "D05",
+        "decision": "Identidade Vegl.ia: Twilight Blue + Mint Vacivitta + Champagne · V mint · ponto champagne",
+        "approved_at": "2026-05-08",
+        "approved_by": "@designer + @ceo",
+        "document": "docs/design/01-brandbook.html"
+      },
+      {
+        "id": "D06",
+        "decision": "Sistema Linecraft de iconografia (1.5px stroke, geometria circular)",
+        "approved_at": "2026-05-08",
+        "approved_by": "@designer",
+        "document": "docs/design/02-iconografia-linecraft.html"
+      },
+      {
+        "id": "D07",
+        "decision": "VaciVitta com V duplo em mint (rebranding) — opção A · símbolo Pulsar",
+        "approved_at": "2026-05-09",
+        "approved_by": "@ceo",
+        "document": "docs/design/07-vacivitta-simbolo-marca.html"
+      },
+      {
+        "id": "D08",
+        "decision": "Repositório GitHub `veglia/veglia-platform` criado",
+        "executed_at": "2026-05-09",
+        "executed_by": "Rodolfo",
+        "url": "github.com/veglia/veglia-platform"
+      },
+      {
+        "id": "D09",
+        "decision": "Projeto Firebase `veglia` criado",
+        "executed_at": "2026-05-09",
+        "executed_by": "Rodolfo",
+        "url": "console.firebase.google.com"
+      },
+      {
+        "id": "D10",
+        "decision": "Firestore inicializado como database principal",
+        "executed_at": "2026-05-09",
+        "executed_by": "Rodolfo"
+      },
+      {
+        "id": "D11",
+        "decision": "Migração para Claude Code com command center estruturado",
+        "executed_at": "2026-05-09",
+        "executed_by": "@ceo",
+        "rationale": "Saímos da fase estratégica/conceitual para fase de execução técnica. Claude Code é o ambiente desenhado para repositórios."
+      }
+    ],
+    "pending": [
+      {
+        "id": "P01",
+        "question": "Plano Firebase Spark ou Blaze?",
+        "recommendation": "Blaze (Cloud Functions exigem)",
+        "owner": "@ceo",
+        "deadline": "Semana 1 (até 16/05)"
+      },
+      {
+        "id": "P02",
+        "question": "Domínio principal: vegl.ia ou veglia.com.br?",
+        "recommendation": "Ambos — vegl.ia produto, veglia.com.br institucional",
+        "owner": "@ceo",
+        "deadline": "Semana 1 (até 16/05)"
+      },
+      {
+        "id": "P03",
+        "question": "Captação seed: T2 ou T3?",
+        "recommendation": "T3 com MRR provado (R$ 120k+)",
+        "owner": "@ceo",
+        "deadline": "Semana 4"
+      },
+      {
+        "id": "P04",
+        "question": "Diagnóstico (F02) e Calculadora (F04) gratuitos permanentemente?",
+        "recommendation": "Sim — motor de aquisição B2C que gera leads para Vacivitta",
+        "owner": "@ceo",
+        "deadline": "Semana 2"
+      },
+      {
+        "id": "P05",
+        "question": "Produção audiovisual: interna ou freelance dedicada?",
+        "recommendation": "Freelance dedicada por 90 dias (R$ 25–35k pelos 12 vídeos)",
+        "owner": "@ceo",
+        "deadline": "Semana 1"
+      },
+      {
+        "id": "P06",
+        "question": "Term sheet: incluir ESOP pool 10–15%?",
+        "recommendation": "Sim — preparar para captação T3, mais barato acertar agora",
+        "owner": "Sociedade",
+        "deadline": "Semana 2"
+      },
+      {
+        "id": "P07",
+        "question": "Ordem de approach comercial: VR / Alelo / Ticket?",
+        "recommendation": "VR primeiro (relacionamento Rodolfo)",
+        "owner": "@ceo + Fábio",
+        "deadline": "Semana 2"
+      },
+      {
+        "id": "P08",
+        "question": "Contratação dev React/Firebase PJ por 3 meses?",
+        "recommendation": "Sim — sócios não devem ser gargalo de execução técnica",
+        "owner": "@ceo",
+        "deadline": "Semana 1 (deadline crítico — atraso aqui derrapa Sprint 1)"
+      }
+    ]
+  },
+  "deliverables": {
+    "strategy": [
+      {
+        "id": "S01",
+        "name": "Roadmap Estratégico de Produto (mestre)",
+        "type": "PDF",
+        "path": "docs/strategy/01-roadmap-estrategico-produto.pdf",
+        "pages": 21,
+        "summary": "22 funcionalidades em 6 camadas · 4 fases · 12 meses · KPIs por trimestre",
+        "delivered_at": "2026-05-09"
+      },
+      {
+        "id": "S02",
+        "name": "Briefing Tese Expandida",
+        "type": "HTML",
+        "path": "docs/strategy/02-briefing-tese-expandida.html",
+        "summary": "Distribuição de trabalho por agente xquads + 5 decisões CEO",
+        "delivered_at": "2026-05-09"
+      },
+      {
+        "id": "S03",
+        "name": "Roadmap Operacional 30 dias",
+        "type": "HTML",
+        "path": "docs/strategy/03-roadmap-operacional-30dias.html",
+        "summary": "Swim lanes CEO + Dev + Comunicação · cronograma semanal · checkpoints",
+        "delivered_at": "2026-05-09"
+      },
+      {
+        "id": "S04",
+        "name": "Arquitetura do Protótipo",
+        "type": "HTML",
+        "path": "docs/strategy/04-arquitetura-prototipo.html",
+        "summary": "Stack Firebase + YouTube embedded · estrutura monorepo · MVP 30/60/90 dias",
+        "delivered_at": "2026-05-09"
+      },
+      {
+        "id": "S05",
+        "name": "Tese Expandida (resumo)",
+        "type": "DOCX",
+        "path": "docs/strategy/05-tese-expandida-resumo.docx",
+        "summary": "20 camadas estratégicas adicionais que elevam valuation, retenção, LTV",
+        "delivered_at": "2026-05-09"
+      },
+      {
+        "id": "S06",
+        "name": "Análise EdTech (original)",
+        "type": "DOCX",
+        "path": "docs/strategy/06-analise-edtech-original.docx",
+        "delivered_at": "2026-05-07"
+      },
+      {
+        "id": "S07",
+        "name": "Tese de Monetização Vacivitta × RRevela",
+        "type": "HTML + PPTX",
+        "path": "docs/strategy/07-tese-monetizacao-vacivitta.html",
+        "delivered_at": "2026-05-03"
+      }
+    ],
+    "design": [
+      {
+        "id": "DS01",
+        "name": "Brandbook Vegl.ia",
+        "type": "HTML",
+        "path": "docs/design/01-brandbook.html",
+        "slides": 19,
+        "summary": "Paleta · tipografia · logo · iconografia · uso da marca",
+        "delivered_at": "2026-05-08"
+      },
+      {
+        "id": "DS02",
+        "name": "Iconografia Linecraft",
+        "type": "HTML",
+        "path": "docs/design/02-iconografia-linecraft.html",
+        "icons": 42,
+        "categories": 7,
+        "delivered_at": "2026-05-08"
+      },
+      {
+        "id": "DS03",
+        "name": "Hero NeuraCore (alternativa)",
+        "type": "HTML",
+        "path": "docs/design/03-hero-neuracore.html",
+        "delivered_at": "2026-05-07"
+      },
+      {
+        "id": "DS04",
+        "name": "Landing Page Completa",
+        "type": "HTML",
+        "path": "docs/design/04-landing-page-completa.html",
+        "sections": 14,
+        "summary": "Hero · Lei 15.377 · módulos · ecossistema · ICP · time · pricing · FAQ · CTA",
+        "delivered_at": "2026-05-08"
+      },
+      {
+        "id": "DS05",
+        "name": "MVP App Pedagogia",
+        "type": "HTML",
+        "path": "docs/design/05-mvp-app-pedagogia.html",
+        "wireframes": "4 phone mockups + 3 RH dashboard mockups",
+        "delivered_at": "2026-05-08"
+      },
+      {
+        "id": "DS06",
+        "name": "Moodboard Referência (Arnold-style)",
+        "type": "PDF",
+        "path": "docs/design/06-moodboard-referencia.pdf",
+        "delivered_at": "2026-05-07"
+      },
+      {
+        "id": "DS07",
+        "name": "Vacivitta Símbolo Marca (rebranding)",
+        "type": "HTML",
+        "path": "docs/design/07-vacivitta-simbolo-marca.html",
+        "concepts": "4 (A Átomo · B Gota · C Cruz · D Pulsar — escolhido)",
+        "delivered_at": "2026-05-09"
+      }
+    ],
+    "product": {
+      "description": "21 documentos .docx detalhando cada funcionalidade do roadmap",
+      "location": "docs/product/",
+      "count": 21,
+      "list": [
+        "Plataforma de Compliance em Saúde",
+        "Diagnóstico Preventivo Inicial",
+        "Modo SIPAT Automática",
+        "Calculadora Inteligente de Calendário Vacinal",
+        "Índice de Saúde Preventiva Corporativa",
+        "Motor de Campanhas Inteligentes",
+        "Universidade Corporativa White Label",
+        "Jornadas de Vida",
+        "Gamificação Corporativa",
+        "Passaporte de Saúde Digital",
+        "Certificação para Empresas",
+        "IA Preventiva Personalizada",
+        "Canal de Conteúdo Médico Autoritativo",
+        "Plataforma Multi-Saúde",
+        "Ecossistema de Benefícios Preventivos",
+        "Central de Saúde Familiar",
+        "Concierge Preventiva Digital",
+        "Marketplace de Saúde",
+        "Plataforma de Dados Epidemiológicos",
+        "Plataforma de Expansão Física Inteligente",
+        "Análise EdTech (documento de tese inicial)"
+      ],
+      "delivered_at": "2026-05-09"
+    },
+    "communication": [
+      {
+        "id": "C01",
+        "name": "Manifesto + Posts iniciais",
+        "type": "MD",
+        "path": "docs/communication/01-manifesto-posts.md",
+        "summary": "Manifesto + 5 posts LinkedIn + formatos Instagram + 8 prompts Freepik",
+        "delivered_at": "2026-05-07"
+      },
+      {
+        "id": "C02",
+        "name": "Landing Prompts Freepik",
+        "type": "MD",
+        "path": "docs/communication/02-landing-prompts-freepik.md",
+        "prompts": 10,
+        "delivered_at": "2026-05-07"
+      }
+    ],
+    "operations": [
+      {
+        "id": "O01",
+        "name": "Term Sheet Tripartite",
+        "type": "PDF",
+        "summary": "8 páginas A4 · vesting 4/1 · cláusula 07 receitas adjacentes",
+        "delivered_at": "2026-05-08"
+      },
+      {
+        "id": "O02",
+        "name": "Script gerador de Term Sheet",
+        "type": "PY",
+        "path": "docs/operations/generate_term_sheet.py",
+        "summary": "Script Python com reportlab para gerar PDF do term sheet"
+      }
+    ],
+    "content": {
+      "description": "Conteúdo educacional pronto e validado pela Dra. Amanda",
+      "modules": [
+        {
+          "id": "M01",
+          "name": "Lei 15.377/2026 · Compliance",
+          "type": "DOCX",
+          "path": "content/lei-15377/Veglia_Modulo1_Lei15377_Compliance.docx",
+          "track": "lei-15377",
+          "validated_by": "Dra. Amanda Conde Perez Fernandes"
+        },
+        {
+          "id": "M02",
+          "name": "Vacinação Corporativa",
+          "type": "DOCX",
+          "path": "content/lei-15377/Veglia_Modulo2_Vacinacao.docx",
+          "track": "lei-15377",
+          "validated_by": "Dra. Amanda Conde Perez Fernandes"
+        },
+        {
+          "id": "M03",
+          "name": "Prevenção de Cânceres",
+          "type": "DOCX",
+          "path": "content/lei-15377/Veglia_Modulo3_Prevencao_Canceres.docx",
+          "track": "lei-15377",
+          "validated_by": "Dra. Amanda Conde Perez Fernandes"
+        },
+        {
+          "id": "M04",
+          "name": "Saúde Mental Corporativa",
+          "type": "DOCX",
+          "path": "content/lei-15377/Veglia_Modulo4_Saude_Mental.docx",
+          "track": "lei-15377",
+          "validated_by": "Dra. Amanda Conde Perez Fernandes"
+        },
+        {
+          "id": "M05",
+          "name": "O que é a NR-1",
+          "type": "DOCX",
+          "path": "content/nr-1/NR1_Modulo1_O_que_e_a_NR1.docx",
+          "track": "nr-1",
+          "validated_by": "Dra. Amanda Conde Perez Fernandes"
+        },
+        {
+          "id": "M06",
+          "name": "GRO/PGR (Gerenciamento de Riscos Ocupacionais)",
+          "type": "DOCX",
+          "path": "content/nr-1/NR1_Modulo2_GRO_PGR.docx",
+          "track": "nr-1",
+          "validated_by": "Dra. Amanda Conde Perez Fernandes"
+        }
+      ],
+      "audiovisual_roadmap": {
+        "name": "Roteiro Produção Audiovisual",
+        "type": "MD",
+        "path": "content/roteiros/01-roteiro-12-videos.md",
+        "videos": 12,
+        "modules_covered": 6
+      },
+      "reference_docs": [
+        {
+          "name": "Calendário SBIm 2026/2027 (vacinas ocupacionais)",
+          "type": "PDF",
+          "path": "content/ocupacional-Calend-SBIm-2026-27-260202.pdf"
+        }
+      ]
+    },
+    "infrastructure": {
+      "command_center": {
+        "name": "Vegl.ia Command Center",
+        "type": "Folder structure",
+        "path": "veglia-platform/",
+        "files_migrated": 55,
+        "delivered_at": "2026-05-09"
+      },
+      "github": {
+        "org": "veglia",
+        "repo": "veglia-platform",
+        "url": "github.com/veglia/veglia-platform",
+        "status": "Created",
+        "created_at": "2026-05-09"
+      },
+      "firebase": {
+        "project_id": "veglia",
+        "url": "console.firebase.google.com",
+        "status": "Created",
+        "services_initialized": ["Firestore"],
+        "services_pending": ["Authentication", "Storage", "Hosting", "Cloud Functions"],
+        "plan": "to be confirmed (recommended: Blaze)",
+        "created_at": "2026-05-09"
+      },
+      "claude_code": {
+        "claude_md": "veglia-platform/CLAUDE.md",
+        "subagents": ["ceo", "dev", "comunicacao", "edu"],
+        "slash_commands": ["sprint-status", "briefing-equipe", "content-semana", "decisao-ceo", "feature-spec"],
+        "settings": "veglia-platform/.claude/settings/settings.json"
+      }
+    }
+  },
+  "features": {
+    "total": 22,
+    "layers": 6,
+    "by_layer": {
+      "1_entrada": {
+        "function": "Diagnóstico e personalização",
+        "features": ["F02", "F04"]
+      },
+      "2_experiencia": {
+        "function": "Retenção e vínculo emocional",
+        "features": ["F08", "F10", "F14", "F16"]
+      },
+      "3_inteligencia": {
+        "function": "Personalização e dados",
+        "features": ["F12", "F17", "F18"]
+      },
+      "4_corporativo": {
+        "function": "Receita B2B e compliance",
+        "features": ["F01", "F03", "F05", "F07", "F11"]
+      },
+      "5_engajamento": {
+        "function": "Adesão e recorrência",
+        "features": ["F06", "F09", "F15"]
+      },
+      "6_expansao": {
+        "function": "Escala e moat competitivo",
+        "features": ["F13", "F19", "F20", "F21", "F22"]
+      }
+    },
+    "list": [
+      {"id": "F01", "name": "Plataforma de Compliance em Saúde", "layer": 4, "phase": "MVP", "monetization": "Assinatura B2B", "priority": 1},
+      {"id": "F02", "name": "Diagnóstico Preventivo Inicial", "layer": 1, "phase": "MVP", "monetization": "Gratuito/Premium", "priority": 2},
+      {"id": "F03", "name": "Modo SIPAT Automática", "layer": 4, "phase": "MVP", "monetization": "Assinatura B2B", "priority": 3},
+      {"id": "F04", "name": "Calculadora de Calendário Vacinal", "layer": 1, "phase": "MVP", "monetization": "Freemium · Lead", "priority": 4},
+      {"id": "F05", "name": "Índice de Saúde Preventiva Corporativa", "layer": 4, "phase": "MVP", "monetization": "Dashboard Premium", "priority": 5},
+      {"id": "F06", "name": "Motor de Campanhas Inteligentes", "layer": 5, "phase": "MVP", "monetization": "Upsell B2B", "priority": 6},
+      {"id": "F07", "name": "Universidade Corporativa White Label", "layer": 4, "phase": "F2", "monetization": "Enterprise B2B", "priority": 7},
+      {"id": "F08", "name": "Jornadas de Vida", "layer": 2, "phase": "F2", "monetization": "Assinatura B2C", "priority": 8},
+      {"id": "F09", "name": "Gamificação Corporativa", "layer": 5, "phase": "F2", "monetization": "Retenção/Upsell", "priority": 9},
+      {"id": "F10", "name": "Passaporte de Saúde Digital", "layer": 2, "phase": "F2", "monetization": "Retenção/Dados", "priority": 10},
+      {"id": "F11", "name": "Certificação para Empresas", "layer": 4, "phase": "F2", "monetization": "Receita direta + ESG", "priority": 11},
+      {"id": "F12", "name": "IA Preventiva Personalizada", "layer": 3, "phase": "F2", "monetization": "Diferencial Premium", "priority": 12},
+      {"id": "F13", "name": "Canal de Conteúdo Médico Autoritativo", "layer": 6, "phase": "F2", "monetization": "Orgânico/Ads/Leads", "priority": 13},
+      {"id": "F14", "name": "Plataforma Multi-Saúde", "layer": 2, "phase": "F2", "monetization": "Assinatura B2C/B2B", "priority": 14},
+      {"id": "F15", "name": "Ecossistema de Benefícios Preventivos", "layer": 5, "phase": "F3", "monetization": "Parcerias + Retenção", "priority": 15},
+      {"id": "F16", "name": "Central de Saúde Familiar", "layer": 2, "phase": "F3", "monetization": "B2C Premium", "priority": 16},
+      {"id": "F17", "name": "Concierge Preventiva Digital", "layer": 3, "phase": "F3", "monetization": "Premium Individual", "priority": 17},
+      {"id": "F18", "name": "Integração com Wearables", "layer": 3, "phase": "F3", "monetization": "Premium + Dados", "priority": 18},
+      {"id": "F19", "name": "Marketplace de Saúde", "layer": 6, "phase": "F3", "monetization": "Comissão/Marketplace", "priority": 19},
+      {"id": "F20", "name": "Motor de Predição de Risco (IA Preditiva)", "layer": 6, "phase": "F4", "monetization": "Enterprise/Analytics", "priority": 20},
+      {"id": "F21", "name": "Plataforma de Dados Epidemiológicos", "layer": 6, "phase": "F4", "monetization": "B2G/B2B Enterprise", "priority": 21},
+      {"id": "F22", "name": "Plataforma de Expansão Física Inteligente", "layer": 6, "phase": "F4", "monetization": "Operacional Vacivitta", "priority": 22}
+    ]
+  },
+  "phases": [
+    {
+      "phase": "T1",
+      "name": "MVP · Fundação",
+      "months": "1-3",
+      "window": "2026-05-09 → 2026-08-09",
+      "features": ["F01", "F02", "F03", "F04", "F05", "F06"],
+      "kpis": {
+        "empresas_ativas": 50,
+        "colaboradores": 2000,
+        "mrr_brl": 35000,
+        "nps": ">50",
+        "taxa_conclusao_trilhas": ">60%",
+        "certificados": 5000
+      },
+      "status": "active"
+    },
+    {
+      "phase": "T2",
+      "name": "Diferenciação",
+      "months": "4-6",
+      "features": ["F07", "F08", "F09", "F10", "F11", "F12", "F13", "F14"],
+      "kpis": {
+        "empresas_ativas": 150,
+        "colaboradores": 8000,
+        "mrr_brl": 120000,
+        "nps": ">60",
+        "taxa_conclusao_trilhas": ">65%",
+        "certificados": 25000
+      },
+      "status": "planned"
+    },
+    {
+      "phase": "T3",
+      "name": "Escala",
+      "months": "7-9",
+      "features": ["F15", "F16", "F17", "F18", "F19"],
+      "kpis": {
+        "empresas_ativas": 400,
+        "colaboradores": 25000,
+        "mrr_brl": 350000,
+        "nps": ">65",
+        "taxa_conclusao_trilhas": ">70%",
+        "certificados": 80000
+      },
+      "captacao_seed": "recommended",
+      "status": "planned"
+    },
+    {
+      "phase": "T4",
+      "name": "Moat",
+      "months": "10-12+",
+      "features": ["F20", "F21", "F22"],
+      "kpis": {
+        "empresas_ativas": "1000+",
+        "colaboradores": "80000+",
+        "mrr_brl": "900000+",
+        "nps": ">70",
+        "taxa_conclusao_trilhas": ">75%",
+        "certificados": "250000+"
+      },
+      "status": "planned"
+    }
+  ],
+  "pricing": {
+    "tiers": [
+      {
+        "name": "Starter",
+        "monthly_brl": 299,
+        "company_size": "Até 50 colaboradores",
+        "includes": ["Vegl.ia Core", "Dashboard básico", "Suporte chat"]
+      },
+      {
+        "name": "Compliance",
+        "monthly_brl": 799,
+        "company_size": "51–250 colaboradores",
+        "includes": ["Core + NR-1", "SIPAT", "Dashboard completo", "Suporte chat + email"]
+      },
+      {
+        "name": "Professional",
+        "monthly_brl": 1800,
+        "company_size": "251–1.000 colaboradores",
+        "includes": ["Tudo + Multi-Saúde", "IA v1", "Certificação", "CS dedicado"]
+      },
+      {
+        "name": "Enterprise",
+        "monthly_brl_min": 5000,
+        "monthly_brl_max": 20000,
+        "company_size": "1.000+ colaboradores ou White Label",
+        "includes": ["Customizado", "IA v2 Full", "API", "CS + Implementação"]
+      }
+    ],
+    "complementary_revenue": [
+      {"name": "Certificação Vegl.ia", "model": "Anual", "range_brl": "2000-8000"},
+      {"name": "Marketplace", "model": "Comissão", "range_pct": "15-30"},
+      {"name": "B2C Individual", "model": "Mensal", "range_brl": "29-99"},
+      {"name": "Analytics Premium", "model": "Adicional mensal", "range_brl": "500-2000"},
+      {"name": "Lead Vacivitta", "model": "Por lead qualificado", "range_brl": "variable"},
+      {"name": "White Label Setup", "model": "Setup único + recorrente", "setup_brl": "3000-10000"}
+    ]
+  },
+  "tech_stack": {
+    "frontend": {
+      "framework": "React 18",
+      "build": "Vite",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "components": "shadcn/ui + Linecraft (custom design system)",
+      "routing": "react-router-dom",
+      "data_fetching": "@tanstack/react-query"
+    },
+    "backend": {
+      "platform": "Firebase",
+      "services": {
+        "auth": "Firebase Auth (Email + Google + Microsoft OAuth + custom claims multi-tenant)",
+        "database": "Firestore (NoSQL · isolamento por company_id)",
+        "storage": "Firebase Storage (certificados PDF, logos, documentos · não vídeos)",
+        "hosting": "Firebase Hosting (SPA · custom domain app.vegl.ia)",
+        "functions": "Cloud Functions Node 20"
+      }
+    },
+    "video": {
+      "host": "YouTube",
+      "visibility": "Não Listado",
+      "embed": "YouTube IFrame Player API",
+      "tracking": "Custom — onStateChange + poll a cada 5s · salva em video_progress",
+      "rationale": "Zero custo de banda · streaming adaptativo nativo · backup permanente Google"
+    },
+    "repository": {
+      "host": "GitHub",
+      "org": "veglia",
+      "repo": "veglia-platform",
+      "structure": "monorepo",
+      "tooling": "Turbo + npm workspaces",
+      "ci_cd": "GitHub Actions — deploy staging em PR · prod em merge para main"
+    },
+    "external_integrations": {
+      "email": "SendGrid (transacionais · lembretes)",
+      "ai": "Claude API (insights F3+)",
+      "ocr": "Document AI (upload carteira vacinal)",
+      "wearables_f3": ["Apple Health", "Google Fit", "Garmin", "Fitbit", "Whoop", "Samsung Health"],
+      "hr_carriers_f2": ["VR (anchor)", "Alelo", "Ticket", "Sólides", "TOTVS RH", "LG"]
+    }
+  },
+  "data_model": {
+    "firestore_collections": [
+      {
+        "name": "companies",
+        "fields": ["name", "cnpj", "plan", "white_label_partner", "modules_active", "branding"]
+      },
+      {
+        "name": "users",
+        "fields": ["company_id", "role", "percurso", "name", "email", "cargo", "departamento", "stats"],
+        "roles": ["colaborador", "gestor", "admin_empresa", "admin_carrier", "admin_master"]
+      },
+      {
+        "name": "modules",
+        "fields": ["track", "percurso", "videos", "quiz"],
+        "tracks": ["lei_15377", "nr1"]
+      },
+      {
+        "name": "enrollments",
+        "fields": ["user_id", "module_id", "company_id", "progress_pct", "status", "started_at", "completed_at"]
+      },
+      {
+        "name": "video_progress",
+        "key": "{user_id}_{video_id}",
+        "fields": ["watched_seconds", "completion_pct", "first_watched_at", "last_watched_at", "completed"]
+      },
+      {
+        "name": "quiz_attempts",
+        "fields": ["user_id", "module_id", "score", "answers", "passed"]
+      },
+      {
+        "name": "certificates",
+        "fields": ["user_id", "module_id", "company_id", "sha256_hash", "pdf_storage_path", "issued_at", "valid_until"]
+      },
+      {
+        "name": "audit_logs",
+        "fields": ["event_type", "user_id", "ip", "timestamp", "payload"],
+        "purpose": "Compliance Lei 15.377/2026 — base imutável para auditoria trabalhista"
+      }
+    ]
+  },
+  "timeline": [
+    {"date": "2026-05-03", "event": "Tese de Monetização Vacivitta × RRevela construída", "category": "strategy"},
+    {"date": "2026-05-07", "event": "Pivô para EdTech / Compliance Preventivo Corporativo ancorado na Lei 15.377/2026", "category": "strategy"},
+    {"date": "2026-05-07", "event": "Análise EdTech original recebida e estudada", "category": "strategy"},
+    {"date": "2026-05-07", "event": "Tripartite acordada: Rodolfo + Fábio + Thiago a 33,33% cada", "category": "operations"},
+    {"date": "2026-05-07", "event": "Naming definido: Vegl.ia (anteriormente Vitta Academy)", "category": "brand"},
+    {"date": "2026-05-08", "event": "Brandbook (19 slides) Arnold-style · Twilight Blue + Mint + Champagne", "category": "design"},
+    {"date": "2026-05-08", "event": "Sistema Linecraft de iconografia (42 ícones, 7 categorias)", "category": "design"},
+    {"date": "2026-05-08", "event": "Landing Page completa (14 seções)", "category": "design"},
+    {"date": "2026-05-08", "event": "MVP App Pedagogia · 4 phone mockups + 3 dashboards RH", "category": "design"},
+    {"date": "2026-05-08", "event": "Term Sheet PDF tripartite (8 páginas A4) com cláusula 07 de receitas adjacentes", "category": "operations"},
+    {"date": "2026-05-08", "event": "Roteiro de Produção Audiovisual (12 vídeos para 6 módulos)", "category": "content"},
+    {"date": "2026-05-08", "event": "Vídeos educacionais Lei 15.377 (4 módulos) e NR-1 (2 módulos) escritos e validados", "category": "content"},
+    {"date": "2026-05-09", "event": "Roadmap Estratégico de Produto (PDF mestre · 22 funcionalidades · 21 páginas)", "category": "strategy"},
+    {"date": "2026-05-09", "event": "Tese expandida: Vegl.ia como ecossistema operacional de prevenção contínua, não edtech", "category": "strategy"},
+    {"date": "2026-05-09", "event": "Briefing Tese Expandida com distribuição de trabalho por agente xquads", "category": "strategy"},
+    {"date": "2026-05-09", "event": "Arquitetura do Protótipo · Stack Firebase + GitHub + YouTube embedded", "category": "tech"},
+    {"date": "2026-05-09", "event": "Roadmap Operacional 30 dias com swim lanes CEO + Dev + Comunicação", "category": "strategy"},
+    {"date": "2026-05-09", "event": "VaciVitta rebranding aprovado (opção A · símbolo Pulsar · V duplo em mint)", "category": "brand"},
+    {"date": "2026-05-09", "event": "Repositório GitHub veglia/veglia-platform criado", "category": "infrastructure"},
+    {"date": "2026-05-09", "event": "Projeto Firebase veglia criado", "category": "infrastructure"},
+    {"date": "2026-05-09", "event": "Firestore inicializado", "category": "infrastructure"},
+    {"date": "2026-05-09", "event": "Migração para Claude Code · Command Center estruturado em veglia-platform/", "category": "infrastructure"},
+    {"date": "2026-05-09", "event": "55+ documentos migrados · CLAUDE.md mestre · 4 sub-agents · 5 slash commands · settings", "category": "infrastructure"},
+    {"date": "2026-05-16", "event": "Checkpoint 01 — Fundação no ar (planejado)", "category": "checkpoint", "future": true},
+    {"date": "2026-05-23", "event": "Checkpoint 02 — Esqueleto técnico + ritmo de conteúdo (planejado)", "category": "checkpoint", "future": true},
+    {"date": "2026-05-30", "event": "Checkpoint 03 — MVP funcional + autoridade Dra. Amanda (planejado)", "category": "checkpoint", "future": true},
+    {"date": "2026-06-09", "event": "Marco final · Demo VR · MVP Sprint 1 (planejado)", "category": "milestone", "future": true},
+    {"date": "2026-08-09", "event": "Fim T1 MVP · KPIs alvo (50 empresas, 2k col., MRR R$35k)", "category": "milestone", "future": true},
+    {"date": "2026-11-09", "event": "Fim T2 Diferenciação · KPIs alvo (150 empresas, 8k col., MRR R$120k)", "category": "milestone", "future": true},
+    {"date": "2027-02-09", "event": "Fim T3 Escala · captação seed recomendada · KPIs alvo (400 empresas, 25k col., MRR R$350k)", "category": "milestone", "future": true},
+    {"date": "2027-05-09", "event": "Fim T4 Moat · KPIs alvo (1000+ empresas, 80k+ col., MRR R$900k+)", "category": "milestone", "future": true}
+  ],
+  "moat_competitivo": [
+    {
+      "id": "M01",
+      "moat": "Operação real Vacivitta (10 anos)",
+      "description": "Não é parceiro de papel — é a operação que dá credibilidade técnica à plataforma. Concorrentes digitais não têm isso."
+    },
+    {
+      "id": "M02",
+      "moat": "Autoridade médica genuína (Dra. Amanda)",
+      "description": "Médica real com audiência, reputação e especialização. Concorrentes não têm rosto e voz médica desta qualidade."
+    },
+    {
+      "id": "M03",
+      "moat": "Compliance Lei 15.377 como entrada obrigatória",
+      "description": "Mercado cativo. Quem entrar primeiro com solução adequada captura share difícil de perder."
+    },
+    {
+      "id": "M04",
+      "moat": "Dados como moat de longo prazo",
+      "description": "Com escala, Vegl.ia terá o maior banco de dados de comportamento preventivo corporativo do Brasil — impossível de replicar rapidamente."
+    },
+    {
+      "id": "M05",
+      "moat": "Ecossistema integrado",
+      "description": "Nenhum concorrente combina compliance + educação + IA + dados + vacinação presencial em um único ecossistema com operação própria."
+    }
+  ],
+  "risks": [
+    {
+      "id": "R01",
+      "risk": "Execução lenta do MVP — concorrente chega primeiro",
+      "mitigation": "Foco absoluto nas 6 features MVP. Lançar em 90 dias com produto funcional, não perfeito."
+    },
+    {
+      "id": "R02",
+      "risk": "Qualidade do conteúdo abaixo do padrão da marca",
+      "mitigation": "Todo conteúdo validado pela Dra. Amanda antes de publicar. Nunca comprometer autoridade médica por velocidade."
+    },
+    {
+      "id": "R03",
+      "risk": "Churn alto nas primeiras empresas-piloto",
+      "mitigation": "Onboarding dedicado para os primeiros 10 clientes. CS ativo nas primeiras 8 semanas de cada conta."
+    },
+    {
+      "id": "R04",
+      "risk": "Complexidade técnica da IA atrasar o roadmap",
+      "mitigation": "MVP sem IA personalizada — campanhas por segmento são suficientes para o T1. IA entra no T2."
+    },
+    {
+      "id": "R05",
+      "risk": "Lei 15.377 ser alterada ou ter fiscalização fraca",
+      "mitigation": "Vegl.ia não depende exclusivamente da lei — tem valor intrínseco em saúde preventiva. Lei é o gatilho, não o produto."
+    },
+    {
+      "id": "R06",
+      "risk": "Cadência de produção dos 12 vídeos audiovisuais (risco oculto principal)",
+      "mitigation": "Contratar produtor audiovisual freelance dedicado por 60 dias. Sócios não devem ser gargalo de produção."
+    },
+    {
+      "id": "R07",
+      "risk": "Atraso na contratação do dev derrapa Sprint 1",
+      "mitigation": "Rodolfo abre processo de contratação no dia 1 com 3 candidatos pré-validados (rede LinkedIn). Decisão até dia 5."
+    },
+    {
+      "id": "R08",
+      "risk": "Tentação de incluir features de Fase 2-3 no MVP (feature creep narrativo)",
+      "mitigation": "Disciplina narrativa rigorosa. Resposta padrão: 'isso vem na Fase X, no momento estamos focados em compliance Lei 15.377'."
+    }
+  ],
+  "principles": [
+    "Disciplina sobre as 22 features. Nada que não esteja no MVP entra no MVP.",
+    "Skin in the game como filtro. Sócios primeiro, capital depois.",
+    "Vacivitta como marca-mãe. Vegl.ia nunca aparece desconectada do ecossistema.",
+    "Compliance Lei 15.377 é a entrada, não o produto. A plataforma tem valor intrínseco.",
+    "Dra. Amanda valida antes de publicar. Conteúdo médico nunca é improvisado.",
+    "Multi-tenant desde a primeira linha de código. Não é refactor — é fundamento.",
+    "Vídeos via YouTube embedded. Storage é proibitivo em escala.",
+    "Outcome-based pricing como padrão (preferência consistente do Rodolfo)."
+  ],
+  "references": {
+    "memory_files": [
+      ".auto-memory/projeto_vacivitta_rrevela.md",
+      ".auto-memory/edtech_rrevela_vacivitta.md",
+      ".auto-memory/edtech_estrutura_e_gtm.md",
+      ".auto-memory/ecossistema_vacivitta.md",
+      ".auto-memory/veglia_conteudo_modulos.md",
+      ".auto-memory/veglia_22_funcionalidades.md",
+      ".auto-memory/rrevela_estrutura.md",
+      ".auto-memory/feedback_outcome_based_preference.md"
+    ],
+    "claude_md_master": "veglia-platform/CLAUDE.md",
+    "external_systems": {
+      "github": "github.com/veglia/veglia-platform",
+      "firebase": "console.firebase.google.com (project: veglia)",
+      "domains": "vegl.ia and veglia.com.br (registration pending)"
+    }
+  },
+  "next_actions_48h": [
+    "Aprovar este memory.json com Fábio e Thiago",
+    "Registrar domínios vegl.ia e veglia.com.br",
+    "Listar 3 candidatos a dev React/Firebase via LinkedIn",
+    "Ativar Firebase Blaze com cartão da empresa",
+    "Adicionar Fábio e Thiago como owners do GitHub Org veglia",
+    "Reunião dos 3 sócios (1h) para aprovar 5 decisões CEO + revisar term sheet"
+  ]
+}

@@ -1,0 +1,1 @@
+export { VegliaPlayer } from "./VegliaPlayer";

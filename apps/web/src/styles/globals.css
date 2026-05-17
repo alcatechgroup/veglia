@@ -1,0 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens de tema — sobrescritos por tenant (white label) */
+:root {
+  --color-primary: #1A3A5C;
+  --color-accent: #5DD3A8;
+  --color-highlight: #C9A96E;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+}

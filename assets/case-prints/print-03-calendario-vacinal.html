@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Vegl.ia · Calendário Vacinal Corporativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-navy: #0B2545;
+    --twilight: #1A3A5C;
+    --mint: #5DD3A8;
+    --mint-dim: #3aab83;
+    --champagne: #C9A96E;
+    --warm-white: #FBF8F1;
+    --surface: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.10);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--deep-navy);
+    width: 1920px; height: 1080px;
+    overflow: hidden; position: fixed;
+    color: var(--warm-white);
+  }
+  .header {
+    height: 60px; width: 100%;
+    background: rgba(26,58,92,0.95); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 28px; gap: 12px;
+    position: fixed; top: 0; left: 0; z-index: 100; backdrop-filter: blur(12px);
+  }
+  .logo { font-size: 20px; font-weight: 800; color: var(--mint); letter-spacing: -0.5px; }
+  .logo span { color: var(--champagne); }
+  .header-divider { width: 1px; height: 24px; background: var(--border); margin: 0 8px; }
+  .header-title { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7); }
+  .badge { padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .badge-champ { background: rgba(201,169,110,0.15); color: var(--champagne); border: 1px solid rgba(201,169,110,0.3); }
+  .btn-outline { background: transparent; border: 1px solid rgba(93,211,168,0.4); color: var(--mint); padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .nav-link { font-size: 13px; color: rgba(255,255,255,0.4); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(93,211,168,0.2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--mint); border: 1.5px solid rgba(93,211,168,0.3); }
+  .sidebar {
+    width: 220px; height: calc(100vh - 60px); background: var(--twilight);
+    border-right: 1px solid var(--border); position: fixed; left: 0; top: 60px;
+    padding: 24px 0; display: flex; flex-direction: column; gap: 4px;
+  }
+  .nav-section { padding: 0 12px 8px; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.25); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; margin: 0 8px; border-radius: 8px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); cursor: pointer; }
+  .nav-item.active { background: rgba(93,211,168,0.12); color: var(--mint); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .sidebar-footer { margin-top: auto; padding: 16px; }
+  .powered-badge { background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); border-radius: 8px; padding: 10px 12px; font-size: 9px; font-weight: 700; color: var(--champagne); text-transform: uppercase; letter-spacing: 1px; line-height: 1.6; }
+  .main { margin-left: 220px; margin-top: 60px; padding: 28px 32px; height: calc(100vh - 60px); overflow: hidden; display: flex; flex-direction: column; gap: 20px; }
+  .kpi-row { display: flex; gap: 16px; flex-shrink: 0; }
+  .kpi-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .kpi-label { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .kpi-value { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+  .kpi-sub { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 3px; }
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; flex: 1; display: flex; flex-direction: column; }
+  .table-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .table-title { font-size: 14px; font-weight: 600; }
+  .table-sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 11px 16px; text-align: left;
+    font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; letter-spacing: 0.7px;
+    border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.1);
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody td { padding: 13px 16px; font-size: 13px; white-space: nowrap; }
+  .person-name { font-weight: 500; color: var(--warm-white); }
+  .person-role { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .vac-chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+  .vac-ok { background: rgba(93,211,168,0.12); color: var(--mint); border: 1px solid rgba(93,211,168,0.25); }
+  .vac-soon { background: rgba(201,169,110,0.12); color: var(--champagne); border: 1px solid rgba(201,169,110,0.25); }
+  .vac-late { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+  .vac-na { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.08); }
+  .table-footer { padding: 12px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 24px; flex-shrink: 0; }
+  .legend { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.4); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .update-info { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.25); font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">Vegl<span>.</span>ia</div>
+  <div class="header-divider"></div>
+  <div class="header-title">Calendário Vacinal Corporativo</div>
+  <span class="badge badge-champ">Powered by VaciVitta</span>
+  <div class="header-right">
+    <button class="btn-outline">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar CSV
+    </button>
+    <span class="nav-link">Suporte</span>
+    <div class="avatar">RH</div>
+  </div>
+</header>
+
+<nav class="sidebar">
+  <div class="nav-section">Principal</div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Visão Geral
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+    Colaboradores
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Trilhas
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Convites
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+    Relatório
+  </div>
+  <div class="nav-section" style="margin-top:16px;">Saúde</div>
+  <div class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+    Calendário Vacinal
+  </div>
+  <div class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    In-Company VaciVitta
+  </div>
+  <div class="sidebar-footer">
+    <div class="powered-badge">Powered by<br>VaciVitta</div>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">Em dia</div><div class="kpi-value" style="color:var(--mint)">89%</div><div class="kpi-sub">42 de 47 colaboradores</div></div>
+    <div class="kpi-card"><div class="kpi-label">Vencidas</div><div class="kpi-value" style="color:#f87171">2</div><div class="kpi-sub">Ação necessária</div></div>
+    <div class="kpi-card"><div class="kpi-label">Vencendo em 30d</div><div class="kpi-value" style="color:var(--champagne)">5</div><div class="kpi-sub">Agendar com VaciVitta</div></div>
+    <div class="kpi-card"><div class="kpi-label">Vacinas Rastreadas</div><div class="kpi-value" style="color:var(--warm-white)">6</div><div class="kpi-sub">Protocolo corporativo</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <div>
+        <div class="table-title">Situação Vacinal por Colaborador</div>
+        <div class="table-sub">Protocolo Corporativo VaciVitta · Lei 15.377/2026 · Dados autodeclarados + integração clínica</div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;">Filtrar ▾</div>
+        <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;">Departamento ▾</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="min-width:180px;">Colaborador</th>
+          <th>Cargo</th>
+          <th>Influenza 2026</th>
+          <th>Hepatite B</th>
+          <th>dTpa</th>
+          <th>COVID-19 Biv.</th>
+          <th>HPV</th>
+          <th>Pneumo 23v</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="person-name">Ana Clara Menezes</div></td>
+          <td><span class="person-role">Gerente RH</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-soon">Vence em 30d</span></td>
+          <td><span class="vac-chip vac-na">N/A</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+        </tr>
+        <tr>
+          <td><div class="person-name">Bruno Tadashi Yamamoto</div></td>
+          <td><span class="person-role">Dev Sênior</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-late">Vencida</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-na">N/A</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+        </tr>
+        <tr>
+          <td><div class="person-name">Carla Souza Lima</div></td>
+          <td><span class="person-role">Analista Financeiro</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-soon">Vence em 30d</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-na">N/A</span></td>
+        </tr>
+        <tr>
+          <td><div class="person-name">Diego Ferreira</div></td>
+          <td><span class="person-role">Executivo Comercial</span></td>
+          <td><span class="vac-chip vac-late">Vencida</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-soon">Vence em 30d</span></td>
+          <td><span class="vac-chip vac-na">N/A</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+        </tr>
+        <tr>
+          <td><div class="person-name">Eduarda Bonfim</div></td>
+          <td><span class="person-role">Coordenadora Marketing</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-soon">Vence em 30d</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+        </tr>
+        <tr>
+          <td><div class="person-name">Felipe Martins</div></td>
+          <td><span class="person-role">Supervisor Operações</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-soon">Vence em 30d</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-na">N/A</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+        </tr>
+        <tr>
+          <td><div class="person-name">Giovana Neves</div></td>
+          <td><span class="person-role">Advogada Sênior</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-soon">Vence em 30d</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-na">N/A</span></td>
+        </tr>
+        <tr>
+          <td><div class="person-name">Henrique Silveira</div></td>
+          <td><span class="person-role">Arquiteto de Sistemas</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+          <td><span class="vac-chip vac-na">N/A</span></td>
+          <td><span class="vac-chip vac-ok">Em dia</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-footer">
+      <div class="legend"><div class="legend-dot" style="background:var(--mint)"></div> Em dia</div>
+      <div class="legend"><div class="legend-dot" style="background:var(--champagne)"></div> Vencendo em 30d</div>
+      <div class="legend"><div class="legend-dot" style="background:#f87171"></div> Vencida</div>
+      <div class="legend"><div class="legend-dot" style="background:rgba(255,255,255,0.2)"></div> N/A</div>
+      <div class="update-info">Última atualização: hoje às 09:42</div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

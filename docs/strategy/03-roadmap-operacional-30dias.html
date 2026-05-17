@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegl.ia — Roadmap Operacional · 30 dias</title>
+<style>
+  :root {
+    --twilight: #1E2A5E;
+    --twilight-deep: #141B3F;
+    --mint: #5DD3A8;
+    --mint-soft: #B8EBD6;
+    --mint-deep: #0D6B47;
+    --champagne: #C9A96E;
+    --champagne-soft: #F0E5CB;
+    --cream: #FAF7F2;
+    --paper: #FFFEFB;
+    --charcoal: #2A2D3A;
+    --gray-soft: #6B6F7E;
+    --gray-line: #E5E2DA;
+    --frente-ceo: #1E2A5E;
+    --frente-dev: #5DD3A8;
+    --frente-com: #C9A96E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--cream);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    color: var(--charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 80px 56px 120px; }
+
+  /* Top */
+  .top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 28px; border-bottom: 1px solid var(--gray-line);
+    margin-bottom: 64px;
+  }
+  .brand { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray-soft); font-weight: 500; }
+  .brand strong { color: var(--twilight); font-weight: 600; }
+  .meta { font-size: 12px; color: var(--gray-soft); text-align: right; letter-spacing: 0.04em; }
+  .meta span { display: block; }
+
+  /* Hero */
+  .hero { margin-bottom: 80px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mint-deep); font-weight: 600;
+    padding: 6px 14px; background: var(--mint-soft); border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 60px; line-height: 1.05; font-weight: 700;
+    color: var(--twilight); letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  h1 em { font-style: normal; color: var(--mint); }
+  .lead {
+    font-size: 18px; color: var(--gray-soft);
+    max-width: 720px; line-height: 1.6;
+  }
+
+  /* Section */
+  section { margin-bottom: 80px; }
+  .sec-num {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px; color: var(--champagne); letter-spacing: 0.15em;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-size: 36px; color: var(--twilight); font-weight: 600;
+    letter-spacing: -0.015em; margin-bottom: 20px; line-height: 1.15;
+  }
+  h2 + p.sec-lead { font-size: 17px; color: var(--gray-soft); max-width: 760px; margin-bottom: 32px; }
+  h3 { font-size: 22px; color: var(--twilight); font-weight: 600; margin: 28px 0 12px; letter-spacing: -0.01em; }
+  h4 { font-size: 14px; color: var(--charcoal); font-weight: 600; margin: 20px 0 8px; letter-spacing: 0.02em; }
+  p { margin-bottom: 14px; font-size: 15px; }
+  p.muted { color: var(--gray-soft); font-size: 13.5px; line-height: 1.7; }
+
+  /* Cards */
+  .card {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 18px; padding: 28px; margin-bottom: 16px;
+  }
+  .card.dark { background: var(--twilight); color: var(--cream); border: none; }
+  .card.dark p { color: rgba(250, 247, 242, 0.85); }
+
+  /* Stats */
+  .stat-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin: 28px 0;
+  }
+  .stat {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 14px; padding: 20px;
+  }
+  .stat-label { font-size: 11px; color: var(--gray-soft); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .stat-value { font-size: 30px; color: var(--twilight); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .stat-trend { font-size: 12px; color: var(--mint-deep); margin-top: 6px; font-weight: 500; }
+
+  /* Three Fronts */
+  .fronts {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin: 32px 0;
+  }
+  .front {
+    border-radius: 18px; padding: 28px;
+    border-top: 4px solid;
+    background: var(--paper); border-right: 1px solid var(--gray-line); border-bottom: 1px solid var(--gray-line); border-left: 1px solid var(--gray-line);
+  }
+  .front-ceo { border-top-color: var(--twilight); }
+  .front-dev { border-top-color: var(--mint); }
+  .front-com { border-top-color: var(--champagne); }
+  .front-handle {
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    font-weight: 700; letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .front-ceo .front-handle { color: var(--twilight); }
+  .front-dev .front-handle { color: var(--mint-deep); }
+  .front-com .front-handle { color: var(--champagne); }
+  .front-name { font-size: 18px; color: var(--twilight); font-weight: 700; margin-bottom: 8px; }
+  .front-mission { font-size: 13px; color: var(--gray-soft); margin-bottom: 14px; line-height: 1.6; }
+  .front-output {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray-soft); margin-top: 10px; padding-top: 14px;
+    border-top: 1px solid var(--gray-line);
+  }
+  .front-output strong { color: var(--charcoal); display: block; font-size: 13px; margin-top: 4px; letter-spacing: 0; text-transform: none; }
+
+  /* Swim lanes (Gantt) */
+  .gantt {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 18px; padding: 32px; margin: 32px 0;
+    overflow-x: auto;
+  }
+  .gantt-header {
+    display: grid;
+    grid-template-columns: 160px repeat(4, 1fr);
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray-line);
+    margin-bottom: 16px;
+  }
+  .gantt-header > div {
+    font-size: 11px; color: var(--gray-soft); letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 600;
+  }
+  .gantt-row {
+    display: grid;
+    grid-template-columns: 160px repeat(4, 1fr);
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-line);
+    align-items: start;
+  }
+  .gantt-row:last-child { border-bottom: none; }
+  .gantt-label {
+    font-size: 13px; font-weight: 600; color: var(--twilight);
+    padding-top: 4px;
+  }
+  .gantt-label small {
+    display: block; font-size: 10px; color: var(--gray-soft); margin-top: 2px;
+    font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .gantt-cell {
+    min-height: 60px; border-radius: 8px;
+    padding: 10px 12px; font-size: 12px;
+    line-height: 1.45; color: var(--charcoal);
+  }
+  .cell-ceo { background: rgba(30, 42, 94, 0.08); border-left: 3px solid var(--twilight); }
+  .cell-dev { background: rgba(93, 211, 168, 0.12); border-left: 3px solid var(--mint); }
+  .cell-com { background: rgba(201, 169, 110, 0.15); border-left: 3px solid var(--champagne); }
+  .cell-empty { background: rgba(0,0,0,0.02); }
+  .gantt-cell strong { display: block; color: var(--twilight); margin-bottom: 4px; font-size: 12.5px; }
+
+  /* Detalhe por frente */
+  .detail-card {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 18px; padding: 32px; margin-bottom: 16px;
+    border-left: 4px solid;
+  }
+  .detail-card.ceo { border-left-color: var(--twilight); }
+  .detail-card.dev { border-left-color: var(--mint); }
+  .detail-card.com { border-left-color: var(--champagne); }
+  .detail-handle {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    padding: 4px 12px; border-radius: 100px; font-weight: 700;
+    margin-bottom: 12px; letter-spacing: 0.04em;
+  }
+  .ceo .detail-handle { background: var(--twilight); color: var(--cream); }
+  .dev .detail-handle { background: var(--mint-soft); color: var(--mint-deep); }
+  .com .detail-handle { background: var(--champagne-soft); color: #6B5527; }
+
+  .task-list { margin-top: 12px; }
+  .task {
+    padding: 10px 0; padding-left: 24px; position: relative;
+    font-size: 14px; color: var(--charcoal); line-height: 1.6;
+    border-bottom: 1px solid var(--gray-line);
+  }
+  .task:last-child { border-bottom: none; }
+  .task::before {
+    content: ""; position: absolute; left: 0; top: 19px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--mint);
+  }
+  .task strong { color: var(--twilight); }
+  .task .week-tag {
+    display: inline-block;
+    background: var(--gray-line); color: var(--gray-soft);
+    font-size: 10px; padding: 2px 8px; border-radius: 100px;
+    margin-right: 8px; letter-spacing: 0.05em; font-weight: 600;
+  }
+
+  /* Editorial calendar */
+  .editorial-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    margin-top: 20px;
+  }
+  .post-card {
+    background: var(--paper); border: 1px solid var(--gray-line);
+    border-radius: 12px; padding: 18px;
+  }
+  .post-tag {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 8px; border-radius: 100px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .post-li { background: rgba(10, 102, 194, 0.1); color: #0A66C2; }
+  .post-ig { background: linear-gradient(135deg, rgba(225, 48, 108, 0.15), rgba(64, 93, 230, 0.15)); color: #C13584; }
+  .post-day { font-size: 11px; color: var(--gray-soft); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.05em; }
+  .post-headline { font-size: 14px; color: var(--twilight); font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+  .post-hook { font-size: 12px; color: var(--gray-soft); line-height: 1.55; }
+
+  /* Code block */
+  .codeblock {
+    background: var(--twilight-deep); color: var(--cream);
+    border-radius: 12px; padding: 24px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12.5px; line-height: 1.85;
+    margin: 16px 0; overflow-x: auto;
+  }
+  .codeblock .cmd { color: var(--mint); }
+  .codeblock .comment { color: var(--champagne); font-style: italic; }
+  .codeblock .arg { color: rgba(250, 247, 242, 0.85); }
+
+  /* Checkpoint */
+  .checkpoint {
+    background: var(--twilight); color: var(--cream);
+    border-radius: 14px; padding: 24px 28px;
+    margin: 16px 0;
+    display: grid; grid-template-columns: 100px 1fr; gap: 24px;
+    align-items: center;
+  }
+  .checkpoint-day {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--mint); font-size: 12px;
+    letter-spacing: 0.1em; font-weight: 700;
+  }
+  .checkpoint-day strong {
+    display: block; color: var(--cream); font-size: 28px;
+    font-family: "Inter", sans-serif; letter-spacing: -0.02em; margin-top: 4px;
+  }
+  .checkpoint-content h4 {
+    color: var(--mint); font-size: 11px;
+    margin: 0 0 6px; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .checkpoint-content p {
+    color: rgba(250, 247, 242, 0.9); font-size: 14px; margin: 0;
+  }
+
+  /* Final CTA */
+  .cta-final {
+    background: linear-gradient(135deg, var(--twilight), var(--twilight-deep));
+    color: var(--cream); border-radius: 24px; padding: 56px 48px; margin-top: 56px;
+    text-align: center;
+  }
+  .cta-final h2 { color: var(--cream); }
+  .cta-final .accent { color: var(--mint); }
+  .cta-final p { color: rgba(250, 247, 242, 0.85); max-width: 620px; margin: 14px auto; }
+  .cta-action {
+    display: inline-block; margin-top: 20px;
+    padding: 14px 32px; background: var(--mint); color: var(--twilight-deep);
+    border-radius: 100px; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  footer {
+    margin-top: 64px; padding-top: 24px;
+    border-top: 1px solid var(--gray-line);
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--gray-soft);
+  }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 48px 24px; }
+    h1 { font-size: 38px; }
+    .stat-row, .fronts, .editorial-grid { grid-template-columns: 1fr; }
+    .gantt-header, .gantt-row { grid-template-columns: 1fr; }
+    .gantt-cell { min-height: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top -->
+  <div class="top">
+    <div class="brand"><strong>Vegl.ia</strong> · Roadmap Operacional · 30 dias</div>
+    <div class="meta">
+      <span>@CEO + @dev + @comunicação</span>
+      <span>09 maio 2026 → 09 junho 2026</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="eyebrow">Fase 1 · MVP T1 · Fundação</span>
+    <h1>30 dias para a <em>fundação</em>.<br>Três frentes em paralelo.</h1>
+    <p class="lead">
+      Foco absoluto na Fase 1 do roadmap (F01–F06). Três frentes operam em paralelo: estratégia (CEO), infraestrutura (Dev) e tracionamento (Comunicação). Documento único — orquestração entre as três para evitar gargalos e duplicação de esforço.
+    </p>
+  </div>
+
+  <!-- Section 01: As 3 frentes -->
+  <section>
+    <div class="sec-num">01 · ARQUITETURA OPERACIONAL</div>
+    <h2>Três frentes · Uma sincronia</h2>
+    <p class="sec-lead">
+      Cada frente tem seu owner, sua entrega e seu ritmo. Mas todas alimentam um único objetivo: ter MVP demonstrável + presença pública + estratégia validada para abrir conversa com a VR em 30 dias.
+    </p>
+
+    <div class="fronts">
+      <div class="front front-ceo">
+        <div class="front-handle">@CEO</div>
+        <div class="front-name">Estratégia & Decisões</div>
+        <div class="front-mission">Define direção, valida hipóteses, destrava decisões societárias e abre conversas comerciais com a VR e empresas-piloto.</div>
+        <div class="front-output">
+          Owner
+          <strong>Rodolfo</strong>
+        </div>
+      </div>
+
+      <div class="front front-dev">
+        <div class="front-handle">@dev</div>
+        <div class="front-name">Infra & Protótipo</div>
+        <div class="front-mission">Constrói a base técnica: GitHub, Firebase, MVP funcional com auth, player de vídeo, primeiro módulo e dashboard RH navegável.</div>
+        <div class="front-output">
+          Owner
+          <strong>Rodolfo + dev contratado</strong>
+        </div>
+      </div>
+
+      <div class="front front-com">
+        <div class="front-handle">@comunicação</div>
+        <div class="front-name">Marca & Tração</div>
+        <div class="front-mission">Coloca Vegl.ia no ar publicamente: landing page, perfis LinkedIn e Instagram, primeiros conteúdos da Dra. Amanda como autoridade.</div>
+        <div class="front-output">
+          Owner
+          <strong>Rodolfo + designer + copy</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">Janela</div>
+        <div class="stat-value">30 dias</div>
+        <div class="stat-trend">09/05 → 09/06</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Frentes em paralelo</div>
+        <div class="stat-value">3</div>
+        <div class="stat-trend">CEO · Dev · Comunicação</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Marco final</div>
+        <div class="stat-value">Demo VR</div>
+        <div class="stat-trend">MVP funcional + landing no ar</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 02: Gantt -->
+  <section>
+    <div class="sec-num">02 · CRONOGRAMA INTEGRADO</div>
+    <h2>Visão semanal das 3 frentes</h2>
+    <p class="sec-lead">
+      Cada célula é uma entrega da semana. Linhas iguais = mesma frente. Quando uma célula depende da anterior, a sincronia é por checkpoint às sextas-feiras.
+    </p>
+
+    <div class="gantt">
+      <div class="gantt-header">
+        <div>Frente</div>
+        <div>Semana 1<br><small>09/05 – 16/05</small></div>
+        <div>Semana 2<br><small>17/05 – 23/05</small></div>
+        <div>Semana 3<br><small>24/05 – 30/05</small></div>
+        <div>Semana 4<br><small>31/05 – 09/06</small></div>
+      </div>
+
+      <!-- CEO row -->
+      <div class="gantt-row">
+        <div class="gantt-label">@CEO<small>Estratégia</small></div>
+        <div class="gantt-cell cell-ceo">
+          <strong>Decisões 01–05</strong>
+          Aprovar MVP F01–F06, plano Firebase Blaze, captação T3, paywall, abordagem VR
+        </div>
+        <div class="gantt-cell cell-ceo">
+          <strong>Term Sheet revisão</strong>
+          ESOP pool 10%, ajustes anti-dilution. Iniciar contato VR (call exploratória)
+        </div>
+        <div class="gantt-cell cell-ceo">
+          <strong>Lista 30 empresas-alvo</strong>
+          Pipeline comercial com Fábio. Primeiras 5 reuniões agendadas
+        </div>
+        <div class="gantt-cell cell-ceo">
+          <strong>Demo VR</strong>
+          Apresentação do MVP funcional para conversa White Label
+        </div>
+      </div>
+
+      <!-- Dev row -->
+      <div class="gantt-row">
+        <div class="gantt-label">@dev<small>Infra & Tech</small></div>
+        <div class="gantt-cell cell-dev">
+          <strong>Setup Firebase + GitHub</strong>
+          Conta Blaze, projeto criado, monorepo, CI/CD GitHub Actions, domínios registrados
+        </div>
+        <div class="gantt-cell cell-dev">
+          <strong>Auth + Boilerplate</strong>
+          Login multi-tenant, design system Linecraft, layout base, rotas. Componente VegliaPlayer
+        </div>
+        <div class="gantt-cell cell-dev">
+          <strong>Módulo Vacinação</strong>
+          Player com tracking, quiz, certificado SHA-256, dashboard colaborador funcionando
+        </div>
+        <div class="gantt-cell cell-dev">
+          <strong>Painel RH MVP</strong>
+          Lista de colaboradores, progresso, export PDF. Demo em staging.vegl.ia
+        </div>
+      </div>
+
+      <!-- Comunicação row -->
+      <div class="gantt-row">
+        <div class="gantt-label">@comunicação<small>Marca & Tração</small></div>
+        <div class="gantt-cell cell-com">
+          <strong>Landing no ar</strong>
+          Deploy de vegl.ia (institucional), formulário de interesse. Perfis LinkedIn + IG criados
+        </div>
+        <div class="gantt-cell cell-com">
+          <strong>Conteúdo semana 1</strong>
+          2 posts LinkedIn (Rodolfo + Vegl.ia) · 3 posts Instagram · 1 vídeo curto Dra. Amanda
+        </div>
+        <div class="gantt-cell cell-com">
+          <strong>Conteúdo semana 2</strong>
+          2 posts LinkedIn · 3 posts Instagram · gravação 1º vídeo educacional módulo Vacinação
+        </div>
+        <div class="gantt-cell cell-com">
+          <strong>Conteúdo + tração</strong>
+          2 posts LinkedIn · 3 posts Instagram · primeiros leads no formulário · 100+ seguidores IG
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 03: Frente CEO Detalhada -->
+  <section>
+    <div class="sec-num">03 · DETALHAMENTO POR FRENTE</div>
+    <h2>O que cada frente entrega</h2>
+
+    <!-- CEO -->
+    <div class="detail-card ceo">
+      <span class="detail-handle">@CEO · ESTRATÉGIA</span>
+      <h3 style="margin-top:0;">Owner: Rodolfo · 30 dias</h3>
+      <p class="muted">A frente CEO é o que destrava ou trava as outras duas. Sem decisão societária aprovada, dev não move; sem conta-piloto fechada, comunicação não tem prova social.</p>
+
+      <div class="task-list">
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Aprovar 5 decisões com Fábio e Thiago:</strong> MVP F01–F06, Firebase Blaze, captação T3, paywall gratuito, abordagem VR</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Registrar domínios:</strong> vegl.ia, veglia.com.br, app.vegl.ia, staging.vegl.ia</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Aprovar contratação:</strong> 1 dev React/Firebase PJ por 3 meses + produtor audiovisual freelance</div>
+        <div class="task"><span class="week-tag">SEM 2</span><strong>Revisar term sheet</strong> com cláusula ESOP pool de 10–15% e anti-dilution para captação T3</div>
+        <div class="task"><span class="week-tag">SEM 2</span><strong>Call exploratória com VR</strong> apresentando tese e pedindo agenda de 30 dias para demo</div>
+        <div class="task"><span class="week-tag">SEM 2</span><strong>Definir ICP</strong> das primeiras 30 empresas-alvo (5–500 colaboradores) com Fábio</div>
+        <div class="task"><span class="week-tag">SEM 3</span><strong>Pipeline comercial:</strong> 5 reuniões agendadas, 10 cartas de intenção em curso</div>
+        <div class="task"><span class="week-tag">SEM 3</span><strong>Briefing 1 vídeo piloto</strong> com Dra. Amanda — aprovar pauta, locação, formato</div>
+        <div class="task"><span class="week-tag">SEM 4</span><strong>Reunião VR</strong> com demo do MVP funcional + proposta de White Label estruturada</div>
+        <div class="task"><span class="week-tag">SEM 4</span><strong>Retrospectiva 30 dias</strong> com sócios e ajuste de roadmap T2 baseado em aprendizados</div>
+      </div>
+    </div>
+
+    <!-- Dev -->
+    <div class="detail-card dev">
+      <span class="detail-handle">@dev · INFRAESTRUTURA</span>
+      <h3 style="margin-top:0;">Owner: Rodolfo (tech lead) + dev contratado</h3>
+      <p class="muted">A frente Dev tem entrega "MVP demonstrável" no dia 30. Não é "MVP completo" — é MVP com fluxo crítico funcional ponta a ponta para mostrar à VR.</p>
+
+      <h4>Stack confirmada</h4>
+      <p class="muted">
+        Frontend: <strong>React 18 + Vite + TypeScript + Tailwind + shadcn/ui</strong><br>
+        Backend: <strong>Firebase (Auth, Firestore, Storage, Hosting, Cloud Functions Node 20)</strong><br>
+        Vídeo: <strong>YouTube Não Listado + IFrame Player API</strong><br>
+        Repo: <strong>Monorepo veglia-platform no GitHub</strong> com workspaces<br>
+        CI/CD: <strong>GitHub Actions</strong> — auto-deploy staging em PR, prod em merge para main
+      </p>
+
+      <h4>Comandos de bootstrap (Semana 1)</h4>
+      <div class="codeblock">
+<span class="comment"># 1. Criar repo no GitHub</span>
+<span class="cmd">gh repo create</span> <span class="arg">veglia-platform --private --description "Plataforma Vegl.ia"</span>
+
+<span class="comment"># 2. Inicializar monorepo</span>
+<span class="cmd">npm init -y</span>
+<span class="cmd">npm install -D</span> <span class="arg">turbo typescript @types/node</span>
+
+<span class="comment"># 3. Setup Firebase</span>
+<span class="cmd">npm install -g firebase-tools</span>
+<span class="cmd">firebase login</span>
+<span class="cmd">firebase init</span> <span class="arg">hosting,firestore,functions,storage,auth</span>
+
+<span class="comment"># 4. Criar app web</span>
+<span class="cmd">npm create vite@latest</span> <span class="arg">apps/web -- --template react-ts</span>
+<span class="cmd">cd apps/web && npm install</span> <span class="arg">firebase react-router-dom @tanstack/react-query</span>
+<span class="cmd">npx shadcn-ui@latest init</span>
+
+<span class="comment"># 5. Primeiro deploy</span>
+<span class="cmd">firebase deploy</span> <span class="arg">--only hosting:staging</span>
+      </div>
+
+      <div class="task-list">
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Conta Firebase Blaze</strong> ativada com billing alert R$ 500/mês</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Repo monorepo</strong> com estrutura apps/web, packages/ui, packages/shared, functions</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>CI/CD</strong> GitHub Actions: lint + test + deploy staging em PR</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Domínios</strong> conectados ao Firebase Hosting (staging.vegl.ia primeiro)</div>
+        <div class="task"><span class="week-tag">SEM 2</span><strong>Auth multi-tenant</strong> Email + Google + custom claims (role, company_id)</div>
+        <div class="task"><span class="week-tag">SEM 2</span><strong>Design system Linecraft</strong> em packages/ui com 8 componentes base</div>
+        <div class="task"><span class="week-tag">SEM 2</span><strong>Componente VegliaPlayer</strong> (YouTube IFrame + tracking Firestore)</div>
+        <div class="task"><span class="week-tag">SEM 2</span><strong>Firestore Security Rules</strong> isolamento multi-tenant testado</div>
+        <div class="task"><span class="week-tag">SEM 3</span><strong>Módulo Vacinação Corporativa</strong> com 1 vídeo piloto + quiz funcional</div>
+        <div class="task"><span class="week-tag">SEM 3</span><strong>Cloud Function</strong> generateCertificate com SHA-256 + PDF</div>
+        <div class="task"><span class="week-tag">SEM 3</span><strong>Dashboard colaborador</strong> com progresso e certificados</div>
+        <div class="task"><span class="week-tag">SEM 4</span><strong>Painel RH</strong> com lista de colaboradores, progresso, export PDF</div>
+        <div class="task"><span class="week-tag">SEM 4</span><strong>Demo end-to-end</strong> em staging.vegl.ia para apresentação à VR</div>
+      </div>
+    </div>
+
+    <!-- Comunicação -->
+    <div class="detail-card com">
+      <span class="detail-handle">@comunicação · MARCA & TRAÇÃO</span>
+      <h3 style="margin-top:0;">Owner: Rodolfo + designer + copy + Dra. Amanda</h3>
+      <p class="muted">A frente Comunicação garante que a Vegl.ia exista publicamente desde o dia 7. Não esperamos o produto pronto — colocamos a marca no ar e construímos audiência enquanto desenvolvemos.</p>
+
+      <h4>Setup inicial (Semana 1)</h4>
+      <div class="task-list">
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Landing page institucional</strong> em vegl.ia (versão estática enquanto MVP é construído)</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>LinkedIn Page · Vegl.ia</strong> com bio, capa, primeiro post de lançamento da marca</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>LinkedIn pessoal Rodolfo</strong> primeiro post anunciando a Vegl.ia (alavanca audiência existente)</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Instagram @vegl.ia</strong> com identidade visual aplicada (Linecraft + paleta), bio e link na bio</div>
+        <div class="task"><span class="week-tag">SEM 1</span><strong>Templates Canva</strong> com brand kit Vegl.ia para posts repetíveis (5 templates base)</div>
+      </div>
+
+      <h4>Calendário editorial das 4 semanas</h4>
+      <div class="editorial-grid">
+        <div class="post-card">
+          <span class="post-tag post-li">LinkedIn · Sem 1</span>
+          <div class="post-day">Quinta · 15/05</div>
+          <div class="post-headline">"Apresentando a Vegl.ia: o sistema operacional preventivo das empresas brasileiras"</div>
+          <div class="post-hook">Post de manifesto. Rodolfo publica em perfil pessoal e republica na page Vegl.ia. Foco: visão grande, Lei 15.377 como gatilho, Vacivitta como base.</div>
+        </div>
+
+        <div class="post-card">
+          <span class="post-tag post-ig">Instagram · Sem 1</span>
+          <div class="post-day">Seg/Qua/Sex</div>
+          <div class="post-headline">Carrossel de marca · Quote da Dra. Amanda · Bastidor</div>
+          <div class="post-hook">3 posts: identidade visual + frase autoral da Dra. Amanda + foto do time. Estabelece presença, não vende ainda.</div>
+        </div>
+
+        <div class="post-card">
+          <span class="post-tag post-li">LinkedIn · Sem 2</span>
+          <div class="post-day">Terça + Quinta</div>
+          <div class="post-headline">"Lei 15.377/2026 explicada em 90 segundos" · "O que sua empresa precisa saber sobre compliance preventivo"</div>
+          <div class="post-hook">Conteúdo educacional. Posiciona Vegl.ia como referência técnica. CTA suave: "veja como nos preparamos".</div>
+        </div>
+
+        <div class="post-card">
+          <span class="post-tag post-ig">Instagram · Sem 2</span>
+          <div class="post-day">Seg/Qua/Sex</div>
+          <div class="post-headline">Reels Dra. Amanda · Carrossel "5 mitos sobre vacinação adulta" · Stories</div>
+          <div class="post-hook">Primeiro reel da Dra. Amanda como autoridade. Carrossel com tom didático. Stories diários para ritmo de presença.</div>
+        </div>
+
+        <div class="post-card">
+          <span class="post-tag post-li">LinkedIn · Sem 3</span>
+          <div class="post-day">Terça + Quinta</div>
+          <div class="post-headline">"Por que treinamento corporativo de saúde precisa mudar" · Case Vacivitta + autoridade</div>
+          <div class="post-hook">Provocação + autoridade. Ataca o problema do treinamento engessado. Apresenta Dra. Amanda como diretora médica.</div>
+        </div>
+
+        <div class="post-card">
+          <span class="post-tag post-ig">Instagram · Sem 3</span>
+          <div class="post-day">Seg/Qua/Sex</div>
+          <div class="post-headline">Carrossel "SIPAT que funciona" · Reel "Calendário vacinal adulto" · Quote</div>
+          <div class="post-hook">Conteúdo aplicado. Começa a falar diretamente para o RH (perfil profissional cresce). Use #SaudeCorporativa #Compliance</div>
+        </div>
+
+        <div class="post-card">
+          <span class="post-tag post-li">LinkedIn · Sem 4</span>
+          <div class="post-day">Terça + Quinta</div>
+          <div class="post-headline">"Bastidores: como construímos a Vegl.ia em 30 dias" · "Compliance trabalhista 2026: o checklist"</div>
+          <div class="post-hook">Mistura transparência (founder mode) + utilidade (checklist). Convite explícito para conhecer a plataforma. Primeiros leads.</div>
+        </div>
+
+        <div class="post-card">
+          <span class="post-tag post-ig">Instagram · Sem 4</span>
+          <div class="post-day">Seg/Qua/Sex</div>
+          <div class="post-headline">Bastidor da gravação · Reel Dra. Amanda · Carrossel "O que a Vegl.ia faz?"</div>
+          <div class="post-hook">Mostra o bastidor da gravação do 1º vídeo educacional. Aproxima audiência. CTA: link na bio para landing page.</div>
+        </div>
+      </div>
+
+      <h4 style="margin-top: 28px;">Hashtags recorrentes</h4>
+      <p class="muted">
+        <strong>LinkedIn:</strong> #compliance #saudecorporativa #leitrabalhista #lei15377 #vacinacaocorporativa #recursoshumanos #saudepreventiva<br>
+        <strong>Instagram:</strong> #saude #vacina #empresa #rh #saudepreventiva #medicinapreventiva #compliance #saudenotrabalho
+      </p>
+
+      <h4>Métricas a acompanhar</h4>
+      <p class="muted">
+        Final do dia 30 — alvos realistas: <strong>500+ seguidores Instagram, 200+ seguidores LinkedIn page, 5+ posts com 1.000+ impressões cada, 30+ leads no formulário da landing</strong>. Não é vaidade — é prova social para a reunião com VR.
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 04: Checkpoints -->
+  <section>
+    <div class="sec-num">04 · CHECKPOINTS · SINCRONIA SEMANAL</div>
+    <h2>Toda sexta · 17h · 30 minutos</h2>
+    <p class="sec-lead">
+      Reunião curta de sincronia entre as 3 frentes. Cada owner reporta entrega da semana, bloqueios e dependências. Decisões em 24h. Sem reuniões longas — frequência alta, foco no destrave.
+    </p>
+
+    <div class="checkpoint">
+      <div class="checkpoint-day">CHECKPOINT 01<br><strong>16/05</strong></div>
+      <div class="checkpoint-content">
+        <h4>Fundação no ar</h4>
+        <p>Domínios registrados · Firebase ativo · Repo criado · Landing page institucional pública · LinkedIn e Instagram lançados · 5 decisões societárias aprovadas</p>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-day">CHECKPOINT 02<br><strong>23/05</strong></div>
+      <div class="checkpoint-content">
+        <h4>Esqueleto técnico + ritmo de conteúdo</h4>
+        <p>Auth funcionando · Design system aplicado · VegliaPlayer pronto · 5 posts publicados · Call VR agendada · Term sheet revisado · Lista de 30 empresas-alvo</p>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-day">CHECKPOINT 03<br><strong>30/05</strong></div>
+      <div class="checkpoint-content">
+        <h4>MVP funcional + autoridade Dra. Amanda</h4>
+        <p>Módulo Vacinação rodando ponta a ponta · Certificado SHA-256 gerado · 1º vídeo educacional gravado · 10 posts publicados · 5 reuniões comerciais agendadas · 200+ seguidores Instagram</p>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-day">CHECKPOINT 04<br><strong>09/06</strong></div>
+      <div class="checkpoint-content">
+        <h4>Demo VR · Marco final dos 30 dias</h4>
+        <p>Painel RH funcional · 30+ leads no formulário · 500+ seguidores Instagram · Reunião VR realizada · Roadmap T2 ajustado · Retrospectiva com sócios</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 05: Riscos e Mitigações -->
+  <section>
+    <div class="sec-num">05 · RISCOS · O QUE PODE DAR ERRADO</div>
+    <h2>Onde os 30 dias podem travar</h2>
+
+    <div class="card dark">
+      <h3 style="margin-top:0;">Risco 01 · Atraso na contratação do dev</h3>
+      <p>Sem dev contratado até o dia 7, a frente Dev derrapa em 2 semanas. <strong>Mitigação:</strong> Rodolfo abre processo já no dia 1, com 3 candidatos pré-validados (rede LinkedIn). Decisão até o dia 5.</p>
+
+      <h3>Risco 02 · Dra. Amanda indisponível para gravação</h3>
+      <p>Sem o 1º vídeo educacional, frente Comunicação fica em conteúdo só de carrossel/quote. <strong>Mitigação:</strong> agenda de gravação travada na semana 1, locação confirmada na semana 2, gravação na semana 3. Plano B: Rodolfo grava como anfitrião + insertes da Dra. Amanda.</p>
+
+      <h3>Risco 03 · VR não responde para call exploratória</h3>
+      <p>Reunião final perde força sem prospect Tier 1. <strong>Mitigação:</strong> trabalhar 3 prospects em paralelo (VR + Alelo + 1 grupo do Fábio). Demo do MVP é o ativo — apresenta ao primeiro que aceitar.</p>
+
+      <h3>Risco 04 · Engajamento orgânico baixo nos primeiros posts</h3>
+      <p>500 seguidores no IG em 30 dias é desafiador a partir do zero. <strong>Mitigação:</strong> aproveitar audiência existente do Rodolfo (LinkedIn) como alavanca; investir R$ 500–1.000 em ads pontuais nos posts de melhor desempenho.</p>
+    </div>
+  </section>
+
+  <!-- Section 06: Próximas 48h -->
+  <section>
+    <div class="sec-num">06 · PRÓXIMAS 48 HORAS · O QUE FAZ AGORA</div>
+    <h2>O que está bloqueado se isso não rodar</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Hoje (sábado/domingo · 09–11/05)</h3>
+      <p class="muted">
+        ☐ Aprovar este roadmap com Fábio e Thiago (mensagem direta + envio do HTML)<br>
+        ☐ Registrar domínios vegl.ia e veglia.com.br no Registro.br ou provedor internacional<br>
+        ☐ Listar 3 candidatos a dev React/Firebase via LinkedIn — agendar entrevistas para semana 1<br>
+        ☐ Criar conta Google Cloud + ativar Firebase Blaze com cartão da empresa<br>
+        ☐ Criar conta GitHub Organization "veglia" + adicionar Rodolfo, Fábio, Thiago como owners
+      </p>
+
+      <h3>Segunda-feira (12/05)</h3>
+      <p class="muted">
+        ☐ Reunião dos 3 sócios (1h) para aprovar 5 decisões CEO + revisar term sheet<br>
+        ☐ Briefing com designer para landing page (entrega quinta-feira)<br>
+        ☐ Briefing com copy para post manifesto Rodolfo (entrega quarta-feira)<br>
+        ☐ Reservar agenda da Dra. Amanda para gravação do vídeo piloto (semana 3)
+      </p>
+
+      <h3>Terça-feira (13/05)</h3>
+      <p class="muted">
+        ☐ Setup do repo no GitHub + monorepo Turbo + CI/CD básico<br>
+        ☐ Setup do projeto Firebase + domínios apontados (DNS pode levar 48h)<br>
+        ☐ Criar conta @vegl.ia no Instagram + LinkedIn Page Vegl.ia<br>
+        ☐ Aprovar copy do post manifesto e revisar primeira versão da landing
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <div class="cta-final">
+    <h2>Hora de <span class="accent">tirar do papel</span>.</h2>
+    <p>
+      Três frentes em paralelo. 30 dias de execução disciplinada. Reunião com a VR no dia 30 com produto demonstrável + presença pública + autoridade médica em construção. Não é tudo — mas é o suficiente para abrir a porta.
+    </p>
+    <div class="cta-action">Começamos hoje.</div>
+  </div>
+
+  <footer>
+    <span>Vegl.ia · Roadmap Operacional · v1.0 · 30 dias</span>
+    <span>RRevela × Vacivitta · Powered by Alcatech.ia · 09 maio 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

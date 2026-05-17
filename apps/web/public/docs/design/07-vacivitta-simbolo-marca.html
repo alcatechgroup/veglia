@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vacivitta · Símbolo de Marca · 4 Conceitos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000;
+    --cream: #F4EDE0;
+    --cream-dim: #E8DFCC;
+    --warm-white: #FBF8F1;
+    --forest: #0F4C3A;
+    --forest-deep: #082A1F;
+    --mint: #5DD3A8;
+    --mint-deep: #2DA67D;
+    --champagne: #C9A96E;
+    --line: rgba(15, 76, 58, 0.12);
+    --text-dark: #082A1F;
+    --text-mid: #4B5A82;
+    --text-soft: rgba(15, 76, 58, 0.55);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--warm-white);
+    color: var(--text-dark);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--mint); color: var(--forest-deep); }
+
+  /* layout */
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 70px 60px;
+  }
+
+  /* HERO */
+  .hero {
+    margin-bottom: 70px;
+    padding-bottom: 50px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--mint-deep);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-weight: 800;
+    font-size: 60px;
+    line-height: 0.95;
+    letter-spacing: -2.5px;
+    color: var(--forest);
+    margin-bottom: 22px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--mint-deep);
+  }
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--text-mid);
+    max-width: 760px;
+  }
+
+  /* princípios */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 50px 0 70px;
+  }
+  .principle {
+    padding: 24px 22px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .principle-eye {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--mint-deep);
+    margin-bottom: 10px;
+  }
+  .principle h4 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .principle p {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-mid);
+  }
+
+  /* concept */
+  .concept {
+    margin-bottom: 70px;
+    padding-bottom: 50px;
+    border-bottom: 1px solid var(--line);
+  }
+  .concept:last-child { border-bottom: none; }
+
+  .concept-header {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin-bottom: 30px;
+  }
+  .concept-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 600;
+    color: var(--mint-deep);
+    line-height: 0.9;
+    letter-spacing: -2px;
+  }
+  .concept-name {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--forest);
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+  .concept-subname {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--mint-deep);
+    margin-left: auto;
+  }
+
+  /* concept body */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .symbol-stage {
+    aspect-ratio: 1;
+    background: var(--cream);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .symbol-stage.dark {
+    background: var(--forest-deep);
+  }
+  .symbol-stage.mint {
+    background: var(--mint);
+  }
+  .symbol-stage::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(15, 76, 58, 0.15);
+  }
+  .symbol-stage.dark::before, .symbol-stage.mint::before {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .concept-info h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: -0.5px;
+    margin-bottom: 14px;
+  }
+  .concept-info p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-mid);
+    margin-bottom: 12px;
+  }
+  .concept-info p strong { color: var(--forest); }
+
+  /* meta */
+  .concept-meta {
+    margin-top: 18px;
+    padding: 16px 20px;
+    background: var(--cream-dim);
+    border-radius: 10px;
+    border-left: 3px solid var(--mint-deep);
+  }
+  .concept-meta-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--mint-deep);
+    margin-bottom: 4px;
+  }
+  .concept-meta-text {
+    font-size: 13px;
+    color: var(--forest);
+    line-height: 1.5;
+  }
+
+  /* application row */
+  .application-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 30px;
+  }
+  .app-cell {
+    aspect-ratio: 16/10;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 14px;
+  }
+  .app-cell.dark { background: var(--forest-deep); }
+  .app-cell.mint { background: var(--mint); }
+
+  .app-name {
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -1px;
+    color: var(--forest-deep);
+    line-height: 1;
+  }
+  .app-name.cream { color: var(--cream); }
+  .app-name .v-mint { color: var(--mint-deep); font-weight: 800; }
+  .app-name.cream .v-mint { color: var(--mint); }
+  .app-name.dark-fg { color: var(--forest-deep); }
+  .app-name.dark-fg .v-mint { color: var(--forest-deep); }
+
+  .app-cell-meta {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 14px;
+  }
+  .app-cell.dark + .app-cell-meta { color: rgba(255,255,255,0.5); }
+
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .pc-block {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .pc-block.pros {
+    background: rgba(93, 211, 168, 0.15);
+    border-left: 3px solid var(--mint-deep);
+  }
+  .pc-block.cons {
+    background: rgba(184, 90, 79, 0.08);
+    border-left: 3px solid #B85A4F;
+  }
+  .pc-block strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 800;
+  }
+  .pc-block.pros strong { color: var(--mint-deep); }
+  .pc-block.cons strong { color: #B85A4F; }
+
+  /* recommendation */
+  .recommendation {
+    margin-top: 40px;
+    padding: 50px;
+    background: var(--forest);
+    color: var(--cream);
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .recommendation::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(93, 211, 168, 0.2) 0%, transparent 70%);
+  }
+  .recommendation .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--mint);
+    font-weight: 700;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .recommendation h3 {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    color: var(--cream);
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .recommendation h3 em {
+    font-style: italic;
+    color: var(--mint);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+  }
+  .recommendation p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(244, 237, 224, 0.85);
+    max-width: 700px;
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .recommendation p strong { color: var(--mint); }
+
+  /* footer */
+  .doc-foot {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    padding-top: 30px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 1100px) {
+    .container { padding: 40px 24px; }
+    .principles, .application-row { grid-template-columns: 1fr; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+    .application-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Símbolo institucional · 4 conceitos</div>
+    <h1>Vacivitta precisa de<br>um <em>símbolo próprio.</em></h1>
+    <p class="hero-sub">
+      Logotipo apenas tipográfico funciona — mas falta um elemento visual que codifique <strong>vacina</strong> e
+      <strong>ecossistema</strong> em uma única forma. Aqui vão 4 conceitos desenhados em Linecraft, prontos para
+      decisão de marca.
+    </p>
+  </section>
+
+  <!-- PRINCÍPIOS -->
+  <section>
+    <h2 style="font-size: 32px; font-weight: 800; color: var(--forest); letter-spacing: -1px; margin-bottom: 20px;">
+      O que o símbolo precisa carregar
+    </h2>
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-eye">Conceito 1</div>
+        <h4>Vacina</h4>
+        <p>O ato fundamental da Vacivitta. Mas sem ser frasco, agulha ou cruz médica — clichês de saúde genérica.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-eye">Conceito 2</div>
+        <h4>Ecossistema</h4>
+        <p>4 pilares conectados — Vacivitta + Vegl.ia + Dra. Amanda + Vitta Plus. O símbolo precisa codificar essa conexão.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-eye">Conceito 3</div>
+        <h4>Linecraft</h4>
+        <p>Sistema de iconografia próprio: linha contínua 1.5, geometria circular, ponto champagne como assinatura institucional.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONCEITO A · ÁTOMO DO CUIDADO ============ -->
+  <section class="concept">
+    <div class="concept-header">
+      <div class="concept-letter">A</div>
+      <div class="concept-name">Átomo do Cuidado</div>
+      <div class="concept-subname">núcleo + 4 satélites</div>
+    </div>
+
+    <div class="concept-grid">
+      <div class="symbol-stage">
+        <svg width="280" height="280" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+          <!-- órbita externa -->
+          <circle cx="120" cy="120" r="100" fill="none" stroke="#0F4C3A" stroke-width="2" stroke-linecap="round"/>
+          <!-- órbita interna -->
+          <circle cx="120" cy="120" r="60" fill="none" stroke="#5DD3A8" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- 4 pilares (satélites) -->
+          <circle cx="120" cy="20" r="9" fill="#0F4C3A"/>
+          <circle cx="220" cy="120" r="9" fill="#0F4C3A"/>
+          <circle cx="120" cy="220" r="9" fill="#0F4C3A"/>
+          <circle cx="20" cy="120" r="9" fill="#0F4C3A"/>
+          <!-- centro champagne (essência) -->
+          <circle cx="120" cy="120" r="14" fill="#C9A96E"/>
+        </svg>
+      </div>
+
+      <div class="concept-info">
+        <h3>Como funciona</h3>
+        <p>Um <strong>núcleo champagne</strong> ao centro representa a essência — a vacina como ato fundamental e a Dra. Amanda como autoridade científica que valida tudo.</p>
+        <p>Ao redor, dois <strong>anéis concêntricos</strong> — o interno em mint Vacivitta (operação contínua, cuidado eterno), o externo em forest deep (limite institucional, contorno da rede).</p>
+        <p>Quatro <strong>satélites cardinais</strong> em forest deep marcam os 4 pilares do ecossistema: Vacivitta, Vegl.ia, Dra. Amanda, Vitta Plus.</p>
+
+        <div class="concept-meta">
+          <div class="concept-meta-label">Carrega</div>
+          <div class="concept-meta-text">Vacina (núcleo · ato fundamental) + Ecossistema (4 satélites) + Movimento (anéis) — 3 conceitos em 1 forma.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="application-row">
+      <div>
+        <div class="app-cell">
+          <svg width="56" height="56" viewBox="0 0 240 240"><circle cx="120" cy="120" r="100" fill="none" stroke="#0F4C3A" stroke-width="6"/><circle cx="120" cy="120" r="60" fill="none" stroke="#5DD3A8" stroke-width="8"/><circle cx="120" cy="20" r="22" fill="#0F4C3A"/><circle cx="220" cy="120" r="22" fill="#0F4C3A"/><circle cx="120" cy="220" r="22" fill="#0F4C3A"/><circle cx="20" cy="120" r="22" fill="#0F4C3A"/><circle cx="120" cy="120" r="34" fill="#C9A96E"/></svg>
+          <div class="app-name"><span style="color: var(--mint-deep); font-weight: 900;">V</span>aci<span style="color: var(--mint-deep); font-weight: 900;">V</span>itta</div>
+        </div>
+        <div class="app-cell-meta">Lockup principal · símbolo + nome</div>
+      </div>
+      <div>
+        <div class="app-cell dark">
+          <svg width="48" height="48" viewBox="0 0 240 240"><circle cx="120" cy="120" r="100" fill="none" stroke="#F4EDE0" stroke-width="6"/><circle cx="120" cy="120" r="60" fill="none" stroke="#5DD3A8" stroke-width="8"/><circle cx="120" cy="20" r="22" fill="#F4EDE0"/><circle cx="220" cy="120" r="22" fill="#F4EDE0"/><circle cx="120" cy="220" r="22" fill="#F4EDE0"/><circle cx="20" cy="120" r="22" fill="#F4EDE0"/><circle cx="120" cy="120" r="34" fill="#C9A96E"/></svg>
+        </div>
+        <div class="app-cell-meta">Sobre forest · negativa</div>
+      </div>
+      <div>
+        <div class="app-cell mint">
+          <svg width="44" height="44" viewBox="0 0 240 240"><circle cx="120" cy="120" r="100" fill="none" stroke="#082A1F" stroke-width="8"/><circle cx="120" cy="20" r="22" fill="#082A1F"/><circle cx="220" cy="120" r="22" fill="#082A1F"/><circle cx="120" cy="220" r="22" fill="#082A1F"/><circle cx="20" cy="120" r="22" fill="#082A1F"/><circle cx="120" cy="120" r="34" fill="#082A1F"/></svg>
+        </div>
+        <div class="app-cell-meta">Favicon · escala mínima</div>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pc-block pros">
+        <strong>Forte em</strong>
+        Premium institucional, escala excelente em favicon/badge, simbolismo claro de ecossistema, Linecraft pleno, ponto champagne na essência.
+      </div>
+      <div class="pc-block cons">
+        <strong>Cuidado com</strong>
+        Pode ser confundido com símbolo de empresa de tecnologia/AI. Precisa do nome ao lado para ancorar em saúde.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONCEITO B · GOTA CONSTELADA ============ -->
+  <section class="concept">
+    <div class="concept-header">
+      <div class="concept-letter">B</div>
+      <div class="concept-name">Gota Constelada</div>
+      <div class="concept-subname">vacina como rede</div>
+    </div>
+
+    <div class="concept-grid">
+      <div class="symbol-stage">
+        <svg width="240" height="280" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+          <!-- gota outline -->
+          <path d="M100 20 Q40 90 40 150 a60 60 0 0 0 120 0 Q160 90 100 20 Z"
+                fill="none" stroke="#0F4C3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- pontos da constelação interna -->
+          <line x1="70" y1="120" x2="100" y2="100" stroke="#5DD3A8" stroke-width="1.5"/>
+          <line x1="100" y1="100" x2="130" y2="120" stroke="#5DD3A8" stroke-width="1.5"/>
+          <line x1="70" y1="120" x2="100" y2="160" stroke="#5DD3A8" stroke-width="1.5"/>
+          <line x1="130" y1="120" x2="100" y2="160" stroke="#5DD3A8" stroke-width="1.5"/>
+          <!-- 4 pilares (pontos da rede) -->
+          <circle cx="70" cy="120" r="7" fill="#5DD3A8"/>
+          <circle cx="100" cy="100" r="7" fill="#5DD3A8"/>
+          <circle cx="130" cy="120" r="7" fill="#5DD3A8"/>
+          <circle cx="100" cy="160" r="7" fill="#5DD3A8"/>
+          <!-- núcleo champagne -->
+          <circle cx="100" cy="130" r="9" fill="#C9A96E"/>
+        </svg>
+      </div>
+
+      <div class="concept-info">
+        <h3>Como funciona</h3>
+        <p>Uma <strong>gota</strong> em line-art — a forma universal da vacina, do líquido que protege. Sem precisar mostrar agulha ou frasco.</p>
+        <p>Dentro da gota, uma <strong>constelação de 4 pontos</strong> em mint conectados por linhas finas. Os 4 pilares do ecossistema vivem dentro da forma do cuidado.</p>
+        <p>No centro da constelação, um <strong>ponto champagne</strong> que é o nó comum — a Dra. Amanda como autoridade científica que costura tudo.</p>
+
+        <div class="concept-meta">
+          <div class="concept-meta-label">Carrega</div>
+          <div class="concept-meta-text">Vacina (forma da gota) + Ecossistema (constelação interna) + Conexão (linhas) — narrativa rica em uma forma só.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="application-row">
+      <div>
+        <div class="app-cell">
+          <svg width="50" height="58" viewBox="0 0 200 240"><path d="M100 20 Q40 90 40 150 a60 60 0 0 0 120 0 Q160 90 100 20 Z" fill="none" stroke="#0F4C3A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><line x1="70" y1="120" x2="100" y2="100" stroke="#5DD3A8" stroke-width="3"/><line x1="100" y1="100" x2="130" y2="120" stroke="#5DD3A8" stroke-width="3"/><line x1="70" y1="120" x2="100" y2="160" stroke="#5DD3A8" stroke-width="3"/><line x1="130" y1="120" x2="100" y2="160" stroke="#5DD3A8" stroke-width="3"/><circle cx="70" cy="120" r="14" fill="#5DD3A8"/><circle cx="100" cy="100" r="14" fill="#5DD3A8"/><circle cx="130" cy="120" r="14" fill="#5DD3A8"/><circle cx="100" cy="160" r="14" fill="#5DD3A8"/><circle cx="100" cy="130" r="18" fill="#C9A96E"/></svg>
+          <div class="app-name"><span style="color: var(--mint-deep); font-weight: 900;">V</span>aci<span style="color: var(--mint-deep); font-weight: 900;">V</span>itta</div>
+        </div>
+        <div class="app-cell-meta">Lockup principal · símbolo + nome</div>
+      </div>
+      <div>
+        <div class="app-cell dark">
+          <svg width="44" height="50" viewBox="0 0 200 240"><path d="M100 20 Q40 90 40 150 a60 60 0 0 0 120 0 Q160 90 100 20 Z" fill="none" stroke="#F4EDE0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="70" cy="120" r="14" fill="#5DD3A8"/><circle cx="100" cy="100" r="14" fill="#5DD3A8"/><circle cx="130" cy="120" r="14" fill="#5DD3A8"/><circle cx="100" cy="160" r="14" fill="#5DD3A8"/><circle cx="100" cy="130" r="18" fill="#C9A96E"/></svg>
+        </div>
+        <div class="app-cell-meta">Sobre forest · negativa</div>
+      </div>
+      <div>
+        <div class="app-cell mint">
+          <svg width="40" height="46" viewBox="0 0 200 240"><path d="M100 20 Q40 90 40 150 a60 60 0 0 0 120 0 Q160 90 100 20 Z" fill="none" stroke="#082A1F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="70" cy="120" r="14" fill="#082A1F"/><circle cx="100" cy="100" r="14" fill="#082A1F"/><circle cx="130" cy="120" r="14" fill="#082A1F"/><circle cx="100" cy="160" r="14" fill="#082A1F"/><circle cx="100" cy="130" r="20" fill="#082A1F"/></svg>
+        </div>
+        <div class="app-cell-meta">Favicon · escala mínima</div>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pc-block pros">
+        <strong>Forte em</strong>
+        Vacina explícita e óbvia (gota), narrativa rica em uma forma, original sem ser clichê médico, conta história mesmo sem nome ao lado.
+      </div>
+      <div class="pc-block cons">
+        <strong>Cuidado com</strong>
+        Em escala muito reduzida (favicon abaixo de 16px) os pontos internos somem. Forma mais complexa que átomo.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONCEITO C · CRUZ EM ÓRBITA ============ -->
+  <section class="concept">
+    <div class="concept-header">
+      <div class="concept-letter">C</div>
+      <div class="concept-name">Cruz em Órbita</div>
+      <div class="concept-subname">saúde + ecossistema</div>
+    </div>
+
+    <div class="concept-grid">
+      <div class="symbol-stage">
+        <svg width="280" height="280" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+          <!-- órbita ao redor -->
+          <circle cx="120" cy="120" r="100" fill="none" stroke="#5DD3A8" stroke-width="2" stroke-linecap="round"/>
+          <!-- cruz central minimal -->
+          <line x1="120" y1="60" x2="120" y2="180" stroke="#0F4C3A" stroke-width="14" stroke-linecap="round"/>
+          <line x1="60" y1="120" x2="180" y2="120" stroke="#0F4C3A" stroke-width="14" stroke-linecap="round"/>
+          <!-- 4 satélites em diagonal (não cardinal) -->
+          <circle cx="48" cy="48" r="9" fill="#0F4C3A"/>
+          <circle cx="192" cy="48" r="9" fill="#0F4C3A"/>
+          <circle cx="48" cy="192" r="9" fill="#0F4C3A"/>
+          <circle cx="192" cy="192" r="9" fill="#0F4C3A"/>
+          <!-- centro champagne -->
+          <circle cx="120" cy="120" r="11" fill="#C9A96E"/>
+        </svg>
+      </div>
+
+      <div class="concept-info">
+        <h3>Como funciona</h3>
+        <p>Uma <strong>cruz minimal</strong> em forest — saúde como categoria, mas com tratamento gráfico autoral, sem o vermelho da Cruz Vermelha.</p>
+        <p>Um <strong>anel mint</strong> envolve a cruz: o cuidado contínuo da Vacivitta envolvendo o ato médico.</p>
+        <p>Quatro <strong>satélites diagonais</strong> em forest deep nas pontas — os 4 pilares do ecossistema fora do eixo principal.</p>
+        <p>No centro da cruz, um <strong>ponto champagne</strong> assina a autoridade institucional.</p>
+
+        <div class="concept-meta">
+          <div class="concept-meta-label">Carrega</div>
+          <div class="concept-meta-text">Saúde (cruz) + Continuidade (anel mint) + Ecossistema (4 satélites) — leitura imediata de "saúde", risco de clichê.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="application-row">
+      <div>
+        <div class="app-cell">
+          <svg width="56" height="56" viewBox="0 0 240 240"><circle cx="120" cy="120" r="100" fill="none" stroke="#5DD3A8" stroke-width="6"/><line x1="120" y1="60" x2="120" y2="180" stroke="#0F4C3A" stroke-width="34" stroke-linecap="round"/><line x1="60" y1="120" x2="180" y2="120" stroke="#0F4C3A" stroke-width="34" stroke-linecap="round"/><circle cx="48" cy="48" r="22" fill="#0F4C3A"/><circle cx="192" cy="48" r="22" fill="#0F4C3A"/><circle cx="48" cy="192" r="22" fill="#0F4C3A"/><circle cx="192" cy="192" r="22" fill="#0F4C3A"/><circle cx="120" cy="120" r="26" fill="#C9A96E"/></svg>
+          <div class="app-name"><span style="color: var(--mint-deep); font-weight: 900;">V</span>aci<span style="color: var(--mint-deep); font-weight: 900;">V</span>itta</div>
+        </div>
+        <div class="app-cell-meta">Lockup principal · símbolo + nome</div>
+      </div>
+      <div>
+        <div class="app-cell dark">
+          <svg width="48" height="48" viewBox="0 0 240 240"><circle cx="120" cy="120" r="100" fill="none" stroke="#5DD3A8" stroke-width="6"/><line x1="120" y1="60" x2="120" y2="180" stroke="#F4EDE0" stroke-width="34" stroke-linecap="round"/><line x1="60" y1="120" x2="180" y2="120" stroke="#F4EDE0" stroke-width="34" stroke-linecap="round"/><circle cx="48" cy="48" r="22" fill="#F4EDE0"/><circle cx="192" cy="48" r="22" fill="#F4EDE0"/><circle cx="48" cy="192" r="22" fill="#F4EDE0"/><circle cx="192" cy="192" r="22" fill="#F4EDE0"/><circle cx="120" cy="120" r="26" fill="#C9A96E"/></svg>
+        </div>
+        <div class="app-cell-meta">Sobre forest · negativa</div>
+      </div>
+      <div>
+        <div class="app-cell mint">
+          <svg width="44" height="44" viewBox="0 0 240 240"><line x1="120" y1="60" x2="120" y2="180" stroke="#082A1F" stroke-width="40" stroke-linecap="round"/><line x1="60" y1="120" x2="180" y2="120" stroke="#082A1F" stroke-width="40" stroke-linecap="round"/><circle cx="120" cy="120" r="30" fill="#082A1F"/></svg>
+        </div>
+        <div class="app-cell-meta">Favicon · escala mínima</div>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pc-block pros">
+        <strong>Forte em</strong>
+        Reconhecimento imediato como categoria saúde, simplicidade extrema, escala perfeita em favicon, sólido e institucional.
+      </div>
+      <div class="pc-block cons">
+        <strong>Cuidado com</strong>
+        Cruz médica é categoria saturada. Pode soar genérico. Difícil ser memorável — Cruz Vermelha, hospitais, planos de saúde já ocupam.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONCEITO D · O PULSAR ============ -->
+  <section class="concept">
+    <div class="concept-header">
+      <div class="concept-letter">D</div>
+      <div class="concept-name">O Pulsar</div>
+      <div class="concept-subname">vacina como onda de proteção</div>
+    </div>
+
+    <div class="concept-grid">
+      <div class="symbol-stage">
+        <svg width="280" height="280" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+          <!-- ondas concêntricas -->
+          <circle cx="120" cy="120" r="100" fill="none" stroke="#5DD3A8" stroke-width="1.5" opacity="0.4"/>
+          <circle cx="120" cy="120" r="78" fill="none" stroke="#5DD3A8" stroke-width="1.8" opacity="0.6"/>
+          <circle cx="120" cy="120" r="56" fill="none" stroke="#5DD3A8" stroke-width="2.2" opacity="0.85"/>
+          <circle cx="120" cy="120" r="34" fill="none" stroke="#0F4C3A" stroke-width="2.5"/>
+          <!-- 4 pilares (pontos onde as ondas pulsam) -->
+          <circle cx="120" cy="20" r="7" fill="#0F4C3A"/>
+          <circle cx="220" cy="120" r="7" fill="#0F4C3A"/>
+          <circle cx="120" cy="220" r="7" fill="#0F4C3A"/>
+          <circle cx="20" cy="120" r="7" fill="#0F4C3A"/>
+          <!-- centro: pulso champagne -->
+          <circle cx="120" cy="120" r="13" fill="#C9A96E"/>
+        </svg>
+      </div>
+
+      <div class="concept-info">
+        <h3>Como funciona</h3>
+        <p>Um <strong>pulso central</strong> em champagne — a vacina como ato fundamental, momento exato da proteção.</p>
+        <p>Em torno dele, <strong>3 ondas concêntricas</strong> em mint com opacidade decrescente — proteção que se propaga, cuidado que se expande, vigília que ecoa.</p>
+        <p>Nos 4 pontos cardinais, <strong>satélites em forest deep</strong> — os 4 pilares que a onda atinge: Vacivitta, Vegl.ia, Dra. Amanda, Vitta Plus.</p>
+        <p>É o símbolo mais <strong>cinematográfico</strong> dos 4 — sugere movimento, dinâmica, vida.</p>
+
+        <div class="concept-meta">
+          <div class="concept-meta-label">Carrega</div>
+          <div class="concept-meta-text">Vacina (pulso central) + Ecossistema (4 satélites alcançados) + Movimento (ondas) — diferencia de qualquer concorrente brasileiro.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="application-row">
+      <div>
+        <div class="app-cell">
+          <svg width="56" height="56" viewBox="0 0 240 240"><circle cx="120" cy="120" r="100" fill="none" stroke="#5DD3A8" stroke-width="4" opacity="0.4"/><circle cx="120" cy="120" r="78" fill="none" stroke="#5DD3A8" stroke-width="5" opacity="0.6"/><circle cx="120" cy="120" r="56" fill="none" stroke="#5DD3A8" stroke-width="6" opacity="0.85"/><circle cx="120" cy="120" r="34" fill="none" stroke="#0F4C3A" stroke-width="8"/><circle cx="120" cy="20" r="18" fill="#0F4C3A"/><circle cx="220" cy="120" r="18" fill="#0F4C3A"/><circle cx="120" cy="220" r="18" fill="#0F4C3A"/><circle cx="20" cy="120" r="18" fill="#0F4C3A"/><circle cx="120" cy="120" r="32" fill="#C9A96E"/></svg>
+          <div class="app-name"><span style="color: var(--mint-deep); font-weight: 900;">V</span>aci<span style="color: var(--mint-deep); font-weight: 900;">V</span>itta</div>
+        </div>
+        <div class="app-cell-meta">Lockup principal · símbolo + nome</div>
+      </div>
+      <div>
+        <div class="app-cell dark">
+          <svg width="48" height="48" viewBox="0 0 240 240"><circle cx="120" cy="120" r="100" fill="none" stroke="#5DD3A8" stroke-width="4" opacity="0.4"/><circle cx="120" cy="120" r="78" fill="none" stroke="#5DD3A8" stroke-width="5" opacity="0.6"/><circle cx="120" cy="120" r="56" fill="none" stroke="#5DD3A8" stroke-width="6" opacity="0.85"/><circle cx="120" cy="120" r="34" fill="none" stroke="#F4EDE0" stroke-width="8"/><circle cx="120" cy="20" r="18" fill="#F4EDE0"/><circle cx="220" cy="120" r="18" fill="#F4EDE0"/><circle cx="120" cy="220" r="18" fill="#F4EDE0"/><circle cx="20" cy="120" r="18" fill="#F4EDE0"/><circle cx="120" cy="120" r="32" fill="#C9A96E"/></svg>
+        </div>
+        <div class="app-cell-meta">Sobre forest · negativa</div>
+      </div>
+      <div>
+        <div class="app-cell mint">
+          <svg width="42" height="42" viewBox="0 0 240 240"><circle cx="120" cy="120" r="80" fill="none" stroke="#082A1F" stroke-width="10"/><circle cx="120" cy="120" r="40" fill="none" stroke="#082A1F" stroke-width="10"/><circle cx="120" cy="120" r="22" fill="#082A1F"/></svg>
+        </div>
+        <div class="app-cell-meta">Favicon · simplificado</div>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pc-block pros">
+        <strong>Forte em</strong>
+        Original e único no mercado brasileiro de saúde, sugere movimento e vida, simbolismo de "proteção que se expande", premium e cinematográfico.
+      </div>
+      <div class="pc-block cons">
+        <strong>Cuidado com</strong>
+        Mais abstrato — exige pedagogia visual nos primeiros meses. Em escala mini precisa simplificar (perde 1-2 ondas). Custos de animação maiores.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RECOMENDAÇÃO ============ -->
+  <section class="recommendation">
+    <div class="eyebrow">Recomendação @designer + @estrategista</div>
+    <h3>Conceito A · <em>Átomo do Cuidado</em></h3>
+    <p>É o único dos quatro que <strong>codifica vacina + ecossistema + autoridade</strong> em uma forma simétrica, escalável até 16px sem perda, e com Linecraft pleno (linha contínua + ponto champagne assinatura).</p>
+    <p>O Átomo lê como infraestrutura científica nacional — exatamente o reposicionamento que o rebranding busca. <strong>Sai do "clínica de família"</strong> para <strong>"sistema brasileiro de imunização"</strong>.</p>
+    <p>Plano B forte: o <strong>Conceito B (Gota Constelada)</strong> se você quiser comunicar vacina de forma mais óbvia/imediata. Custa um pouco em escala minúscula, ganha em narrativa explícita.</p>
+    <p style="margin-top: 18px; font-style: italic;">Próximo movimento: validar com Fábio e Thiago a escolha entre A ou B, e produzir variações finais (favicon, sticker, monogram, animação).</p>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="doc-foot">
+    @designer · 4 conceitos de símbolo institucional<br>
+    Vacivitta · RRevela © 2026
+  </div>
+
+</div>
+
+</body>
+</html>

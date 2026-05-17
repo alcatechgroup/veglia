@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegl.ia · Sistema de Iconografia · Linecraft v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --twilight: #1A3A5C;
+    --deep-navy: #0B2545;
+    --mid-blue: #2E5078;
+    --sky: #C9DCE8;
+    --sky-2: #DDE7EF;
+    --mint: #5DD3A8;
+    --mint-deep: #2DA67D;
+    --mint-light: #B6F0D7;
+    --champagne: #C9A96E;
+    --champagne-light: #E5D5A8;
+    --cream: #F4EDE0;
+    --warm-white: #FBF8F1;
+    --bone: #EFEBE2;
+    --black: #0A0A0A;
+    --line: rgba(26, 58, 92, 0.12);
+    --text-dark: #0B2545;
+    --text-mid: #4B5A82;
+    --text-soft: rgba(11, 37, 69, 0.6);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--warm-white);
+    color: var(--text-dark);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--mint); color: var(--deep-navy); }
+
+  /* ========== LAYOUT ========== */
+  .layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+  .sidebar {
+    position: sticky; top: 0;
+    height: 100vh;
+    background: var(--deep-navy);
+    color: var(--cream);
+    padding: 36px 28px;
+    overflow-y: auto;
+  }
+  .sb-logo {
+    display: flex; align-items: baseline;
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -1px; margin-bottom: 6px;
+  }
+  .sb-logo .dot { color: var(--champagne); font-size: 36px; line-height: 0.5; margin: 0 -3px; }
+  .sb-logo .ia { color: var(--mint); }
+  .sb-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 13px;
+    color: var(--champagne-light); margin-bottom: 32px;
+  }
+  .sb-section-label {
+    font-size: 10px; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--champagne);
+    margin: 22px 0 10px; font-weight: 700;
+  }
+  .sb-nav { list-style: none; padding: 0; }
+  .sb-nav li { margin: 2px 0; }
+  .sb-nav a {
+    display: block; padding: 6px 0 6px 12px;
+    font-size: 12.5px; color: rgba(244, 237, 224, 0.7);
+    text-decoration: none; border-left: 2px solid transparent;
+    margin-left: -12px; transition: all 0.2s;
+  }
+  .sb-nav a:hover { color: var(--mint); border-left-color: var(--mint); }
+  .sb-foot {
+    margin-top: 30px; font-size: 10px;
+    color: rgba(244, 237, 224, 0.4);
+    letter-spacing: 1px; text-transform: uppercase;
+    border-top: 1px solid rgba(244, 237, 224, 0.1);
+    padding-top: 14px;
+  }
+  .content { padding: 70px 80px; max-width: 1200px; }
+
+  /* ========== HERO ========== */
+  .hero { margin-bottom: 80px; padding-bottom: 50px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--mint-deep);
+    font-weight: 700; margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-weight: 800; font-size: 64px;
+    line-height: 0.95; letter-spacing: -2.5px;
+    color: var(--twilight); margin-bottom: 22px;
+  }
+  .hero h1 em { font-style: normal; color: var(--mint-deep); }
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; line-height: 1.4;
+    color: var(--text-mid); max-width: 760px;
+    margin-bottom: 30px;
+  }
+
+  /* ========== SECTION ========== */
+  .section { margin-bottom: 80px; scroll-margin-top: 30px; }
+  .sec-eyebrow {
+    font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--mint-deep);
+    font-weight: 700; margin-bottom: 12px;
+  }
+  .section h2 {
+    font-weight: 800; font-size: 42px;
+    line-height: 1.05; letter-spacing: -1.5px;
+    color: var(--twilight); margin-bottom: 16px;
+  }
+  .section h2 em { font-style: normal; color: var(--mint-deep); font-weight: 400; }
+  .section h3 {
+    font-size: 22px; font-weight: 700;
+    color: var(--twilight); margin: 30px 0 14px;
+    letter-spacing: -0.5px;
+  }
+  .section-intro {
+    font-size: 16px; line-height: 1.6;
+    color: var(--text-mid); max-width: 800px;
+    margin-bottom: 30px;
+  }
+  .section p {
+    font-size: 15px; line-height: 1.7;
+    color: var(--text-mid); margin-bottom: 12px;
+    max-width: 800px;
+  }
+  .section p strong { color: var(--twilight); }
+
+  /* agent badges row */
+  .agents-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 14px;
+  }
+  .agent-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 11px; background: var(--cream);
+    border-radius: 99px; font-size: 11px;
+    font-weight: 700; color: var(--twilight);
+  }
+  .agent-chip .d {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--mint-deep);
+  }
+
+  /* ========== PRINCIPLES ========== */
+  .principles-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin: 30px 0;
+  }
+  .pr-card {
+    padding: 28px 24px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .pr-card .demo {
+    aspect-ratio: 1;
+    background: var(--cream);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pr-card h4 {
+    font-size: 16px; font-weight: 700;
+    color: var(--twilight); margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .pr-card p {
+    font-size: 13px; line-height: 1.55;
+    color: var(--text-mid); margin: 0;
+  }
+
+  /* ========== ICON SYSTEM ========== */
+  .vi {
+    width: 24px; height: 24px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--twilight);
+    flex-shrink: 0;
+  }
+  .vi-lg { width: 48px; height: 48px; stroke-width: 1.4; }
+  .vi-xl { width: 96px; height: 96px; stroke-width: 1.2; }
+
+  /* ========== ICONS GALLERY ========== */
+  .category-block { margin-bottom: 50px; }
+  .category-header {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .category-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 600;
+    color: var(--mint-deep); line-height: 1;
+    letter-spacing: -1px;
+  }
+  .category-title {
+    font-size: 22px; font-weight: 700;
+    color: var(--twilight);
+    letter-spacing: -0.5px;
+  }
+  .category-count {
+    font-size: 11px; color: var(--text-soft);
+    margin-left: auto; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .icons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .icon-tile {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.25s;
+  }
+  .icon-tile:hover {
+    border-color: var(--mint);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26, 58, 92, 0.08);
+  }
+  .icon-tile .vi { color: var(--twilight); margin-bottom: 12px; }
+  .icon-tile-name {
+    font-size: 12px; font-weight: 700;
+    color: var(--twilight); margin-bottom: 2px;
+    letter-spacing: -0.2px;
+  }
+  .icon-tile-handle {
+    font-family: 'Courier New', monospace;
+    font-size: 10px; color: var(--text-soft);
+    word-break: break-all;
+  }
+
+  /* featured big icons */
+  .featured-icons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 30px 0;
+  }
+  .fi-card {
+    background: var(--deep-navy);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .fi-card.cream { background: var(--cream); color: var(--twilight); }
+  .fi-card.mint { background: var(--mint-light); color: var(--twilight); }
+  .fi-card .vi-xl { color: var(--mint); margin-bottom: 18px; }
+  .fi-card.cream .vi-xl, .fi-card.mint .vi-xl { color: var(--twilight); }
+  .fi-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600;
+    margin-bottom: 8px; letter-spacing: -0.5px;
+  }
+  .fi-card p {
+    font-size: 12px; line-height: 1.5;
+    margin: 0; opacity: 0.85;
+  }
+
+  /* ========== SPECS TABLE ========== */
+  .spec-table {
+    width: 100%; border-collapse: separate;
+    border-spacing: 0; margin: 24px 0;
+    background: white; border-radius: 12px;
+    overflow: hidden; border: 1px solid var(--line);
+  }
+  .spec-table th {
+    background: var(--twilight); color: var(--cream);
+    padding: 14px 16px; text-align: left;
+    font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase; font-weight: 700;
+  }
+  .spec-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px; color: var(--text-dark);
+    vertical-align: middle;
+  }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .spec-table code {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; padding: 2px 8px;
+    background: var(--cream); border-radius: 4px;
+    color: var(--twilight);
+  }
+
+  /* ========== USAGE MOCKUPS ========== */
+  .usage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 30px 0;
+  }
+  .usage-card {
+    padding: 30px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .usage-card .label {
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--mint-deep);
+    font-weight: 800; margin-bottom: 14px;
+  }
+  .usage-card h4 {
+    font-size: 18px; font-weight: 700;
+    color: var(--twilight); margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+
+  /* mock buttons / nav with icons */
+  .mock-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    align-items: center; padding: 14px;
+    background: var(--cream); border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .mock-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 16px;
+    background: var(--twilight); color: var(--cream);
+    border-radius: 99px; font-size: 13px; font-weight: 700;
+  }
+  .mock-btn.outline {
+    background: transparent; color: var(--twilight);
+    border: 1.5px solid var(--twilight);
+  }
+  .mock-btn.mint { background: var(--mint); color: var(--deep-navy); }
+  .mock-btn .vi { color: currentColor; width: 16px; height: 16px; }
+
+  /* mobile nav mock */
+  .mobile-nav-mock {
+    background: var(--deep-navy); color: var(--cream);
+    border-radius: 24px;
+    padding: 14px;
+    display: flex; justify-content: space-around;
+    margin-bottom: 14px;
+  }
+  .mn-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.5px;
+    color: rgba(244, 237, 224, 0.55);
+    cursor: pointer;
+  }
+  .mn-item.active { color: var(--mint); }
+  .mn-item .vi { color: currentColor; width: 22px; height: 22px; }
+
+  /* feature row */
+  .feature-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    background: var(--bone);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .feature-row .vi {
+    color: var(--mint-deep);
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+  }
+  .feature-row strong {
+    font-size: 13px; color: var(--twilight);
+    flex: 1;
+  }
+
+  /* ========== ACCESSIBILITY ========== */
+  .a11y-card {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--mint-light) 100%);
+    padding: 30px;
+    border-radius: 14px;
+    margin: 24px 0;
+  }
+
+  /* footer */
+  .doc-foot {
+    margin-top: 80px;
+    padding: 50px 60px;
+    background: var(--deep-navy);
+    color: var(--cream);
+    border-radius: 14px;
+    text-align: center;
+  }
+  .doc-foot-logo {
+    display: inline-flex; align-items: baseline;
+    font-size: 32px; font-weight: 800;
+    letter-spacing: -1.2px; margin-bottom: 14px;
+  }
+  .doc-foot-logo .dot { color: var(--champagne); font-size: 38px; line-height: 0.5; margin: 0 -3px; }
+  .doc-foot-logo .ia { color: var(--mint); }
+  .doc-foot-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 16px;
+    color: var(--champagne-light); margin-bottom: 18px;
+  }
+  .doc-foot-meta {
+    font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(244, 237, 224, 0.5);
+  }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .content { padding: 40px 24px; }
+    .principles-grid, .featured-icons, .usage-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo"><span>Vegl</span><span class="dot">·</span><span class="ia">ia</span></div>
+    <div class="sb-tag">Sistema de Iconografia</div>
+
+    <div class="sb-section-label">Sistema</div>
+    <ul class="sb-nav">
+      <li><a href="#principios">Princípios visuais</a></li>
+      <li><a href="#anatomia">Anatomia do ícone</a></li>
+      <li><a href="#tokens">Tokens técnicos</a></li>
+    </ul>
+
+    <div class="sb-section-label">Galeria</div>
+    <ul class="sb-nav">
+      <li><a href="#manifesto-icons">Ícones-manifesto</a></li>
+      <li><a href="#cat-compliance">Compliance & Lei</a></li>
+      <li><a href="#cat-saude">Saúde & Prevenção</a></li>
+      <li><a href="#cat-aprendizado">Aprendizado</a></li>
+      <li><a href="#cat-rh">Dashboard RH</a></li>
+      <li><a href="#cat-sistema">Sistema & Status</a></li>
+      <li><a href="#cat-navegacao">Navegação mobile</a></li>
+    </ul>
+
+    <div class="sb-section-label">Aplicação</div>
+    <ul class="sb-nav">
+      <li><a href="#aplicacao-landing">Em landing</a></li>
+      <li><a href="#aplicacao-app">Em app</a></li>
+      <li><a href="#a11y">Acessibilidade</a></li>
+    </ul>
+
+    <div class="sb-section-label">Handoff</div>
+    <ul class="sb-nav">
+      <li><a href="#handoff">Para @dev</a></li>
+    </ul>
+
+    <div class="sb-foot">RRevela © 2026<br>Linecraft v1.0 · uso interno</div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="agents-row">
+        <span class="agent-chip"><span class="d"></span>@xquads-designer</span>
+        <span class="agent-chip"><span class="d"></span>@xquads-po</span>
+        <span class="agent-chip"><span class="d"></span>@xquads-dev</span>
+        <span class="agent-chip"><span class="d"></span>@xquads-mobiledesign-edu</span>
+        <span class="agent-chip"><span class="d"></span>@ux</span>
+      </div>
+      <div class="hero-eyebrow">Sistema · Linecraft v1.0 · 2026</div>
+      <h1>Iconografia<br><em>própria</em>.</h1>
+      <p class="hero-sub">Sistema de ícones desenhado para a Vegl.ia — linha contínua, geometria circular como base, peso constante, ponto champagne como assinatura discreta. Premium-acessível, nunca corporativo frio. Usado igualmente na landing institucional e no app de bolso do colaborador.</p>
+      <div style="display: flex; gap: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-soft); font-weight: 600;">
+        <div>Ícones<strong style="color: var(--twilight); display: block; font-size: 14px; margin-top: 2px;">42</strong></div>
+        <div>Categorias<strong style="color: var(--twilight); display: block; font-size: 14px; margin-top: 2px;">7</strong></div>
+        <div>Formato<strong style="color: var(--twilight); display: block; font-size: 14px; margin-top: 2px;">SVG inline</strong></div>
+        <div>Viewport<strong style="color: var(--twilight); display: block; font-size: 14px; margin-top: 2px;">24 × 24</strong></div>
+      </div>
+    </section>
+
+    <!-- ============ PRINCÍPIOS ============ -->
+    <section class="section" id="principios">
+      <div class="sec-eyebrow">— I — Princípios visuais</div>
+      <h2>3 regras que fazem um ícone <em>parecer da Vegl.ia.</em></h2>
+      <p class="section-intro">Sistema autoral nasce de regras claras. Cada ícone do Linecraft respeita 3 princípios não-negociáveis que diferenciam a marca de qualquer biblioteca genérica (Lucide, Feather, Material Symbols).</p>
+
+      <div class="principles-grid">
+        <div class="pr-card">
+          <div class="demo">
+            <svg class="vi vi-lg" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M8 12 L11 15 L16 9"/>
+            </svg>
+          </div>
+          <h4>01 · Linha única, peso constante</h4>
+          <p>Stroke 1.5px em viewport 24×24. Sem variação de espessura. Sem fill maciço. A linha é o protagonista.</p>
+        </div>
+
+        <div class="pr-card">
+          <div class="demo">
+            <svg class="vi vi-lg" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="12" cy="12" r="1" fill="#C9A96E" stroke="none"/>
+            </svg>
+          </div>
+          <h4>02 · Geometria circular como ancoragem</h4>
+          <p>O círculo é a base de quase todos os ícones — alinhamento direto ao ponto do logotipo Vegl·ia. Reforça coesão visual.</p>
+        </div>
+
+        <div class="pr-card">
+          <div class="demo">
+            <svg class="vi vi-lg" viewBox="0 0 24 24">
+              <path d="M4 18 V8 a4 4 0 0 1 4 -4 h8 a4 4 0 0 1 4 4 v10"/>
+              <circle cx="18" cy="6" r="1" fill="#C9A96E" stroke="none"/>
+            </svg>
+          </div>
+          <h4>03 · Ponto champagne como assinatura</h4>
+          <p>Em ícones-chave (vigília, certificação, validação), o ponto dourado marca presença. Discreto. Reservado a momentos de autoridade.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ANATOMIA ============ -->
+    <section class="section" id="anatomia">
+      <div class="sec-eyebrow">— II — Anatomia do ícone</div>
+      <h2>Construção em <em>grade matemática.</em></h2>
+      <p class="section-intro">Cada ícone é desenhado dentro de uma grade 24×24 com área útil 20×20 (padding 2px de respiro). Stroke linecap e linejoin sempre round. Cantos com radius 1-2 quando aplicável.</p>
+
+      <div class="featured-icons">
+        <div class="fi-card cream">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" style="color: var(--twilight);">
+            <rect x="2" y="2" width="20" height="20" rx="2" stroke-dasharray="2 2" opacity="0.3"/>
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 8 V12 L15 14"/>
+          </svg>
+          <h4>Padding 2px</h4>
+          <p>Área útil de 20×20 dentro do viewport 24×24. Garante respiro em qualquer aplicação.</p>
+        </div>
+        <div class="fi-card cream">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" style="color: var(--twilight);">
+            <line x1="12" y1="2" x2="12" y2="22" stroke-dasharray="1 1" opacity="0.2"/>
+            <line x1="2" y1="12" x2="22" y2="12" stroke-dasharray="1 1" opacity="0.2"/>
+            <circle cx="12" cy="12" r="7"/>
+          </svg>
+          <h4>Centralização absoluta</h4>
+          <p>Eixos central e horizontal sempre como referência. Simetria onde possível, intencionalidade onde quebrada.</p>
+        </div>
+        <div class="fi-card cream">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" style="color: var(--twilight);">
+            <path d="M6 12 L12 6 L18 12 L12 18 Z"/>
+          </svg>
+          <h4>Stroke round</h4>
+          <p>linecap="round" + linejoin="round" sempre. Pontas arredondadas evitam dureza visual.</p>
+        </div>
+        <div class="fi-card cream">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" style="color: var(--twilight);">
+            <circle cx="12" cy="12" r="9"/>
+            <circle cx="12" cy="12" r="1" fill="#C9A96E" stroke="none"/>
+          </svg>
+          <h4>Acento champagne</h4>
+          <p>Ponto preenchido em #C9A96E como assinatura em ícones especiais. Nunca decorativo — sempre semântico.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOKENS ============ -->
+    <section class="section" id="tokens">
+      <div class="sec-eyebrow">— III — Tokens técnicos</div>
+      <h2>Especificação para <em>handoff direto.</em></h2>
+
+      <table class="spec-table">
+        <thead>
+          <tr><th>Token</th><th>Valor</th><th>Notas</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Viewport</strong></td><td><code>24 × 24</code></td><td>Padrão para todos os ícones do sistema</td></tr>
+          <tr><td><strong>Área útil</strong></td><td><code>20 × 20</code></td><td>Padding 2px em todos os lados</td></tr>
+          <tr><td><strong>Stroke width</strong></td><td><code>1.5</code></td><td>Constante em todos os ícones</td></tr>
+          <tr><td><strong>Stroke linecap</strong></td><td><code>round</code></td><td>Pontas arredondadas sempre</td></tr>
+          <tr><td><strong>Stroke linejoin</strong></td><td><code>round</code></td><td>Junções suaves sempre</td></tr>
+          <tr><td><strong>Cor padrão</strong></td><td><code>currentColor</code></td><td>Herda do contexto · stroke="currentColor"</td></tr>
+          <tr><td><strong>Acento champagne</strong></td><td><code>#C9A96E</code></td><td>fill direto · usado em ponto-assinatura</td></tr>
+          <tr><td><strong>Tamanho mobile</strong></td><td><code>22-24px</code></td><td>Em apps · área de toque mínima 44pt iOS / 48dp Android</td></tr>
+          <tr><td><strong>Tamanho desktop</strong></td><td><code>20-32px</code></td><td>Em landing · escalável conforme contexto</td></tr>
+          <tr><td><strong>Tamanho hero/feature</strong></td><td><code>48-96px</code></td><td>Para destaques institucionais</td></tr>
+          <tr><td><strong>Convenção naming</strong></td><td><code>vi-[nome]</code></td><td>Prefixo "vi" = Vegl Icon · kebab-case</td></tr>
+          <tr><td><strong>Acessibilidade</strong></td><td><code>aria-label + role="img"</code></td><td>Sempre · com title se possível</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ ÍCONES-MANIFESTO ============ -->
+    <section class="section" id="manifesto-icons">
+      <div class="sec-eyebrow">— IV — Ícones-manifesto</div>
+      <h2>4 ícones que <em>carregam a marca.</em></h2>
+      <p class="section-intro">Os 4 símbolos centrais da Vegl.ia. Carregam o ponto champagne como assinatura institucional. São os únicos que podem aparecer em escala monumental.</p>
+
+      <div class="featured-icons">
+        <div class="fi-card">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" aria-label="Vigília">
+            <ellipse cx="12" cy="12" rx="10" ry="6"/>
+            <circle cx="12" cy="12" r="3"/>
+            <circle cx="12" cy="12" r="1" fill="#C9A96E" stroke="none"/>
+          </svg>
+          <h4>Vigília</h4>
+          <p>O olho que vela. Símbolo-mãe da marca. Aparece no hero e em momentos de autoridade.</p>
+        </div>
+        <div class="fi-card">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" aria-label="Guardião">
+            <path d="M12 3 L20 6 V12 a8 8 0 0 1 -8 9 a8 8 0 0 1 -8 -9 V6 Z"/>
+            <circle cx="12" cy="11" r="1.5" fill="#C9A96E" stroke="none"/>
+          </svg>
+          <h4>Guardião</h4>
+          <p>Escudo da empresa. Usado em compliance, documentação auditável e proteção institucional.</p>
+        </div>
+        <div class="fi-card">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" aria-label="Cuidado">
+            <path d="M12 21 C 7 17 3 14 3 9 a4 4 0 0 1 9 -2 a4 4 0 0 1 9 2 c0 5 -4 8 -9 12 Z"/>
+            <circle cx="12" cy="11" r="1" fill="#C9A96E" stroke="none"/>
+          </svg>
+          <h4>Cuidado</h4>
+          <p>Coração estilizado. Não é fofo — é sóbrio, com ponto dourado dentro como cerne afetivo.</p>
+        </div>
+        <div class="fi-card">
+          <svg class="vi vi-xl" viewBox="0 0 24 24" aria-label="Ecossistema">
+            <circle cx="6" cy="6" r="3"/>
+            <circle cx="18" cy="6" r="3"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="18" r="3"/>
+            <line x1="6" y1="9" x2="6" y2="15"/>
+            <line x1="9" y1="6" x2="15" y2="6"/>
+            <line x1="18" y1="9" x2="18" y2="15"/>
+            <line x1="9" y1="18" x2="15" y2="18"/>
+            <circle cx="12" cy="12" r="1" fill="#C9A96E" stroke="none"/>
+          </svg>
+          <h4>Ecossistema</h4>
+          <p>Os 4 pilares Vacivitta conectados. Aparece em peças que falam de parceria estratégica.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COMPLIANCE & LEI ============ -->
+    <section class="section" id="cat-compliance">
+      <div class="sec-eyebrow">— V — Categoria · Compliance & Lei</div>
+      <h2>Documentação, lei e <em>auditoria.</em></h2>
+
+      <div class="category-block">
+        <div class="icons-grid">
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Documento auditável">
+              <path d="M7 3 H15 L19 7 V19 a2 2 0 0 1 -2 2 H7 a2 2 0 0 1 -2 -2 V5 a2 2 0 0 1 2 -2 Z"/>
+              <path d="M14 3 V8 H19"/>
+              <line x1="9" y1="13" x2="15" y2="13"/>
+              <line x1="9" y1="16" x2="13" y2="16"/>
+            </svg>
+            <div class="icon-tile-name">Documento</div>
+            <div class="icon-tile-handle">vi-document</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Lei">
+              <line x1="12" y1="3" x2="12" y2="6"/>
+              <path d="M5 6 H19 L17 14 a3 3 0 0 1 -6 0 Z" />
+              <path d="M5 6 L7 14 a3 3 0 0 1 -6 0 Z" transform="translate(4 0)"/>
+              <line x1="8" y1="20" x2="16" y2="20"/>
+              <line x1="12" y1="14" x2="12" y2="20"/>
+            </svg>
+            <div class="icon-tile-name">Lei / Justiça</div>
+            <div class="icon-tile-handle">vi-law</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Compliance check">
+              <path d="M12 3 L20 6 V12 a8 8 0 0 1 -8 9 a8 8 0 0 1 -8 -9 V6 Z"/>
+              <path d="M9 12 L11 14 L15 10"/>
+            </svg>
+            <div class="icon-tile-name">Compliance</div>
+            <div class="icon-tile-handle">vi-compliance</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Hash auditável">
+              <line x1="9" y1="3" x2="7" y2="21"/>
+              <line x1="17" y1="3" x2="15" y2="21"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+            </svg>
+            <div class="icon-tile-name">Hash</div>
+            <div class="icon-tile-handle">vi-hash</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Política template">
+              <rect x="5" y="3" width="14" height="18" rx="2"/>
+              <line x1="9" y1="8" x2="15" y2="8"/>
+              <line x1="9" y1="12" x2="15" y2="12"/>
+              <line x1="9" y1="16" x2="13" y2="16"/>
+              <circle cx="17" cy="17" r="1" fill="#C9A96E" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Política</div>
+            <div class="icon-tile-handle">vi-policy</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Auditoria">
+              <circle cx="11" cy="11" r="6"/>
+              <line x1="20" y1="20" x2="16" y2="16"/>
+              <path d="M9 11 L11 13 L13 9"/>
+            </svg>
+            <div class="icon-tile-name">Auditoria</div>
+            <div class="icon-tile-handle">vi-audit</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Certificado">
+              <circle cx="12" cy="10" r="6"/>
+              <path d="M9 14 L7 21 L12 18 L17 21 L15 14"/>
+              <path d="M9 10 L11 12 L15 8"/>
+            </svg>
+            <div class="icon-tile-name">Certificado</div>
+            <div class="icon-tile-handle">vi-certificate</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="LGPD privacidade">
+              <rect x="5" y="10" width="14" height="11" rx="2"/>
+              <path d="M8 10 V7 a4 4 0 0 1 8 0 V10"/>
+              <circle cx="12" cy="15" r="1.5"/>
+            </svg>
+            <div class="icon-tile-name">Privacidade</div>
+            <div class="icon-tile-handle">vi-privacy</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SAÚDE & PREVENÇÃO ============ -->
+    <section class="section" id="cat-saude">
+      <div class="sec-eyebrow">— VI — Categoria · Saúde & Prevenção</div>
+      <h2>Vacinação, prevenção e <em>cuidado preventivo.</em></h2>
+
+      <div class="category-block">
+        <div class="icons-grid">
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Vacinação">
+              <path d="M14 4 L20 10"/>
+              <path d="M16 2 L22 8"/>
+              <line x1="13" y1="5" x2="19" y2="11"/>
+              <line x1="11" y1="9" x2="15" y2="13" />
+              <path d="M11 9 L4 16 a2 2 0 0 0 0 3 L7 22 a2 2 0 0 0 3 0 L17 15 Z"/>
+            </svg>
+            <div class="icon-tile-name">Vacina</div>
+            <div class="icon-tile-handle">vi-vaccine</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Calendário vacinal">
+              <rect x="4" y="5" width="16" height="16" rx="2"/>
+              <line x1="4" y1="9" x2="20" y2="9"/>
+              <line x1="9" y1="3" x2="9" y2="7"/>
+              <line x1="15" y1="3" x2="15" y2="7"/>
+              <circle cx="12" cy="14" r="1" fill="#C9A96E" stroke="none"/>
+              <circle cx="8" cy="14" r="0.7" fill="currentColor" stroke="none"/>
+              <circle cx="16" cy="14" r="0.7" fill="currentColor" stroke="none"/>
+              <circle cx="12" cy="18" r="0.7" fill="currentColor" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Calendário</div>
+            <div class="icon-tile-handle">vi-calendar</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Prevenção câncer">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 7 V12 L16 14"/>
+              <circle cx="12" cy="12" r="1" fill="#C9A96E" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Prevenção</div>
+            <div class="icon-tile-handle">vi-prevention</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Saúde mental">
+              <path d="M9 14 a4 4 0 1 1 0 -7 V6 a3 3 0 0 1 6 0 V7 a4 4 0 0 1 0 7 a3 3 0 0 1 -3 4 a3 3 0 0 1 -3 -4 Z"/>
+              <line x1="12" y1="14" x2="12" y2="18"/>
+            </svg>
+            <div class="icon-tile-name">Mente</div>
+            <div class="icon-tile-handle">vi-mind</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Coração / pulso">
+              <path d="M3 12 H7 L9 8 L12 17 L14 12 H21"/>
+            </svg>
+            <div class="icon-tile-name">Pulso</div>
+            <div class="icon-tile-handle">vi-pulse</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Médico">
+              <circle cx="12" cy="7" r="4"/>
+              <path d="M5 21 V18 a4 4 0 0 1 4 -4 H15 a4 4 0 0 1 4 4 V21"/>
+              <line x1="9" y1="6" x2="9" y2="9"/>
+              <line x1="7.5" y1="7.5" x2="10.5" y2="7.5"/>
+            </svg>
+            <div class="icon-tile-name">Médico(a)</div>
+            <div class="icon-tile-handle">vi-doctor</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Exame preventivo">
+              <circle cx="11" cy="11" r="6"/>
+              <line x1="20" y1="20" x2="16" y2="16"/>
+              <line x1="9" y1="11" x2="13" y2="11"/>
+              <line x1="11" y1="9" x2="11" y2="13"/>
+            </svg>
+            <div class="icon-tile-name">Exame</div>
+            <div class="icon-tile-handle">vi-exam</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="NR-1 SST">
+              <path d="M5 9 a7 7 0 0 1 14 0 V14 H5 Z"/>
+              <line x1="3" y1="14" x2="21" y2="14"/>
+              <line x1="9" y1="9" x2="15" y2="9"/>
+              <line x1="12" y1="6" x2="12" y2="9"/>
+            </svg>
+            <div class="icon-tile-name">SST / NR-1</div>
+            <div class="icon-tile-handle">vi-sst</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ APRENDIZADO ============ -->
+    <section class="section" id="cat-aprendizado">
+      <div class="sec-eyebrow">— VII — Categoria · Aprendizado</div>
+      <h2>Trilhas, aulas, quizzes e <em>fixação.</em></h2>
+
+      <div class="category-block">
+        <div class="icons-grid">
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Trilha">
+              <path d="M5 21 C 5 16 9 16 12 12 C 15 8 19 8 19 3"/>
+              <circle cx="5" cy="21" r="1.5"/>
+              <circle cx="19" cy="3" r="1.5"/>
+              <circle cx="12" cy="12" r="1" fill="#C9A96E" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Trilha</div>
+            <div class="icon-tile-handle">vi-trail</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Aula em vídeo">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <path d="M10 9 L15 12 L10 15 Z"/>
+            </svg>
+            <div class="icon-tile-name">Aula</div>
+            <div class="icon-tile-handle">vi-lesson</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Quiz">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M9 9 a3 3 0 0 1 6 0 c0 1.5 -3 2 -3 4"/>
+              <circle cx="12" cy="17" r="0.7" fill="currentColor" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Quiz</div>
+            <div class="icon-tile-handle">vi-quiz</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Conhecimento">
+              <path d="M3 7 L12 3 L21 7 L12 11 Z"/>
+              <path d="M6 9 V14 a6 3 0 0 0 12 0 V9"/>
+              <line x1="21" y1="7" x2="21" y2="14"/>
+            </svg>
+            <div class="icon-tile-name">Conhecimento</div>
+            <div class="icon-tile-handle">vi-knowledge</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Progresso">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 3 a9 9 0 0 1 6.5 15.3" stroke="#C9A96E"/>
+              <line x1="12" y1="12" x2="16" y2="9"/>
+            </svg>
+            <div class="icon-tile-name">Progresso</div>
+            <div class="icon-tile-handle">vi-progress</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Concluído">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M8 12 L11 15 L16 9"/>
+            </svg>
+            <div class="icon-tile-name">Concluído</div>
+            <div class="icon-tile-handle">vi-check-circle</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Bloqueado">
+              <rect x="5" y="11" width="14" height="10" rx="2"/>
+              <path d="M8 11 V7 a4 4 0 0 1 8 0 V11"/>
+            </svg>
+            <div class="icon-tile-name">Bloqueado</div>
+            <div class="icon-tile-handle">vi-locked</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Streak">
+              <path d="M12 3 L13 9 L19 9 L14 13 L16 20 L12 16 L8 20 L10 13 L5 9 L11 9 Z"/>
+            </svg>
+            <div class="icon-tile-name">Streak / Conquista</div>
+            <div class="icon-tile-handle">vi-streak</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Tempo">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 7 V12 L15 14"/>
+            </svg>
+            <div class="icon-tile-name">Tempo</div>
+            <div class="icon-tile-handle">vi-time</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Validação Dra. Amanda">
+              <circle cx="12" cy="12" r="9"/>
+              <circle cx="12" cy="9" r="3"/>
+              <path d="M6 19 a6 6 0 0 1 12 0"/>
+              <circle cx="18" cy="6" r="1.5" fill="#C9A96E" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Validado</div>
+            <div class="icon-tile-handle">vi-validated</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DASHBOARD RH ============ -->
+    <section class="section" id="cat-rh">
+      <div class="sec-eyebrow">— VIII — Categoria · Dashboard RH</div>
+      <h2>Gestão, equipe e <em>tomada de decisão.</em></h2>
+
+      <div class="category-block">
+        <div class="icons-grid">
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Equipe">
+              <circle cx="9" cy="8" r="3"/>
+              <circle cx="17" cy="9" r="2.5"/>
+              <path d="M3 21 a6 6 0 0 1 12 0"/>
+              <path d="M14 19 a4.5 4.5 0 0 1 7 2"/>
+            </svg>
+            <div class="icon-tile-name">Equipe</div>
+            <div class="icon-tile-handle">vi-team</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Empresa">
+              <path d="M5 21 V8 L12 4 L19 8 V21 Z"/>
+              <line x1="9" y1="13" x2="11" y2="13"/>
+              <line x1="13" y1="13" x2="15" y2="13"/>
+              <line x1="9" y1="17" x2="11" y2="17"/>
+              <line x1="13" y1="17" x2="15" y2="17"/>
+            </svg>
+            <div class="icon-tile-name">Empresa</div>
+            <div class="icon-tile-handle">vi-company</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Dashboard">
+              <rect x="3" y="3" width="8" height="9" rx="1.5"/>
+              <rect x="13" y="3" width="8" height="6" rx="1.5"/>
+              <rect x="13" y="11" width="8" height="10" rx="1.5"/>
+              <rect x="3" y="14" width="8" height="7" rx="1.5"/>
+            </svg>
+            <div class="icon-tile-name">Dashboard</div>
+            <div class="icon-tile-handle">vi-dashboard</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Relatório gráfico">
+              <line x1="4" y1="20" x2="20" y2="20"/>
+              <line x1="4" y1="20" x2="4" y2="4"/>
+              <rect x="7" y="14" width="3" height="6"/>
+              <rect x="12" y="9" width="3" height="11"/>
+              <rect x="17" y="11" width="3" height="9"/>
+            </svg>
+            <div class="icon-tile-name">Relatório</div>
+            <div class="icon-tile-handle">vi-report</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Departamento">
+              <rect x="9" y="3" width="6" height="6" rx="1"/>
+              <rect x="3" y="15" width="6" height="6" rx="1"/>
+              <rect x="15" y="15" width="6" height="6" rx="1"/>
+              <path d="M12 9 V12 M6 12 H18 V15 M6 12 V15 M12 12 V15"/>
+            </svg>
+            <div class="icon-tile-name">Departamento</div>
+            <div class="icon-tile-handle">vi-department</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Alerta">
+              <path d="M12 3 L21 19 H3 Z"/>
+              <line x1="12" y1="9" x2="12" y2="14"/>
+              <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Alerta</div>
+            <div class="icon-tile-handle">vi-alert</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Filtro">
+              <path d="M3 5 H21 L14 14 V20 L10 22 V14 Z"/>
+            </svg>
+            <div class="icon-tile-name">Filtro</div>
+            <div class="icon-tile-handle">vi-filter</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Exportar">
+              <path d="M12 14 V3"/>
+              <path d="M8 7 L12 3 L16 7"/>
+              <path d="M5 14 V19 a2 2 0 0 0 2 2 H17 a2 2 0 0 0 2 -2 V14"/>
+            </svg>
+            <div class="icon-tile-name">Exportar</div>
+            <div class="icon-tile-handle">vi-export</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SISTEMA & STATUS ============ -->
+    <section class="section" id="cat-sistema">
+      <div class="sec-eyebrow">— IX — Categoria · Sistema & Status</div>
+      <h2>Estados, ações e <em>feedback do produto.</em></h2>
+
+      <div class="category-block">
+        <div class="icons-grid">
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Notificação">
+              <path d="M6 9 a6 6 0 0 1 12 0 V15 L20 17 H4 L6 15 Z"/>
+              <path d="M10 19 a2 2 0 0 0 4 0"/>
+              <circle cx="18" cy="6" r="1.5" fill="#C9A96E" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Notificação</div>
+            <div class="icon-tile-handle">vi-bell</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Buscar">
+              <circle cx="11" cy="11" r="6"/>
+              <line x1="20" y1="20" x2="16" y2="16"/>
+            </svg>
+            <div class="icon-tile-name">Buscar</div>
+            <div class="icon-tile-handle">vi-search</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Configurações">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 3 V5 M12 19 V21 M3 12 H5 M19 12 H21 M5.6 5.6 L7 7 M17 17 L18.4 18.4 M5.6 18.4 L7 17 M17 7 L18.4 5.6"/>
+            </svg>
+            <div class="icon-tile-name">Configurações</div>
+            <div class="icon-tile-handle">vi-settings</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Perfil">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M5 21 V19 a6 6 0 0 1 14 0 V21"/>
+            </svg>
+            <div class="icon-tile-name">Perfil</div>
+            <div class="icon-tile-handle">vi-user</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Informação">
+              <circle cx="12" cy="12" r="9"/>
+              <line x1="12" y1="11" x2="12" y2="16"/>
+              <circle cx="12" cy="8" r="0.7" fill="currentColor" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Info</div>
+            <div class="icon-tile-handle">vi-info</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Compartilhar">
+              <circle cx="6" cy="12" r="2.5"/>
+              <circle cx="18" cy="6" r="2.5"/>
+              <circle cx="18" cy="18" r="2.5"/>
+              <line x1="8.5" y1="11" x2="15.5" y2="7"/>
+              <line x1="8.5" y1="13" x2="15.5" y2="17"/>
+            </svg>
+            <div class="icon-tile-name">Compartilhar</div>
+            <div class="icon-tile-handle">vi-share</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Download">
+              <path d="M12 4 V15"/>
+              <path d="M8 11 L12 15 L16 11"/>
+              <line x1="5" y1="20" x2="19" y2="20"/>
+            </svg>
+            <div class="icon-tile-name">Download</div>
+            <div class="icon-tile-handle">vi-download</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Vacinação corporativa">
+              <path d="M3 17 H21"/>
+              <rect x="5" y="11" width="14" height="6" rx="1"/>
+              <line x1="12" y1="6" x2="12" y2="11"/>
+              <circle cx="12" cy="5" r="1.5" fill="#C9A96E" stroke="none"/>
+              <line x1="9" y1="14" x2="15" y2="14"/>
+            </svg>
+            <div class="icon-tile-name">Campanha</div>
+            <div class="icon-tile-handle">vi-campaign</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NAVEGAÇÃO MOBILE ============ -->
+    <section class="section" id="cat-navegacao">
+      <div class="sec-eyebrow">— X — Categoria · Navegação mobile</div>
+      <h2>Setas, gestos e <em>controles de produto.</em></h2>
+
+      <div class="category-block">
+        <div class="icons-grid">
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Voltar">
+              <path d="M15 18 L9 12 L15 6"/>
+            </svg>
+            <div class="icon-tile-name">Voltar</div>
+            <div class="icon-tile-handle">vi-back</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Avançar">
+              <path d="M9 6 L15 12 L9 18"/>
+            </svg>
+            <div class="icon-tile-name">Avançar</div>
+            <div class="icon-tile-handle">vi-forward</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Menu">
+              <line x1="4" y1="7" x2="20" y2="7"/>
+              <line x1="4" y1="12" x2="20" y2="12"/>
+              <line x1="4" y1="17" x2="14" y2="17"/>
+            </svg>
+            <div class="icon-tile-name">Menu</div>
+            <div class="icon-tile-handle">vi-menu</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Fechar">
+              <line x1="6" y1="6" x2="18" y2="18"/>
+              <line x1="18" y1="6" x2="6" y2="18"/>
+            </svg>
+            <div class="icon-tile-name">Fechar</div>
+            <div class="icon-tile-handle">vi-close</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Adicionar">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <div class="icon-tile-name">Adicionar</div>
+            <div class="icon-tile-handle">vi-plus</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Home">
+              <path d="M4 11 L12 4 L20 11 V20 a1 1 0 0 1 -1 1 H5 a1 1 0 0 1 -1 -1 Z"/>
+              <path d="M10 21 V14 H14 V21"/>
+            </svg>
+            <div class="icon-tile-name">Home</div>
+            <div class="icon-tile-handle">vi-home</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Trilhas (nav)">
+              <path d="M5 21 C 5 16 9 16 12 12 C 15 8 19 8 19 3"/>
+              <circle cx="12" cy="12" r="1.5" fill="#C9A96E" stroke="none"/>
+            </svg>
+            <div class="icon-tile-name">Trilhas</div>
+            <div class="icon-tile-handle">vi-trails</div>
+          </div>
+
+          <div class="icon-tile">
+            <svg class="vi" viewBox="0 0 24 24" aria-label="Acessibilidade">
+              <circle cx="12" cy="5" r="2"/>
+              <path d="M12 7 V13 M9 11 H15 M9 21 L12 13 L15 21"/>
+            </svg>
+            <div class="icon-tile-name">Acessibilidade</div>
+            <div class="icon-tile-handle">vi-a11y</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ APLICAÇÃO LANDING ============ -->
+    <section class="section" id="aplicacao-landing">
+      <div class="sec-eyebrow">— XI — Aplicação · Landing</div>
+      <h2>Como os ícones <em>vivem na landing.</em></h2>
+      <p class="section-intro">Mockups com ícones reais aplicados nos componentes da landing institucional. Tamanhos preferenciais entre 22-32px no contexto editorial premium.</p>
+
+      <div class="usage-grid">
+
+        <div class="usage-card">
+          <div class="label">CTAs com ícone</div>
+          <h4>Botões e links</h4>
+          <div class="mock-row">
+            <div class="mock-btn">
+              <svg class="vi" viewBox="0 0 24 24"><path d="M12 3 L20 6 V12 a8 8 0 0 1 -8 9 a8 8 0 0 1 -8 -9 V6 Z"/><path d="M9 12 L11 14 L15 10"/></svg>
+              Cumprir em 30 dias
+            </div>
+            <div class="mock-btn outline">
+              <svg class="vi" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9 L15 12 L10 15 Z"/></svg>
+              Ver demo
+            </div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-btn mint">
+              <svg class="vi" viewBox="0 0 24 24"><path d="M12 14 V3"/><path d="M8 7 L12 3 L16 7"/><path d="M5 14 V19 a2 2 0 0 0 2 2 H17 a2 2 0 0 0 2 -2 V14"/></svg>
+              Baixar política
+            </div>
+            <div class="mock-btn outline">
+              <svg class="vi" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><line x1="8.5" y1="11" x2="15.5" y2="7"/><line x1="8.5" y1="13" x2="15.5" y2="17"/></svg>
+              Compartilhar
+            </div>
+          </div>
+        </div>
+
+        <div class="usage-card">
+          <div class="label">Lista de features</div>
+          <h4>Promessas-chave</h4>
+          <div class="feature-row">
+            <svg class="vi" viewBox="0 0 24 24"><path d="M12 3 L20 6 V12 a8 8 0 0 1 -8 9 a8 8 0 0 1 -8 -9 V6 Z"/><path d="M9 12 L11 14 L15 10"/></svg>
+            <strong>Compliance auditável</strong>
+          </div>
+          <div class="feature-row">
+            <svg class="vi" viewBox="0 0 24 24"><path d="M12 21 C 7 17 3 14 3 9 a4 4 0 0 1 9 -2 a4 4 0 0 1 9 2 c0 5 -4 8 -9 12 Z"/></svg>
+            <strong>Cuidado humano</strong>
+          </div>
+          <div class="feature-row">
+            <svg class="vi" viewBox="0 0 24 24"><path d="M3 17 H21"/><rect x="5" y="11" width="14" height="6" rx="1"/><line x1="12" y1="6" x2="12" y2="11"/></svg>
+            <strong>Execução real via Vacivitta</strong>
+          </div>
+          <div class="feature-row">
+            <svg class="vi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="9" r="3"/><path d="M6 19 a6 6 0 0 1 12 0"/></svg>
+            <strong>Validação Dra. Amanda</strong>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ APLICAÇÃO APP ============ -->
+    <section class="section" id="aplicacao-app">
+      <div class="sec-eyebrow">— XII — Aplicação · App mobile</div>
+      <h2>Iconografia em mobile <em>com toque mínimo.</em></h2>
+      <p class="section-intro">No app, ícones aparecem em 22-24px, com área de toque de 44pt iOS / 48dp Android via padding. Bottom nav usa 5 ícones-chave + label curto.</p>
+
+      <div class="usage-grid">
+
+        <div class="usage-card">
+          <div class="label">Bottom navigation · Colaborador</div>
+          <h4>Tab bar do app</h4>
+          <div class="mobile-nav-mock">
+            <div class="mn-item active">
+              <svg class="vi" viewBox="0 0 24 24"><path d="M4 11 L12 4 L20 11 V20 a1 1 0 0 1 -1 1 H5 a1 1 0 0 1 -1 -1 Z"/><path d="M10 21 V14 H14 V21"/></svg>
+              Início
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><path d="M5 21 C 5 16 9 16 12 12 C 15 8 19 8 19 3"/></svg>
+              Trilhas
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><circle cx="12" cy="10" r="6"/><path d="M9 14 L7 21 L12 18 L17 21 L15 14"/></svg>
+              Certificados
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><path d="M6 9 a6 6 0 0 1 12 0 V15 L20 17 H4 L6 15 Z"/><path d="M10 19 a2 2 0 0 0 4 0"/></svg>
+              Avisos
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21 V19 a6 6 0 0 1 14 0 V21"/></svg>
+              Perfil
+            </div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-soft);">Estado ativo: cor mint. Inativo: cream com 55% opacidade. Sem badge vermelho — usar ponto champagne discreto.</p>
+        </div>
+
+        <div class="usage-card">
+          <div class="label">Bottom navigation · Gestor RH</div>
+          <h4>Tab bar do dashboard</h4>
+          <div class="mobile-nav-mock">
+            <div class="mn-item active">
+              <svg class="vi" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="9" rx="1.5"/><rect x="13" y="3" width="8" height="6" rx="1.5"/><rect x="13" y="11" width="8" height="10" rx="1.5"/><rect x="3" y="14" width="8" height="7" rx="1.5"/></svg>
+              Painel
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 21 a6 6 0 0 1 12 0"/><path d="M14 19 a4.5 4.5 0 0 1 7 2"/></svg>
+              Equipe
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><path d="M3 17 H21"/><rect x="5" y="11" width="14" height="6" rx="1"/><line x1="12" y1="6" x2="12" y2="11"/></svg>
+              Campanhas
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="20" y1="20" x2="16" y2="16"/><path d="M9 11 L11 13 L13 9"/></svg>
+              Auditoria
+            </div>
+            <div class="mn-item">
+              <svg class="vi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3 V5 M12 19 V21 M3 12 H5 M19 12 H21"/></svg>
+              Ajustes
+            </div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-soft);">Mesmo padrão de cores. Diferenciação só na configuração de tabs por papel do usuário.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ ACESSIBILIDADE ============ -->
+    <section class="section" id="a11y">
+      <div class="sec-eyebrow">— XIII — Acessibilidade</div>
+      <h2>WCAG 2.1 AA <em>desde o primeiro pixel.</em></h2>
+
+      <div class="a11y-card">
+        <h3 style="margin-top: 0;">Regras inegociáveis para todo ícone Vegl.ia</h3>
+        <p><strong>1. Sempre acompanhado de aria-label descritivo.</strong> O leitor de tela precisa entender a função, não a forma. Ex: <code>aria-label="Adequação à Lei 15.377"</code>, não <code>aria-label="escudo"</code>.</p>
+        <p><strong>2. Ícone sozinho exige role="img".</strong> Se for clicável, role="button" + aria-label adicional.</p>
+        <p><strong>3. Cor sozinha nunca comunica estado.</strong> Erro tem cor + ícone de alerta + texto. Concluído tem cor + check + texto.</p>
+        <p><strong>4. Contraste mínimo 4.5:1.</strong> Em qualquer plano de fundo da paleta, o stroke do ícone precisa passar no teste de contraste WCAG AA.</p>
+        <p><strong>5. Foco visível obrigatório.</strong> Quando ícone é interativo, anel de foco em mint (#5DD3A8) com 2px de offset.</p>
+        <p><strong>6. Não-decorativo precisa de title.</strong> SVG inline com <code>&lt;title&gt;</code> é parseado pelo leitor de tela mesmo sem aria-label.</p>
+      </div>
+    </section>
+
+    <!-- ============ HANDOFF ============ -->
+    <section class="section" id="handoff">
+      <div class="sec-eyebrow">— XIV — Handoff técnico · @dev</div>
+      <h2>Como o time técnico <em>consome o sistema.</em></h2>
+
+      <h3>Estrutura de entrega</h3>
+      <p>Cada ícone vive em um arquivo SVG individual em <code>src/icons/vi-[nome].svg</code>. O componente React/Vue/Web Component recebe props padronizadas:</p>
+
+      <div style="background: var(--deep-navy); color: var(--cream); padding: 20px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; margin: 20px 0;">
+        <span style="color: var(--mint);">&lt;Icon</span><br>
+        &nbsp;&nbsp;name=<span style="color: var(--champagne-light);">"vi-compliance"</span><br>
+        &nbsp;&nbsp;size={<span style="color: var(--champagne-light);">24</span>}<br>
+        &nbsp;&nbsp;color=<span style="color: var(--champagne-light);">"currentColor"</span><br>
+        &nbsp;&nbsp;ariaLabel=<span style="color: var(--champagne-light);">"Adequação à Lei 15.377"</span><br>
+        &nbsp;&nbsp;hasGoldDot={<span style="color: var(--champagne-light);">true</span>}<br>
+        <span style="color: var(--mint);">/&gt;</span>
+      </div>
+
+      <h3>Convenções</h3>
+      <table class="spec-table">
+        <thead><tr><th>Item</th><th>Convenção</th></tr></thead>
+        <tbody>
+          <tr><td>Naming</td><td><code>vi-[função-em-kebab-case]</code> · ex: <code>vi-compliance</code>, <code>vi-vaccine</code>, <code>vi-team</code></td></tr>
+          <tr><td>Cor</td><td><code>currentColor</code> sempre · controlado via CSS no contexto</td></tr>
+          <tr><td>Ponto champagne</td><td>Atributo <code>fill="#C9A96E" stroke="none"</code> · usado só em ícones-manifesto e validação</td></tr>
+          <tr><td>Tree-shaking</td><td>Cada ícone é módulo isolado · bundle paga só pelos ícones usados</td></tr>
+          <tr><td>Sprite SVG</td><td>Versão sprite disponível para uso via <code>&lt;use href="#vi-name"&gt;</code> em landing</td></tr>
+          <tr><td>Versionamento</td><td>SemVer · MAJOR ao adicionar/remover ícones · MINOR ao melhorar visual sem quebrar API</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Próximos passos para o @dev</h3>
+      <p>1. Exportar SVGs individuais a partir deste documento (todos estão inline aqui — fácil extração).</p>
+      <p>2. Configurar bundler (Vite, Webpack) com loader SVG-as-component.</p>
+      <p>3. Criar wrapper <code>&lt;Icon&gt;</code> com props padronizadas e lógica de aria-label.</p>
+      <p>4. Documentar no Storybook (ou similar) para o time consumir.</p>
+      <p>5. Versionar pacote <code>@veglia/icons</code> internamente para reuso entre landing, app web, app mobile.</p>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="doc-foot">
+      <div class="doc-foot-logo"><span>Vegl</span><span class="dot">·</span><span class="ia">ia</span></div>
+      <div class="doc-foot-tag">Quem vela cuida.</div>
+      <div class="doc-foot-meta">
+        Sistema de Iconografia · Linecraft v1.0 · 2026<br>
+        @xquads-designer × @xquads-po × @xquads-dev × @xquads-mobiledesign-edu × @ux<br>
+        RRevela © 2026
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

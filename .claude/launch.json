@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "apresentacao",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "/tmp/veglia-preview", "--listen", "5175", "--no-clipboard"],
+      "port": 5175
+    },
+    {
+      "name": "landing",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/web", "run", "preview", "--", "--port", "5174", "--host"],
+      "port": 5174
+    }
+  ]
+}

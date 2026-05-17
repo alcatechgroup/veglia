@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vegl.ia · Apresentação Comercial · Parceiro Estratégico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep-navy: #0B2545;
+      --twilight: #1A3A5C;
+      --mint: #5DD3A8;
+      --champagne: #C9A96E;
+      --warm-white: #FBF8F1;
+      --cream: #F4EDE0;
+      --red-alert: #E05252;
+      --sky: #C9DCE8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { font-family: 'Inter', sans-serif; }
+
+    /* ============================================================
+       SLIDE BASE
+    ============================================================ */
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .slide-content {
+      position: relative;
+      z-index: 2;
+      padding: 36px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-photo {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .slide-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .slide-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* Gradientes por posição */
+    .photo-right .slide-photo::after {
+      background: linear-gradient(to left, rgba(11,37,69,0.15) 0%, rgba(11,37,69,0.85) 100%);
+    }
+
+    .photo-left .slide-photo::after {
+      background: linear-gradient(to right, rgba(11,37,69,0.15) 0%, rgba(11,37,69,0.85) 100%);
+    }
+
+    /* Overlay especial para slides cream */
+    .photo-right.cream-overlay .slide-photo::after {
+      background: linear-gradient(to left, rgba(244,237,224,0.1) 0%, rgba(244,237,224,0.9) 70%, #F4EDE0 100%);
+    }
+
+    .photo-left.cream-overlay .slide-photo::after {
+      background: linear-gradient(to right, rgba(244,237,224,0.1) 0%, rgba(244,237,224,0.9) 70%, #F4EDE0 100%);
+    }
+
+    /* Variantes de largura */
+    .photo-45 .slide-photo { width: 45%; }
+    .photo-45 .slide-content { width: 55%; }
+
+    .photo-42 .slide-photo { width: 42%; }
+    .photo-42 .slide-content { width: 58%; }
+
+    .photo-40 .slide-photo { width: 40%; }
+    .photo-40 .slide-content { width: 60%; }
+
+    .photo-38 .slide-photo { width: 38%; }
+    .photo-38 .slide-content { width: 62%; }
+
+    /* photo-right: foto fica depois do content */
+    .photo-right { flex-direction: row; }
+    .photo-right .slide-content { order: 1; }
+    .photo-right .slide-photo { order: 2; }
+
+    /* photo-left: foto fica antes do content */
+    .photo-left { flex-direction: row; }
+    .photo-left .slide-photo { order: 1; }
+    .photo-left .slide-content { order: 2; }
+
+    /* ============================================================
+       RODAPÉ GLOBAL
+    ============================================================ */
+    .slide-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 26px;
+      background: rgba(0,0,0,0.25);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .slide-footer span {
+      font-family: 'Inter', sans-serif;
+      font-size: 7px;
+    }
+
+    .footer-dark span {
+      color: rgba(255,255,255,0.45);
+    }
+
+    .footer-light span {
+      color: rgba(11,37,69,0.45);
+    }
+
+    /* ============================================================
+       UTILITÁRIOS
+    ============================================================ */
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      margin-bottom: 10px;
+    }
+
+    .headline {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: var(--warm-white);
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .deco-line {
+      width: 80px;
+      height: 2px;
+      background: var(--mint);
+      margin: 14px 0;
+    }
+
+    /* ============================================================
+       PRINT
+    ============================================================ */
+    @media print {
+      @page { size: A4 landscape; margin: 0; }
+      body { margin: 0; background: white; }
+      .slide { display: flex !important; break-after: page; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .slide-nav { display: none !important; }
+    }
+
+    /* ============================================================
+       NAVEGAÇÃO WEB
+    ============================================================ */
+    @media screen {
+      body {
+        background: #111;
+        padding: 20px;
+        gap: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .slide {
+        box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+        border-radius: 4px;
+      }
+      .slide-nav {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 999;
+        background: rgba(0,0,0,0.6);
+        padding: 8px 14px;
+        border-radius: 999px;
+      }
+      .slide-nav a {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        display: block;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+      .slide-nav a:hover, .slide-nav a.active { background: var(--mint); }
+    }
+
+    /* ============================================================
+       MOBILE RESPONSIVE (≤ 768px)
+    ============================================================ */
+    @media screen and (max-width: 768px) {
+
+      body {
+        padding: 0;
+        gap: 0;
+        background: #0A0A0A;
+      }
+
+      /* --- Slide base: full-width card, altura automática --- */
+      .slide {
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        flex-direction: column !important;
+        border-bottom: 1px solid rgba(93,211,168,0.08);
+        overflow: hidden;
+      }
+
+      /* --- Foto: banner topo, altura proporcional --- */
+      .slide-photo {
+        width: 100% !important;
+        height: 54vw !important;
+        min-height: 200px;
+        max-height: 300px;
+        order: 1 !important;
+        flex-shrink: 0 !important;
+      }
+
+      /* --- Conteúdo: empilha abaixo da foto --- */
+      .slide-content {
+        width: 100% !important;
+        order: 2 !important;
+        padding: 28px 20px 52px !important;
+        flex: 1;
+      }
+
+      /* --- Gradiente vertical (escuro no fundo da foto, ligando ao content) --- */
+      .photo-right .slide-photo::after,
+      .photo-left .slide-photo::after {
+        background: linear-gradient(
+          to top,
+          rgba(11,37,69,1) 0%,
+          rgba(11,37,69,0.5) 40%,
+          transparent 100%
+        ) !important;
+      }
+
+      /* Slides cream: gradiente cream na base da foto */
+      .photo-right.cream-overlay .slide-photo::after,
+      .photo-left.cream-overlay .slide-photo::after {
+        background: linear-gradient(
+          to top,
+          #F4EDE0 0%,
+          rgba(244,237,224,0.9) 35%,
+          rgba(244,237,224,0.05) 100%
+        ) !important;
+      }
+
+      /* --- Twilight bg slides: ajusta gradiente escuro --- */
+      #s2 .slide-photo::after {
+        background: linear-gradient(
+          to top,
+          rgba(26,58,92,1) 0%,
+          rgba(26,58,92,0.5) 40%,
+          transparent 100%
+        ) !important;
+      }
+
+      /* --- Footer: posição relativa, dentro do fluxo --- */
+      .slide-footer {
+        position: relative !important;
+        bottom: auto !important;
+        margin-top: 0;
+        height: 34px;
+      }
+
+      /* --- Ordem de empilhamento mobile: foto topo → conteúdo → footer --- */
+      .slide-photo  { order: 0 !important; }
+      .slide-content { order: 1 !important; }
+      .slide-footer  { order: 99 !important; position: relative !important; bottom: auto !important; }
+
+      /* --- Logo absoluta: fica sobre a foto --- */
+      .slide .logo-badge {
+        top: 12px;
+        left: 14px;
+        z-index: 30;
+      }
+
+      /* --- Eyebrow e headline: tamanhos mobile --- */
+      .eyebrow { font-size: 9px !important; letter-spacing: 2px !important; }
+
+      /* ---- Slide 10 (Plataforma): grid 2 colunas ---- */
+      .s10-grid {
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: auto auto auto auto !important;
+        padding: 10px 12px 12px !important;
+        gap: 8px !important;
+        overflow-y: auto;
+      }
+
+      /* Video player: full width na row 3 */
+      .s10-video {
+        grid-column: 1 / -1 !important;
+        grid-row: auto !important;
+      }
+
+      /* Certificado: full width na row 4 */
+      .s10-cert {
+        grid-column: 1 / -1 !important;
+      }
+
+      /* Slide 10 header: top padding clears o logo (19px + 16px top) */
+      .s10-header {
+        padding-top: 58px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+
+      /* ---- Slide 11 (CTA): top padding clears o logo ---- */
+      .s11-content {
+        max-width: 100% !important;
+        padding: 58px 20px 24px !important;
+      }
+      #s11 h2 { font-size: 22px !important; }
+
+      /* ---- Capa (s1): headline e subtítulo ---- */
+      #s1 .slide-content { padding-bottom: 52px !important; }
+
+      /* --- Navegação mobile: dots menores, mais compactos --- */
+      .slide-nav {
+        bottom: 12px;
+        padding: 6px 12px;
+        gap: 6px;
+      }
+      .slide-nav a {
+        width: 8px;
+        height: 8px;
+      }
+
+    }
+
+    /* Tablet (769px – 1024px): escala proporcional */
+    @media screen and (min-width: 769px) and (max-width: 1200px) {
+      body { padding: 12px; gap: 12px; }
+      .slide {
+        width: 100%;
+        max-width: 1000px;
+        height: auto;
+        min-height: 0;
+        aspect-ratio: 297 / 210;
+        overflow: hidden;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV WEB -->
+<nav class="slide-nav">
+  <a href="#s1" class="active" title="Capa"></a>
+  <a href="#s2" title="Problema"></a>
+  <a href="#s3" title="Lei 15.377"></a>
+  <a href="#s4" title="Solução"></a>
+  <a href="#s5" title="Trilhas"></a>
+  <a href="#s6" title="Corpo Técnico"></a>
+  <a href="#s7" title="Vacivitta"></a>
+  <a href="#s8" title="Parceria"></a>
+  <a href="#s9" title="Modelo Comercial"></a>
+  <a href="#s10" title="A Plataforma"></a>
+  <a href="#s11" title="Próximos Passos"></a>
+</nav>
+
+<!-- ============================================================
+     SLIDE 1 — CAPA
+============================================================ -->
+<section id="s1" class="slide photo-right photo-45" style="background:#0B2545;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <div class="slide-content" style="width:55%;">
+
+    <!-- Badge confidencial -->
+    <div style="
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(26,58,92,0.7); border-left:3px solid var(--mint);
+      padding:6px 12px; border-radius:3px; margin-bottom:20px; width:fit-content;
+    ">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--warm-white);letter-spacing:1px;">
+        CONFIDENCIAL &middot; Apresentação Comercial Restrita
+      </span>
+    </div>
+
+    <!-- Logo -->
+    <div style="font-family:'Inter',sans-serif;font-weight:900;font-size:64px;color:var(--warm-white);line-height:1;margin-bottom:4px;">
+      Vegl<span style="color:#5DD3A8;">&middot;ia</span>
+    </div>
+
+    <div class="deco-line"></div>
+
+    <!-- Headline -->
+    <h1 style="font-family:'Inter',sans-serif;font-weight:700;font-size:22px;color:var(--warm-white);line-height:1.3;max-width:420px;margin-bottom:10px;">
+      A lei mudou. Sua empresa está pronta para provar que cuida?
+    </h1>
+
+    <!-- Subtítulo mono -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mint);text-transform:uppercase;letter-spacing:3px;margin-bottom:14px;">
+      Compliance Preventivo Corporativo &middot; Lei 15.377/2026
+    </div>
+
+    <!-- Tagline -->
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--champagne);margin-bottom:20px;">
+      Quem vela, cuida.
+    </div>
+
+    <!-- Ícones -->
+    <div style="display:flex;gap:16px;align-items:center;">
+      <span style="color:rgba(93,211,168,0.4);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </span>
+      <span style="color:rgba(93,211,168,0.4);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </span>
+      <span style="color:rgba(93,211,168,0.4);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </span>
+    </div>
+
+  </div>
+
+  <!-- Foto direita -->
+  <div class="slide-photo" style="width:45%;">
+    <img src="../apps/web/public/images/hero_rh_confiante.jpg" alt="RH profissional confiante" style="object-position:center top;">
+  </div>
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>01 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 2 — O PROBLEMA
+============================================================ -->
+<section id="s2" class="slide photo-left photo-42" style="background:#1A3A5C;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <div class="slide-content" style="width:58%;">
+
+    <div class="eyebrow" style="color:var(--champagne);">01 &middot; O Problema</div>
+
+    <h2 class="headline" style="font-size:24px;max-width:400px;">
+      O RH zela. Mas a lei agora exige que a empresa prove.
+    </h2>
+
+    <!-- 3 cards alerta -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div style="border-left:4px solid var(--mint);background:rgba(255,255,255,0.06);border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="color:var(--mint);font-size:14px;">&#9650;</span>
+          <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--mint);">Autuações chegam silenciosamente</span>
+        </div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">A fiscalização do MTE não avisa. Quando chega, exige documentação retroativa que a maioria das empresas não tem.</p>
+      </div>
+
+      <div style="border-left:4px solid var(--champagne);background:rgba(255,255,255,0.06);border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="color:var(--champagne);font-size:13px;">&#9719;</span>
+          <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--champagne);">Absenteísmo por doenças preveníveis</span>
+        </div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">Gripe, Covid, pneumonia e outras doenças imunopreveníveis custam bilhões em afastamentos anuais. São evitáveis.</p>
+      </div>
+
+      <div style="border-left:4px solid #E05252;background:rgba(255,255,255,0.06);border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="color:#E05252;font-size:14px;">&#9878;</span>
+          <span style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#E05252;">Passivo trabalhista por omissão</span>
+        </div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">A falta de comunicação documentada sobre vacinação e prevenção já configura infração. O risco jurídico é real.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Foto direita -->
+  <div class="slide-photo" style="width:42%;">
+    <img src="../apps/web/public/images/colaborador-protegido.jpg" alt="Colaborador protegido" style="object-position:center;">
+  </div>
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>02 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 3 — A LEI 15.377/2026
+============================================================ -->
+<section id="s3" class="slide photo-left photo-40 cream-overlay" style="background:#F4EDE0;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#0B2545;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <!-- Foto esquerda -->
+  <div class="slide-photo" style="width:40%;">
+    <img src="../apps/web/public/images/maos-cuidado-geracoes.jpg" alt="Maos cuidado geracoes" style="object-position:center;">
+  </div>
+
+  <div class="slide-content" style="width:60%;">
+
+    <div class="eyebrow" style="color:var(--champagne);">02 &middot; A Obrigação Legal</div>
+
+    <h2 class="headline" style="font-size:20px;color:var(--deep-navy);max-width:380px;">
+      Sancionada em 2 de abril de 2026. Em vigor desde 6 de abril.
+    </h2>
+
+    <!-- Box de obrigações -->
+    <div style="background:var(--deep-navy);border-radius:10px;padding:20px;margin-bottom:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--champagne);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;">
+        Art. 169-A da CLT &mdash; 4 Obrigações Simultâneas
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="display:flex;gap:6px;align-items:flex-start;">
+          <span style="color:var(--mint);font-size:10px;margin-top:1px;">&#9658;</span>
+          <span style="font-size:9px;color:rgba(251,248,241,0.8);line-height:1.5;">Comunicar campanhas de vacinação</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:flex-start;">
+          <span style="color:var(--mint);font-size:10px;margin-top:1px;">&#9658;</span>
+          <span style="font-size:9px;color:rgba(251,248,241,0.8);line-height:1.5;">Orientar sobre prevenção de cânceres</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:flex-start;">
+          <span style="color:var(--mint);font-size:10px;margin-top:1px;">&#9658;</span>
+          <span style="font-size:9px;color:rgba(251,248,241,0.8);line-height:1.5;">Garantir ausência para exames preventivos</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:flex-start;">
+          <span style="color:var(--mint);font-size:10px;margin-top:1px;">&#9658;</span>
+          <span style="font-size:9px;color:rgba(251,248,241,0.8);line-height:1.5;">Documentar de forma auditável</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div style="background:rgba(224,82,82,0.07);border:1px solid #E05252;border-radius:6px;padding:10px 14px;">
+      <span style="font-size:9px;color:#E05252;font-weight:600;">
+        &#9888; Intenção não é prova. Documentação é.
+      </span>
+    </div>
+
+  </div>
+
+  <div class="slide-footer footer-light">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>03 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 4 — COMO O VEGL.IA RESOLVE
+============================================================ -->
+<section id="s4" class="slide photo-right photo-42" style="background:#0B2545;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <div class="slide-content" style="width:58%;">
+
+    <div class="eyebrow" style="color:var(--mint);">03 &middot; A Solução</div>
+
+    <h2 class="headline" style="font-size:22px;max-width:380px;">
+      Quatro pilares. Uma plataforma.
+    </h2>
+
+    <!-- Grid 2x2 de mini-cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(93,211,168,0.2);border-radius:8px;padding:12px;">
+        <div style="color:var(--mint);margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--mint);margin-bottom:4px;">Trilhas Auditáveis</div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">Treinamentos registrados com certificado SHA-256.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(93,211,168,0.2);border-radius:8px;padding:12px;">
+        <div style="color:var(--mint);margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--mint);margin-bottom:4px;">Dashboard em Tempo Real</div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">Relatório exportável para o jurídico com um clique.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(93,211,168,0.2);border-radius:8px;padding:12px;">
+        <div style="color:var(--mint);margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="19" x2="9" y2="15"/><polyline points="15 4 19 8 9 18 5 14"/><line x1="9" y1="18" x2="5" y2="14"/><line x1="13" y1="6" x2="7" y2="12"/><line x1="11" y1="8" x2="5" y2="14"/></svg>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--mint);margin-bottom:4px;">Vacinação In-Company</div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">Campanha corporativa agendada direto pela plataforma.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(93,211,168,0.2);border-radius:8px;padding:12px;">
+        <div style="color:var(--mint);margin-bottom:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><polyline points="9 11 12 14 16 9"/></svg>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--mint);margin-bottom:4px;">Conteúdo Validado</div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">Cada módulo chancelado pela Dra. Amanda Conde.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Foto direita -->
+  <div class="slide-photo" style="width:42%;">
+    <img src="../apps/web/public/images/mao-celular-veg1.jpg" alt="App Vegl.ia no celular" style="object-position:center top;">
+  </div>
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>04 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 5 — AS TRILHAS
+============================================================ -->
+<section id="s5" class="slide photo-left photo-38 cream-overlay" style="background:#F4EDE0;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#0B2545;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <!-- Foto esquerda -->
+  <div class="slide-photo" style="width:38%;">
+    <img src="../apps/web/public/images/treinamento-equipe.jpg" alt="Treinamento de equipe" style="object-position:center top;">
+  </div>
+
+  <div class="slide-content" style="width:62%;padding:28px 36px;">
+
+    <div class="eyebrow" style="color:var(--champagne);">04 &middot; Trilhas Educacionais</div>
+
+    <h2 class="headline" style="font-size:20px;color:var(--deep-navy);margin-bottom:14px;">
+      Seis trilhas. Dois percursos cada. Prontas e auditáveis.
+    </h2>
+
+    <!-- Tabela -->
+    <table style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:12px;">
+      <thead>
+        <tr style="background:var(--deep-navy);">
+          <th style="padding:7px 10px;text-align:left;font-family:'Inter',sans-serif;font-size:9px;font-weight:600;color:var(--warm-white);border-radius:4px 0 0 0;">Trilha</th>
+          <th style="padding:7px 10px;text-align:left;font-family:'Inter',sans-serif;font-size:9px;font-weight:600;color:var(--warm-white);">Percurso</th>
+          <th style="padding:7px 10px;text-align:left;font-family:'Inter',sans-serif;font-size:9px;font-weight:600;color:var(--warm-white);border-radius:0 4px 0 0;">Base Legal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#F4EDE0;">
+          <td style="padding:6px 10px;font-weight:600;color:var(--deep-navy);">Lei 15.377 &middot; M1</td>
+          <td style="padding:6px 10px;color:var(--deep-navy);">Compliance Legal</td>
+          <td style="padding:6px 10px;color:rgba(11,37,69,0.65);">Art. 169-A CLT</td>
+        </tr>
+        <tr style="background:#EDE8DC;">
+          <td style="padding:6px 10px;font-weight:600;color:var(--deep-navy);">Lei 15.377 &middot; M2</td>
+          <td style="padding:6px 10px;color:var(--deep-navy);">Vacinação Adulta</td>
+          <td style="padding:6px 10px;color:rgba(11,37,69,0.65);">Art. 169-A, I</td>
+        </tr>
+        <tr style="background:#F4EDE0;">
+          <td style="padding:6px 10px;font-weight:600;color:var(--deep-navy);">Lei 15.377 &middot; M3</td>
+          <td style="padding:6px 10px;color:var(--deep-navy);">Prevenção de Cânceres</td>
+          <td style="padding:6px 10px;color:rgba(11,37,69,0.65);">Art. 169-A, II</td>
+        </tr>
+        <tr style="background:#EDE8DC;">
+          <td style="padding:6px 10px;font-weight:600;color:var(--deep-navy);">Lei 15.377 &middot; M4</td>
+          <td style="padding:6px 10px;color:var(--deep-navy);">Saúde Mental e Burnout</td>
+          <td style="padding:6px 10px;color:rgba(11,37,69,0.65);">Art. 169-A + NR-1</td>
+        </tr>
+        <tr style="background:#F4EDE0;">
+          <td style="padding:6px 10px;font-weight:600;color:var(--deep-navy);">NR-1 &middot; M1</td>
+          <td style="padding:6px 10px;color:var(--deep-navy);">Riscos Psicossociais</td>
+          <td style="padding:6px 10px;color:rgba(11,37,69,0.65);">NR-1 rev. 2024</td>
+        </tr>
+        <tr style="background:#EDE8DC;">
+          <td style="padding:6px 10px;font-weight:600;color:var(--deep-navy);">NR-1 &middot; M2</td>
+          <td style="padding:6px 10px;color:var(--deep-navy);">PGR/GRO na Prática</td>
+          <td style="padding:6px 10px;color:rgba(11,37,69,0.65);">NR-1 + eSocial</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Badge auditoria -->
+    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--twilight);border:1px solid var(--mint);border-radius:6px;padding:7px 12px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5DD3A8" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><polyline points="9 12 11 14 15 10"/></svg>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--mint);letter-spacing:0.5px;">
+        &#10003; Certificado SHA-256 &middot; Válido para auditoria MTE e eSocial
+      </span>
+    </div>
+
+  </div>
+
+  <div class="slide-footer footer-light">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>05 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 6 — AUTORIDADE MÉDICA
+============================================================ -->
+<section id="s6" class="slide photo-right photo-42" style="background:#0B2545;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <div class="slide-content" style="width:58%;">
+
+    <div class="eyebrow" style="color:var(--champagne);">05 &middot; Autoridade Médica</div>
+
+    <h2 class="headline" style="font-size:22px;max-width:400px;margin-bottom:16px;">
+      Conteúdo sem autoria médica não é compliance. É risco.
+    </h2>
+
+    <!-- Card médica -->
+    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
+
+      <!-- Avatar -->
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(93,211,168,0.2);border:2px solid var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-family:'Inter',sans-serif;font-weight:700;font-size:22px;color:var(--mint);">AC</span>
+      </div>
+
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--mint);margin-bottom:2px;">Dra. Amanda Conde Perez Fernandes</div>
+        <div style="font-size:10px;color:var(--champagne);margin-bottom:6px;">Pediatra &middot; Neonatologista &middot; Nutróloga</div>
+        <p style="font-size:9px;color:rgba(255,255,255,0.75);line-height:1.5;max-width:300px;">Especialista em imunizações com atuação clínica e corporativa. Referência nacional em vacinação adulta e saúde preventiva empresarial.</p>
+      </div>
+
+    </div>
+
+    <!-- Credenciais -->
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="color:var(--mint);font-size:10px;">&#9658;</span>
+        <span style="font-size:9px;color:rgba(255,255,255,0.8);">Membro SBIm &mdash; Sociedade Brasileira de Imunizações</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="color:var(--mint);font-size:10px;">&#9658;</span>
+        <span style="font-size:9px;color:rgba(255,255,255,0.8);">Diretora médica da Vacivitta</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="color:var(--mint);font-size:10px;">&#9658;</span>
+        <span style="font-size:9px;color:rgba(255,255,255,0.8);">Especialista em imunização adulta e pediátrica</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="color:var(--mint);font-size:10px;">&#9658;</span>
+        <span style="font-size:9px;color:rgba(255,255,255,0.8);">Neonatologista e nutróloga clínica</span>
+      </div>
+    </div>
+
+    <!-- Quote -->
+    <div style="background:var(--twilight);border:1px solid rgba(201,169,110,0.4);border-radius:8px;padding:12px 14px;">
+      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(255,255,255,0.8);line-height:1.6;">
+        "Quando o Ministério do Trabalho solicita evidência técnica &mdash; a Vegl.ia entrega nome, CRM e especialidade."
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Foto direita -->
+  <div class="slide-photo" style="width:42%;">
+    <img src="../apps/web/public/images/maos-cuidado-geracoes.jpg" alt="Maos cuidado geracoes" style="object-position:center;">
+  </div>
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>06 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 7 — VACIVITTA
+============================================================ -->
+<section id="s7" class="slide photo-right photo-42" style="background:#1A3A5C;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <div class="slide-content" style="width:58%;">
+
+    <div class="eyebrow" style="color:var(--mint);">06 &middot; Integração Vacivitta</div>
+
+    <h2 class="headline" style="font-size:22px;max-width:400px;margin-bottom:20px;">
+      A diferença entre informar e vacinar está a um agendamento de distância.
+    </h2>
+
+    <!-- 3 itens verticais -->
+    <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:20px;">
+
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span style="color:var(--mint);flex-shrink:0;margin-top:2px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>
+        </span>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--mint);margin-bottom:3px;">Agendamento na plataforma</div>
+          <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">O RH agenda a campanha direto pelo painel, sem e-mail ou telefone.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span style="color:var(--mint);flex-shrink:0;margin-top:2px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="19" x2="9" y2="15"/><polyline points="15 4 19 8 9 18 5 14"/><line x1="9" y1="18" x2="5" y2="14"/><line x1="13" y1="6" x2="7" y2="12"/><line x1="11" y1="8" x2="5" y2="14"/></svg>
+        </span>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--mint);margin-bottom:3px;">Operação real Vacivitta</div>
+          <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">Equipe vai até a empresa com imunobiológicos e cold chain controlada.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span style="color:var(--mint);flex-shrink:0;margin-top:2px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><polyline points="9 12 11 14 15 10"/></svg>
+        </span>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--mint);margin-bottom:3px;">Registro automático</div>
+          <p style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.5;">Vacinação registrada no dashboard. Evidência auditável gerada automaticamente.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pull quote -->
+    <div style="border-top:1.5px solid var(--mint);border-bottom:1.5px solid var(--mint);padding:12px 0;">
+      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--warm-white);line-height:1.5;">
+        "Nenhuma plataforma de compliance do Brasil tem operação vacinal própria embarcada."
+      </p>
+    </div>
+
+    <!-- Badge -->
+    <div style="margin-top:10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--champagne);letter-spacing:1px;">
+        Powered by Vacivitta &middot; vacivitta.com.br
+      </span>
+    </div>
+
+  </div>
+
+  <!-- Foto direita -->
+  <div class="slide-photo" style="width:42%;">
+    <img src="../apps/web/public/images/vacinacao-corporativa.jpg" alt="Vacinacao corporativa" style="object-position:center top;">
+  </div>
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>07 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 8 — PROPOSTA DE PARCERIA
+============================================================ -->
+<section id="s8" class="slide photo-left photo-38 cream-overlay" style="background:#F4EDE0;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#0B2545;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <!-- Foto esquerda -->
+  <div class="slide-photo" style="width:38%;">
+    <img src="../apps/web/public/images/treinamento-equipe.jpg" alt="Treinamento de equipe" style="object-position:center;">
+  </div>
+
+  <div class="slide-content" style="width:62%;padding:28px 36px;">
+
+    <div class="eyebrow" style="color:var(--champagne);">07 &middot; Proposta de Parceria</div>
+
+    <h2 class="headline" style="font-size:20px;color:var(--deep-navy);margin-bottom:14px;">
+      Por que levar o Vegl.ia ao seu cliente empresa?
+    </h2>
+
+    <!-- 5 cards -->
+    <div style="display:flex;flex-direction:column;gap:8px;">
+
+      <div style="border-left:4px solid var(--mint);background:rgba(255,255,255,0.6);border-radius:6px;padding:10px 14px;">
+        <div style="display:flex;gap:8px;align-items:baseline;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(93,211,168,0.5);font-weight:600;">01</span>
+          <span style="font-size:11px;font-weight:600;color:var(--deep-navy);">Demanda imediata e urgente</span>
+        </div>
+        <p style="font-size:9px;color:rgba(11,37,69,0.65);line-height:1.5;padding-left:24px;">A lei está em vigor. Cada mês sem solução é passivo acumulado para o seu cliente.</p>
+      </div>
+
+      <div style="border-left:4px solid var(--champagne);background:rgba(255,255,255,0.6);border-radius:6px;padding:10px 14px;">
+        <div style="display:flex;gap:8px;align-items:baseline;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(201,169,110,0.5);font-weight:600;">02</span>
+          <span style="font-size:11px;font-weight:600;color:var(--deep-navy);">Retenção via compliance</span>
+        </div>
+        <p style="font-size:9px;color:rgba(11,37,69,0.65);line-height:1.5;padding-left:24px;">Histórico auditável não se transfere. Compliance cria vínculo que benefício tradicional não cria.</p>
+      </div>
+
+      <div style="border-left:4px solid var(--mint);background:rgba(255,255,255,0.6);border-radius:6px;padding:10px 14px;">
+        <div style="display:flex;gap:8px;align-items:baseline;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(93,211,168,0.5);font-weight:600;">03</span>
+          <span style="font-size:11px;font-weight:600;color:var(--deep-navy);">Nova linha de receita</span>
+        </div>
+        <p style="font-size:9px;color:rgba(11,37,69,0.65);line-height:1.5;padding-left:24px;">Revenue share sobre base fidelizada. Sem custo de desenvolvimento.</p>
+      </div>
+
+      <div style="border-left:4px solid var(--champagne);background:rgba(255,255,255,0.6);border-radius:6px;padding:10px 14px;">
+        <div style="display:flex;gap:8px;align-items:baseline;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(201,169,110,0.5);font-weight:600;">04</span>
+          <span style="font-size:11px;font-weight:600;color:var(--deep-navy);">Categoria nova no portfólio</span>
+        </div>
+        <p style="font-size:9px;color:rgba(11,37,69,0.65);line-height:1.5;padding-left:24px;">Percebido pelo board e pelo jurídico &mdash; não só pelo RH.</p>
+      </div>
+
+      <div style="border-left:4px solid var(--mint);background:rgba(255,255,255,0.6);border-radius:6px;padding:10px 14px;">
+        <div style="display:flex;gap:8px;align-items:baseline;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(93,211,168,0.5);font-weight:600;">05</span>
+          <span style="font-size:11px;font-weight:600;color:var(--deep-navy);">Operação real como diferencial</span>
+        </div>
+        <p style="font-size:9px;color:rgba(11,37,69,0.65);line-height:1.5;padding-left:24px;">Vacinação in-company via Vacivitta: nenhum concorrente entrega isso hoje.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="slide-footer footer-light">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>08 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 9 — MODELO COMERCIAL
+============================================================ -->
+<section id="s9" class="slide photo-left photo-38" style="background:#0B2545;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+
+  <!-- Foto esquerda -->
+  <div class="slide-photo" style="width:38%;">
+    <img src="images/imagens/magnific_editorial-corporate-photo_2993467720.png" alt="Parceria estratégica corporativa" style="object-position:center center;">
+  </div>
+
+  <div class="slide-content" style="width:62%;padding:28px 36px;">
+
+    <div class="eyebrow" style="color:var(--mint);">08 &middot; Modelo Comercial</div>
+
+    <h2 class="headline" style="font-size:20px;max-width:380px;margin-bottom:16px;">
+      White label, setup em 15 dias, revenue share sobre base existente.
+    </h2>
+
+    <!-- Tabela de planos -->
+    <div style="border-radius:8px;overflow:hidden;margin-bottom:14px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--mint);">
+            <th style="padding:8px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--deep-navy);">Plano</th>
+            <th style="padding:8px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--deep-navy);">Perfil</th>
+            <th style="padding:8px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--deep-navy);">Preço/mês</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);">
+            <td style="padding:7px 10px;font-size:10px;color:var(--warm-white);">Essencial</td>
+            <td style="padding:7px 10px;font-size:9px;color:rgba(251,248,241,0.7);">Até 50 colaboradores</td>
+            <td style="padding:7px 10px;font-size:9px;color:rgba(251,248,241,0.7);">R$ 490</td>
+          </tr>
+          <tr style="background:var(--twilight);border:1.5px solid var(--mint);">
+            <td style="padding:7px 10px;font-size:10px;color:var(--warm-white);font-weight:600;">
+              <span style="color:var(--mint);margin-right:4px;">&#9733;</span>Professional
+            </td>
+            <td style="padding:7px 10px;font-size:9px;color:rgba(251,248,241,0.9);">51 a 500 colaboradores</td>
+            <td style="padding:7px 10px;font-size:9px;color:rgba(251,248,241,0.9);">R$ 1.290</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);">
+            <td style="padding:7px 10px;font-size:10px;color:var(--warm-white);">Enterprise</td>
+            <td style="padding:7px 10px;font-size:9px;color:rgba(251,248,241,0.7);">500+ colaboradores</td>
+            <td style="padding:7px 10px;font-size:9px;color:rgba(251,248,241,0.7);">Sob consulta</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3 mini-boxes -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+
+      <div style="flex:1;background:var(--twilight);border-radius:8px;border-top:2.5px solid var(--mint);padding:10px 12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--mint);margin-bottom:4px;">White Label</div>
+        <p style="font-size:8px;color:rgba(255,255,255,0.7);line-height:1.4;">Brandada com sua identidade visual.</p>
+      </div>
+
+      <div style="flex:1;background:var(--twilight);border-radius:8px;border-top:2.5px solid var(--champagne);padding:10px 12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--champagne);margin-bottom:4px;">Revenue Share</div>
+        <p style="font-size:8px;color:rgba(255,255,255,0.7);line-height:1.4;">Recorrente sobre base ativa.</p>
+      </div>
+
+      <div style="flex:1;background:var(--twilight);border-radius:8px;border-top:2.5px solid var(--sky);padding:10px 12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--sky);margin-bottom:4px;">Setup 15 dias</div>
+        <p style="font-size:8px;color:rgba(255,255,255,0.7);line-height:1.4;">Integração via API ou SSO.</p>
+      </div>
+
+    </div>
+
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10px;color:rgba(255,255,255,0.5);">
+      Proposta customizada por porte e volume.
+    </p>
+
+  </div>
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>09 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 10 — A PLATAFORMA
+============================================================ -->
+<section id="s10" class="slide" style="background:var(--deep-navy);display:flex;flex-direction:column;padding:0;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+  <!-- Header -->
+  <div class="s10-header" style="padding:22px 32px 0 32px;flex-shrink:0;">
+    <div class="eyebrow" style="color:var(--mint);margin-bottom:6px;">10 · A Plataforma</div>
+    <h2 style="font-family:'Inter',sans-serif;font-weight:700;font-size:18px;color:var(--warm-white);line-height:1.3;margin:0 0 4px;">
+      Da obrigação legal à evidência auditável — tudo em um só lugar.
+    </h2>
+    <p style="font-size:9px;color:rgba(255,255,255,0.45);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin:0;">app.vegl.ia · Plataforma em produção</p>
+    <div style="height:1px;background:rgba(93,211,168,0.2);margin-top:10px;"></div>
+  </div>
+
+  <!-- Grid de 5 telas -->
+  <div class="s10-grid" style="flex:1;padding:12px 28px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;">
+
+    <!-- TELA 1: Login -->
+    <div style="border-radius:8px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.09);display:flex;flex-direction:column;">
+      <div style="background:#111827;padding:5px 8px;display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <div style="width:7px;height:7px;border-radius:50%;background:#E05252;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#C9A96E;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#5DD3A8;"></div>
+        <div style="flex:1;background:rgba(255,255,255,0.07);border-radius:3px;padding:2px 8px;margin-left:6px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:6px;color:rgba(255,255,255,0.35);">app.vegl.ia/login</span>
+        </div>
+      </div>
+      <div style="background:linear-gradient(145deg,#0D1F3A 0%,#0B2545 100%);flex:1;padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <!-- Logo Vegl.ia no login -->
+        <div style="display:flex;align-items:baseline;gap:0;margin-bottom:10px;">
+          <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:16px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span>
+          <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:16px;color:#C9A96E;letter-spacing:-0.5px;">·</span>
+          <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:16px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+        </div>
+        <div style="font-size:7px;color:rgba(255,255,255,0.5);margin-bottom:12px;text-align:center;">Acesso à plataforma corporativa</div>
+        <!-- campos -->
+        <div style="width:100%;max-width:120px;">
+          <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:4px 7px;margin-bottom:5px;">
+            <div style="font-size:5px;color:rgba(255,255,255,0.35);margin-bottom:1px;">E-mail corporativo</div>
+            <div style="font-size:6px;color:rgba(255,255,255,0.6);">ana.silva@empresa.com.br</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:4px 7px;margin-bottom:8px;">
+            <div style="font-size:5px;color:rgba(255,255,255,0.35);margin-bottom:1px;">Senha</div>
+            <div style="font-size:6px;color:rgba(255,255,255,0.6);">••••••••</div>
+          </div>
+          <div style="background:#5DD3A8;border-radius:4px;padding:5px;text-align:center;">
+            <span style="font-size:7px;font-weight:700;color:#0B2545;">Entrar na plataforma →</span>
+          </div>
+          <div style="text-align:center;margin-top:5px;">
+            <span style="font-size:5px;color:rgba(255,255,255,0.3);">Powered by Vacivitta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA 2: Dashboard RH -->
+    <div style="border-radius:8px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.09);display:flex;flex-direction:column;">
+      <div style="background:#111827;padding:5px 8px;display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <div style="width:7px;height:7px;border-radius:50%;background:#E05252;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#C9A96E;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#5DD3A8;"></div>
+        <div style="flex:1;background:rgba(255,255,255,0.07);border-radius:3px;padding:2px 8px;margin-left:6px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:6px;color:rgba(255,255,255,0.35);">app.vegl.ia/dashboard</span>
+        </div>
+      </div>
+      <div style="background:#0B2545;flex:1;padding:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:6px;color:rgba(93,211,168,0.6);text-transform:uppercase;letter-spacing:1px;">Dashboard Compliance</div>
+          <div style="background:rgba(93,211,168,0.15);border-radius:3px;padding:2px 5px;border:1px solid rgba(93,211,168,0.3);">
+            <span style="font-size:5px;color:#5DD3A8;font-family:'JetBrains Mono',monospace;">Maio 2026</span>
+          </div>
+        </div>
+        <!-- 4 KPIs -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;">
+          <div style="background:rgba(93,211,168,0.1);border:1px solid rgba(93,211,168,0.2);border-radius:4px;padding:5px;text-align:center;">
+            <div style="font-size:12px;font-weight:700;color:#5DD3A8;font-family:'Inter',sans-serif;">94%</div>
+            <div style="font-size:5px;color:rgba(255,255,255,0.45);">Compliance Geral</div>
+          </div>
+          <div style="background:rgba(93,211,168,0.07);border:1px solid rgba(93,211,168,0.12);border-radius:4px;padding:5px;text-align:center;">
+            <div style="font-size:12px;font-weight:700;color:var(--warm-white);font-family:'Inter',sans-serif;">142</div>
+            <div style="font-size:5px;color:rgba(255,255,255,0.45);">Colaboradores</div>
+          </div>
+          <div style="background:rgba(93,211,168,0.07);border:1px solid rgba(93,211,168,0.12);border-radius:4px;padding:5px;text-align:center;">
+            <div style="font-size:12px;font-weight:700;color:var(--warm-white);font-family:'Inter',sans-serif;">6</div>
+            <div style="font-size:5px;color:rgba(255,255,255,0.45);">Trilhas ativas</div>
+          </div>
+          <div style="background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.2);border-radius:4px;padding:5px;text-align:center;">
+            <div style="font-size:12px;font-weight:700;color:#C9A96E;font-family:'Inter',sans-serif;">8</div>
+            <div style="font-size:5px;color:rgba(255,255,255,0.45);">Pendências</div>
+          </div>
+        </div>
+        <!-- mini tabela -->
+        <div style="background:rgba(255,255,255,0.04);border-radius:4px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr;background:rgba(93,211,168,0.12);padding:3px 5px;">
+            <span style="font-size:5px;color:#5DD3A8;font-weight:600;">COLABORADOR</span>
+            <span style="font-size:5px;color:#5DD3A8;font-weight:600;text-align:center;">LEI 15.377</span>
+            <span style="font-size:5px;color:#5DD3A8;font-weight:600;text-align:center;">STATUS</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:2px 5px;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:5px;color:rgba(255,255,255,0.65);">Ana Clara M.</span>
+            <span style="font-size:5px;color:rgba(255,255,255,0.5);text-align:center;">100%</span>
+            <span style="font-size:5px;color:#5DD3A8;text-align:center;">✓ Completo</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:2px 5px;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:5px;color:rgba(255,255,255,0.65);">Bruno T. Y.</span>
+            <span style="font-size:5px;color:rgba(255,255,255,0.5);text-align:center;">75%</span>
+            <span style="font-size:5px;color:#C9A96E;text-align:center;">⏳ Em curso</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:2px 5px;">
+            <span style="font-size:5px;color:rgba(255,255,255,0.65);">Carla S. L.</span>
+            <span style="font-size:5px;color:rgba(255,255,255,0.5);text-align:center;">100%</span>
+            <span style="font-size:5px;color:#5DD3A8;text-align:center;">✓ Completo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA 3: Trilhas Educacionais -->
+    <div style="border-radius:8px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.09);display:flex;flex-direction:column;">
+      <div style="background:#111827;padding:5px 8px;display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <div style="width:7px;height:7px;border-radius:50%;background:#E05252;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#C9A96E;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#5DD3A8;"></div>
+        <div style="flex:1;background:rgba(255,255,255,0.07);border-radius:3px;padding:2px 8px;margin-left:6px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:6px;color:rgba(255,255,255,0.35);">app.vegl.ia/trilhas</span>
+        </div>
+      </div>
+      <div style="background:#0B2545;flex:1;padding:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:6px;color:rgba(93,211,168,0.6);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Trilhas Educacionais</div>
+        <!-- filtros pill -->
+        <div style="display:flex;gap:4px;margin-bottom:6px;">
+          <div style="background:#5DD3A8;border-radius:10px;padding:2px 6px;"><span style="font-size:5px;font-weight:600;color:#0B2545;">Lei 15.377</span></div>
+          <div style="background:rgba(255,255,255,0.07);border-radius:10px;padding:2px 6px;border:1px solid rgba(255,255,255,0.12);"><span style="font-size:5px;color:rgba(255,255,255,0.5);">NR-1</span></div>
+          <div style="background:rgba(255,255,255,0.07);border-radius:10px;padding:2px 6px;border:1px solid rgba(255,255,255,0.12);"><span style="font-size:5px;color:rgba(255,255,255,0.5);">Todos</span></div>
+        </div>
+        <!-- Trilhas -->
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="background:rgba(93,211,168,0.08);border:1px solid rgba(93,211,168,0.22);border-radius:4px;padding:6px;">
+            <div style="font-size:6px;font-weight:600;color:var(--warm-white);margin-bottom:2px;">Lei 15.377 · Vacinação Adulta</div>
+            <div style="font-size:5px;color:rgba(255,255,255,0.4);margin-bottom:3px;">Módulo 2 de 4 · Dra. Amanda Conde</div>
+            <div style="background:rgba(255,255,255,0.08);border-radius:2px;height:3px;overflow:hidden;margin-bottom:2px;">
+              <div style="background:#5DD3A8;height:100%;width:50%;border-radius:2px;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="font-size:5px;color:#5DD3A8;">50% concluído</span>
+              <span style="font-size:5px;color:rgba(255,255,255,0.3);">Continuar →</span>
+            </div>
+          </div>
+          <div style="background:rgba(93,211,168,0.05);border:1px solid rgba(93,211,168,0.1);border-radius:4px;padding:6px;">
+            <div style="font-size:6px;font-weight:600;color:var(--warm-white);margin-bottom:2px;">Lei 15.377 · Saúde Mental</div>
+            <div style="font-size:5px;color:rgba(255,255,255,0.4);margin-bottom:3px;">Módulo 4 de 4 · Dra. Amanda Conde</div>
+            <div style="background:rgba(255,255,255,0.08);border-radius:2px;height:3px;overflow:hidden;margin-bottom:2px;">
+              <div style="background:#5DD3A8;height:100%;width:100%;border-radius:2px;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="font-size:5px;color:#5DD3A8;">Concluído ✓</span>
+              <span style="font-size:5px;color:rgba(255,255,255,0.3);">Ver certificado →</span>
+            </div>
+          </div>
+          <div style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.15);border-radius:4px;padding:6px;">
+            <div style="font-size:6px;font-weight:600;color:var(--warm-white);margin-bottom:2px;">NR-1 · Riscos Psicossociais</div>
+            <div style="font-size:5px;color:rgba(255,255,255,0.4);margin-bottom:3px;">Módulo 1 de 2 · Dra. Amanda Conde</div>
+            <div style="background:rgba(255,255,255,0.08);border-radius:2px;height:3px;overflow:hidden;margin-bottom:2px;">
+              <div style="background:#C9A96E;height:100%;width:25%;border-radius:2px;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="font-size:5px;color:#C9A96E;">25% concluído</span>
+              <span style="font-size:5px;color:rgba(255,255,255,0.3);">Continuar →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA 4: Player de Treinamento (vídeo Dra. Amanda) -->
+    <div class="s10-video" style="border-radius:8px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.09);display:flex;flex-direction:column;grid-column:1/3;">
+      <div style="background:#111827;padding:5px 8px;display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <div style="width:7px;height:7px;border-radius:50%;background:#E05252;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#C9A96E;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#5DD3A8;"></div>
+        <div style="flex:1;background:rgba(255,255,255,0.07);border-radius:3px;padding:2px 8px;margin-left:6px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:6px;color:rgba(255,255,255,0.35);">app.vegl.ia/trilhas/lei-15377/modulo-2</span>
+        </div>
+      </div>
+      <div style="background:#0A1929;flex:1;display:flex;gap:0;overflow:hidden;">
+        <!-- lado esquerdo: player de vídeo -->
+        <div style="width:58%;background:#000;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <!-- simulação de vídeo -->
+          <div style="position:absolute;inset:0;background:linear-gradient(160deg,#0B2545 0%,#061224 100%);"></div>
+          <!-- barra topo do player -->
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.08);">
+            <div style="width:42%;height:100%;background:#5DD3A8;"></div>
+          </div>
+          <!-- avatar da doutora centralizado -->
+          <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1A3A5C,#0B2545);border:2px solid rgba(93,211,168,0.5);display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:10px;font-weight:700;color:#5DD3A8;">A</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.6);border-radius:3px;padding:2px 6px;text-align:center;">
+              <div style="font-size:6px;font-weight:600;color:var(--warm-white);">Dra. Amanda Conde</div>
+              <div style="font-size:5px;color:rgba(255,255,255,0.5);">Pediatra · Membro SBIm</div>
+            </div>
+          </div>
+          <!-- controles do player -->
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:6px 8px 4px;">
+            <div style="display:flex;align-items:center;gap:5px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="#5DD3A8"><polygon points="5,3 19,12 5,21"/></svg>
+              <div style="flex:1;background:rgba(255,255,255,0.2);border-radius:2px;height:2px;">
+                <div style="width:42%;height:100%;background:#5DD3A8;border-radius:2px;"></div>
+              </div>
+              <span style="font-size:5px;color:rgba(255,255,255,0.6);font-family:'JetBrains Mono',monospace;">2:08 / 5:00</span>
+            </div>
+          </div>
+        </div>
+        <!-- lado direito: info do módulo -->
+        <div style="flex:1;padding:10px;background:#0D1F38;">
+          <!-- breadcrumb -->
+          <div style="font-size:5px;color:rgba(255,255,255,0.35);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+            Trilhas → Lei 15.377 → Módulo 2
+          </div>
+          <div style="font-size:7px;font-weight:700;color:var(--warm-white);margin-bottom:3px;">Vacinação Adulta: Calendário SBIm 2026</div>
+          <div style="font-size:5px;color:rgba(255,255,255,0.45);margin-bottom:8px;">Dra. Amanda Conde · 5 min · Art. 169-A, I CLT</div>
+          <!-- módulos da trilha -->
+          <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:5px;padding:3px;background:rgba(93,211,168,0.07);border-radius:3px;border:1px solid rgba(93,211,168,0.15);">
+              <div style="width:12px;height:12px;border-radius:50%;background:#5DD3A8;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:5px;font-weight:700;color:#0B2545;">✓</span></div>
+              <span style="font-size:5px;color:rgba(255,255,255,0.6);">M1 · Compliance Legal</span>
+              <span style="font-size:5px;color:#5DD3A8;margin-left:auto;">Completo</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:3px;background:rgba(93,211,168,0.12);border-radius:3px;border:1px solid rgba(93,211,168,0.3);">
+              <div style="width:12px;height:12px;border-radius:50%;background:rgba(93,211,168,0.3);border:1.5px solid #5DD3A8;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:5px;font-weight:700;color:#5DD3A8;">2</span></div>
+              <span style="font-size:5px;color:var(--warm-white);font-weight:600;">M2 · Vacinação Adulta</span>
+              <span style="font-size:5px;color:#C9A96E;margin-left:auto;">Em curso</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:3px;background:rgba(255,255,255,0.03);border-radius:3px;">
+              <div style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:5px;color:rgba(255,255,255,0.3);">3</span></div>
+              <span style="font-size:5px;color:rgba(255,255,255,0.35);">M3 · Prevenção de Cânceres</span>
+            </div>
+          </div>
+          <!-- barra de progresso -->
+          <div style="font-size:5px;color:rgba(255,255,255,0.35);margin-bottom:2px;">Progresso da trilha</div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:2px;height:4px;overflow:hidden;">
+            <div style="background:#5DD3A8;height:100%;width:42%;border-radius:2px;"></div>
+          </div>
+          <div style="font-size:5px;color:#5DD3A8;margin-top:1px;">42% · 2 de 4 módulos concluídos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA 5: Certificado Vegl.ia -->
+    <div class="s10-cert" style="border-radius:8px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.09);display:flex;flex-direction:column;">
+      <div style="background:#111827;padding:5px 8px;display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <div style="width:7px;height:7px;border-radius:50%;background:#E05252;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#C9A96E;"></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:#5DD3A8;"></div>
+        <div style="flex:1;background:rgba(255,255,255,0.07);border-radius:3px;padding:2px 8px;margin-left:6px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:6px;color:rgba(255,255,255,0.35);">app.vegl.ia/certificados</span>
+        </div>
+      </div>
+      <div style="background:#0B2545;flex:1;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <!-- Certificado mockup -->
+        <div style="width:100%;background:linear-gradient(145deg,#F4EDE0 0%,#FBF8F1 100%);border-radius:6px;padding:10px;border:1.5px solid rgba(201,169,110,0.5);box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+          <!-- borda decorativa -->
+          <div style="border:1px solid rgba(201,169,110,0.3);border-radius:4px;padding:8px;">
+            <!-- topo cert -->
+            <div style="display:flex;align-items:baseline;gap:0;justify-content:center;margin-bottom:4px;">
+              <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:11px;color:#0B2545;letter-spacing:-0.5px;">Vegl</span>
+              <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:11px;color:#C9A96E;letter-spacing:-0.5px;">·</span>
+              <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:11px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+            </div>
+            <div style="text-align:center;font-size:5px;color:rgba(11,37,69,0.5);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">Certificado de Conclusão</div>
+            <div style="height:0.5px;background:rgba(201,169,110,0.4);margin-bottom:5px;"></div>
+            <div style="text-align:center;margin-bottom:4px;">
+              <div style="font-size:5px;color:rgba(11,37,69,0.5);margin-bottom:2px;">Certificamos que</div>
+              <div style="font-size:9px;font-weight:700;color:#0B2545;font-family:'Cormorant Garamond',serif;font-style:italic;">Ana Clara Mendes</div>
+            </div>
+            <div style="text-align:center;margin-bottom:4px;">
+              <div style="font-size:5px;color:rgba(11,37,69,0.55);line-height:1.4;">concluiu com êxito a trilha</div>
+              <div style="font-size:6px;font-weight:700;color:#0B2545;margin:1px 0;">Lei 15.377/2026 · Compliance Preventivo</div>
+              <div style="font-size:5px;color:rgba(11,37,69,0.45);">Dra. Amanda Conde Perez Fernandes · CRM 12345</div>
+            </div>
+            <div style="height:0.5px;background:rgba(201,169,110,0.4);margin-bottom:4px;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:4px;color:rgba(11,37,69,0.4);font-family:'JetBrains Mono',monospace;">Data</div>
+                <div style="font-size:5px;color:#0B2545;font-weight:600;">16 Mai 2026</div>
+              </div>
+              <!-- QR code placeholder -->
+              <div style="width:22px;height:22px;background:rgba(11,37,69,0.08);border-radius:2px;border:1px solid rgba(11,37,69,0.15);display:flex;align-items:center;justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                  <rect x="1" y="1" width="7" height="7" rx="1" fill="none" stroke="#0B2545" stroke-width="1"/>
+                  <rect x="3" y="3" width="3" height="3" fill="#0B2545"/>
+                  <rect x="12" y="1" width="7" height="7" rx="1" fill="none" stroke="#0B2545" stroke-width="1"/>
+                  <rect x="14" y="3" width="3" height="3" fill="#0B2545"/>
+                  <rect x="1" y="12" width="7" height="7" rx="1" fill="none" stroke="#0B2545" stroke-width="1"/>
+                  <rect x="3" y="14" width="3" height="3" fill="#0B2545"/>
+                  <rect x="12" y="12" width="2" height="2" fill="#0B2545"/>
+                  <rect x="15" y="12" width="2" height="2" fill="#0B2545"/>
+                  <rect x="12" y="15" width="2" height="2" fill="#0B2545"/>
+                  <rect x="15" y="15" width="4" height="4" fill="#0B2545"/>
+                </svg>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:4px;color:rgba(11,37,69,0.4);font-family:'JetBrains Mono',monospace;">Hash SHA-256</div>
+                <div style="font-size:4px;color:#0B2545;font-family:'JetBrains Mono',monospace;">a3f8c2e1…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:4px;font-size:5px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;text-align:center;">Válido para auditoria MTE · eSocial · Fiscalização</div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>10 / 11</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SLIDE 11 — PRÓXIMOS PASSOS · AGENDAR DEMO
+============================================================ -->
+<section id="s11" class="slide" style="background:linear-gradient(145deg,#050D1A 0%,#0B2545 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;">
+  <!-- Logo topo-esquerdo -->
+  <div style="position:absolute;top:16px;left:22px;z-index:20;line-height:1;display:flex;align-items:baseline;gap:0;">
+    <span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#FBF8F1;letter-spacing:-0.5px;">Vegl</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#C9A96E;letter-spacing:-0.5px;">·</span><span style="font-family:'Inter',sans-serif;font-weight:900;font-size:19px;color:#5DD3A8;letter-spacing:-0.5px;">ia</span>
+  </div>
+
+  <!-- Conteúdo centralizado -->
+  <div class="s11-content" style="max-width:480px;text-align:center;padding:0 24px;">
+
+    <div class="eyebrow" style="color:var(--mint);margin-bottom:14px;justify-content:center;">11 · Próximos Passos</div>
+
+    <h2 style="font-family:'Inter',sans-serif;font-weight:800;font-size:26px;color:var(--warm-white);line-height:1.25;margin:0 0 12px;">
+      Veja a plataforma.<br>
+      <span style="color:var(--mint);">Coloque sua empresa</span> dentro da lei.
+    </h2>
+
+    <p style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;margin:0 0 28px;">
+      Em 30 minutos você acessa a Vegl.ia ao vivo, entende o que falta para o compliance e sai com um caminho claro. A Lei 15.377 está em vigor — a evidência auditável começa agora.
+    </p>
+
+    <!-- CTA principal -->
+    <div style="display:inline-block;background:var(--mint);border-radius:10px;padding:14px 32px;margin-bottom:16px;cursor:pointer;">
+      <div style="font-family:'Inter',sans-serif;font-weight:800;font-size:16px;color:#0B2545;letter-spacing:-0.3px;">Ver a Plataforma →</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(11,37,69,0.7);margin-top:2px;">contato@vegl.ia</div>
+    </div>
+
+    <!-- Linha divisória suave -->
+    <div style="height:1px;background:rgba(93,211,168,0.15);width:60%;margin:0 auto 20px;"></div>
+
+    <!-- 3 bullets ultra-compactos -->
+    <div style="display:flex;gap:24px;justify-content:center;margin-bottom:28px;">
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--mint);">①</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px;">Demonstração ao vivo</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--mint);">②</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px;">Proposta customizada</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--mint);">③</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px;">Piloto 90 dias</div>
+      </div>
+    </div>
+
+    <!-- Tagline final -->
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--champagne);letter-spacing:0.3px;">
+      Vegl.ia. Quem vela, cuida.
+    </div>
+
+  </div>
+
+  <div class="slide-footer footer-dark">
+    <span>Vegl.ia &middot; Powered by Vacivitta &middot; vegl.ia &middot; contato@vegl.ia &middot; Confidencial</span>
+    <span>11 / 11</span>
+  </div>
+</section>
+
+</body>
+</html>

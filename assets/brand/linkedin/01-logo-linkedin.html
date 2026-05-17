@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Vegl.ia · Logo LinkedIn 400×400</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0A0A0A; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .canvas {
+    width:400px; height:400px;
+    background:#0B2545;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  }
+  /* Glow sutil ao fundo */
+  .glow {
+    position:absolute;
+    width:280px; height:280px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(93,211,168,0.08) 0%, transparent 70%);
+    top:50%; left:50%; transform:translate(-50%,-50%);
+  }
+  /* Linha accent topo */
+  .line-top {
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, transparent, #5DD3A8 40%, #C9A96E 60%, transparent);
+  }
+  /* Logo principal */
+  .logo-wrap { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .logo-text { display:flex; align-items:baseline; gap:0; line-height:1; }
+  .logo-text .v { font-size:72px; font-weight:900; color:#FBF8F1; letter-spacing:-3px; }
+  .logo-text .dot { font-size:72px; font-weight:900; color:#C9A96E; letter-spacing:-3px; }
+  .logo-text .ia { font-size:72px; font-weight:900; color:#5DD3A8; letter-spacing:-3px; }
+  /* Linha divisória */
+  .divider { width:60px; height:1.5px; background:linear-gradient(90deg, transparent, rgba(93,211,168,0.5), transparent); }
+  /* Tagline */
+  .tagline {
+    font-size:10px; letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,0.4);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  /* Rodapé Vacivitta */
+  .powered {
+    position:absolute; bottom:18px;
+    font-size:8px; letter-spacing:2px; text-transform:uppercase;
+    color:rgba(255,255,255,0.2);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  .powered span { color:rgba(201,169,110,0.4); }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="canvas">
+  <div class="line-top"></div>
+  <div class="glow"></div>
+  <div class="logo-wrap">
+    <div class="logo-text">
+      <span class="v">Vegl</span><span class="dot">·</span><span class="ia">ia</span>
+    </div>
+    <div class="divider"></div>
+    <div class="tagline">Compliance Preventivo</div>
+  </div>
+  <div class="powered">Powered by <span>Vacivitta</span></div>
+</div>
+</body>
+</html>

@@ -4,7 +4,13 @@ import * as nodemailer from "nodemailer";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
-import type { CustomClaims, UserRole } from "@veglia/shared";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+// Local type definitions (avoids workspace:* protocol incompatibility with Firebase Cloud Build)
+type UserRole = "admin" | "admin_rh" | "rh" | "collaborator";
+interface CustomClaims {
+  company_id: string;
+  role: UserRole;
+}
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -29,6 +35,229 @@ export const syncUserClaims = onDocumentWritten("users/{uid}", async (event) => 
   };
 
   await admin.auth().setCustomUserClaims(uid, claims);
+});
+
+/**
+ * Concede pontos ao usuário por ações na plataforma.
+ * Calcula level e badges automaticamente.
+ */
+export const awardPoints = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
+
+  const { user_id, company_id, action } = request.data as {
+    user_id: string;
+    company_id: string;
+    action:
+      | "video_watched"
+      | "module_completed"
+      | "trilha_completed"
+      | "certificate_issued"
+      | "invite_accepted";
+  };
+
+  if (!user_id || !company_id || !action) {
+    throw new HttpsError("invalid-argument", "user_id, company_id e action são obrigatórios");
+  }
+
+  const POINTS_MAP: Record<string, number> = {
+    video_watched: 10,
+    module_completed: 50,
+    trilha_completed: 200,
+    certificate_issued: 500,
+    invite_accepted: 100,
+  };
+
+  const points = POINTS_MAP[action] ?? 0;
+
+  const LEVELS = [
+    { name: "Iniciante", min: 0 },
+    { name: "Guardiao", min: 500 },
+    { name: "Protetor", min: 1500 },
+    { name: "Defensor", min: 3500 },
+  ];
+
+  const BADGE_RULES: Array<{ id: string; condition: (pts: number, badges: string[], action: string) => boolean }> = [
+    {
+      id: "primeiro-certificado",
+      condition: (_, __, a) => a === "certificate_issued",
+    },
+    {
+      id: "compliance-completo",
+      condition: (pts) => pts >= 700,
+    },
+    {
+      id: "vacinado-2026",
+      condition: (_, badges) => badges.includes("primeiro-certificado"),
+    },
+  ];
+
+  const pointsRef = db.collection("user_points").doc(user_id);
+
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(pointsRef);
+    const existing = snap.exists ? snap.data()! : { total_points: 0, badges: [] as string[] };
+    const newTotal = (existing.total_points as number) + points;
+    const currentBadges = (existing.badges as string[]) ?? [];
+
+    // Calcula level
+    let level = "Iniciante";
+    for (const l of LEVELS) {
+      if (newTotal >= l.min) level = l.name;
+    }
+
+    // Verifica novos badges
+    const newBadges = [...currentBadges];
+    for (const rule of BADGE_RULES) {
+      if (!newBadges.includes(rule.id) && rule.condition(newTotal, newBadges, action)) {
+        newBadges.push(rule.id);
+      }
+    }
+
+    tx.set(
+      pointsRef,
+      {
+        user_id,
+        company_id,
+        total_points: newTotal,
+        level,
+        badges: newBadges,
+        updated_at: Date.now(),
+      },
+      { merge: true }
+    );
+  });
+
+  return { success: true, points_awarded: points };
+});
+
+/**
+ * Assistente IA preventivo da Vegl.ia.
+ * Usa Anthropic Claude API via HTTP direto (sem SDK, para evitar dependencia extra).
+ * Busca contexto do usuario e mantém histórico das últimas 10 mensagens.
+ */
+export const chatWithVeglia = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
+
+  const { message } = request.data as { message: string };
+  if (!message?.trim()) throw new HttpsError("invalid-argument", "message required");
+
+  const uid = request.auth.uid;
+  const companyId = request.auth.token["company_id"] as string;
+
+  // Rate limit: busca mensagens do dia atual
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const todayMsgsSnap = await db
+    .collection("ai_chats")
+    .doc(uid)
+    .collection("messages")
+    .where("role", "==", "user")
+    .where("created_at", ">=", startOfDay.getTime())
+    .get();
+
+  // Rate limit básico: 10 msgs/dia para planos starter (liberado para demo)
+  // Em produção: verificar plan da empresa para aplicar limite
+  const DAILY_LIMIT = 50;
+  if (todayMsgsSnap.size >= DAILY_LIMIT) {
+    throw new HttpsError("resource-exhausted", "Limite diário atingido");
+  }
+
+  // Busca contexto do usuário
+  const [enrollSnap, passportSnap, diagSnap] = await Promise.all([
+    db.collection("enrollments").where("uid", "==", uid).get(),
+    db.collection("health_passports").doc(uid).get(),
+    db.collection("diagnostic_results").doc(uid).get(),
+  ]);
+
+  const completedCourses = enrollSnap.docs
+    .filter((d) => d.data().completed_at)
+    .map((d) => d.data().course_id as string);
+
+  const passport = passportSnap.exists ? passportSnap.data() : null;
+  const diagnostic = diagSnap.exists ? diagSnap.data() : null;
+
+  const userContext = `
+Contexto do usuário:
+- Trilhas concluídas: ${completedCourses.length > 0 ? completedCourses.join(", ") : "nenhuma"}
+- Vacinas registradas: ${passport ? (passport.vaccinations as unknown[]).length : 0}
+- Score de saúde: ${passport?.health_score ?? "não avaliado"}
+- Diagnóstico: ${diagnostic ? `score ${diagnostic.score}/100, categoria ${diagnostic.category}` : "não realizado"}
+`;
+
+  // Histórico das últimas 10 mensagens
+  const historySnap = await db
+    .collection("ai_chats")
+    .doc(uid)
+    .collection("messages")
+    .orderBy("created_at", "desc")
+    .limit(10)
+    .get();
+
+  const history = historySnap.docs
+    .map((d) => d.data() as { role: string; content: string })
+    .reverse();
+
+  const systemPrompt = `Você é a Vegl.ia IA — assistente de saúde preventiva corporativa da plataforma Vegl.ia, desenvolvida em parceria com a VaciVitta e validada pela Dra. Amanda Conde Perez Fernandes (pediatra, neonatologista, nutróloga, membro da SBIm).
+
+Seu papel:
+- Orientar sobre saúde preventiva, vacinação, compliance da Lei 15.377/2026 e NR-1
+- Recomendar trilhas de aprendizado disponíveis na plataforma
+- Sempre indicar consulta médica para diagnósticos individuais
+- Nunca fazer diagnóstico médico — apenas orientações preventivas e educativas
+- Tom: direto, acolhedor, com autoridade técnica baseada em evidências
+
+${userContext}
+
+IMPORTANTE: Quando não souber algo, diga "consulte um profissional de saúde". Nunca diagnostique condições médicas individuais.`;
+
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  if (!anthropicKey) {
+    throw new HttpsError("failed-precondition", "Assistente IA não configurado");
+  }
+
+  // Chamada à API Anthropic via fetch nativo do Node 20
+  const messages = [
+    ...history.map((h) => ({ role: h.role, content: h.content })),
+    { role: "user", content: message },
+  ];
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": anthropicKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-haiku-4-5",
+      max_tokens: 1024,
+      system: systemPrompt,
+      messages,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new HttpsError("internal", "Erro ao chamar assistente IA");
+  }
+
+  const aiResponse = (await response.json()) as {
+    content: Array<{ type: string; text: string }>;
+  };
+  const aiText = aiResponse.content.find((c) => c.type === "text")?.text ?? "";
+
+  // Salva conversa no Firestore
+  const chatRef = db.collection("ai_chats").doc(uid);
+  const msgsRef = chatRef.collection("messages");
+  const now = Date.now();
+
+  await Promise.all([
+    msgsRef.add({ role: "user", content: message, created_at: now }),
+    msgsRef.add({ role: "assistant", content: aiText, created_at: now + 1 }),
+    chatRef.set({ user_id: uid, company_id: companyId, updated_at: now }, { merge: true }),
+  ]);
+
+  return { response: aiText };
 });
 
 /**
@@ -305,6 +534,182 @@ export const generateCertificate = onCall(async (request) => {
 });
 
 /**
+ * Cria um ou mais convites para colaboradores.
+ * Apenas admin_rh ou admin da empresa pode chamar.
+ * Retorna IDs criados e dispara sendInviteEmail para cada convite.
+ */
+export const createInvite = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
+
+  const callerRole = request.auth.token["role"] as string | undefined;
+  const callerCompanyId = request.auth.token["company_id"] as string | undefined;
+
+  if (callerRole !== "admin" && callerRole !== "admin_rh") {
+    throw new HttpsError("permission-denied", "Only admin or admin_rh can create invites");
+  }
+
+  const { emails, role, company_id } = request.data as {
+    emails: string[];
+    role: "collaborator" | "rh";
+    company_id: string;
+  };
+
+  if (!emails?.length) throw new HttpsError("invalid-argument", "emails array required");
+  if (!role) throw new HttpsError("invalid-argument", "role required");
+  if (!company_id) throw new HttpsError("invalid-argument", "company_id required");
+
+  // Admin só pode criar convites para a própria empresa
+  if (callerCompanyId && callerCompanyId !== company_id) {
+    throw new HttpsError("permission-denied", "Cannot create invites for a different company");
+  }
+
+  const inviteIds: string[] = [];
+  const batch = db.batch();
+
+  for (const email of emails) {
+    const inviteRef = db.collection("invites").doc();
+    batch.set(inviteRef, {
+      email: email.trim().toLowerCase(),
+      role,
+      company_id,
+      created_by: request.auth.uid,
+      createdAt: Date.now(),
+      usedAt: null,
+    });
+    inviteIds.push(inviteRef.id);
+  }
+
+  await batch.commit();
+
+  return { created: inviteIds.length, inviteIds };
+});
+
+/**
+ * Cron diário: verifica vacinas vencendo, módulos abandonados, diagnósticos pendentes.
+ * Cria notificações em notifications/{id}.
+ * Roda às 08:00 BRT todos os dias.
+ */
+export const dailyHealthCheck = onSchedule("0 11 * * *", async () => {
+  const now = Date.now();
+  const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
+
+  const passportsSnap = await db.collection("health_passports").get();
+  const batch = db.batch();
+  let count = 0;
+
+  for (const passDoc of passportsSnap.docs) {
+    const passport = passDoc.data();
+    const userId = passport.user_id as string;
+    const companyId = passport.company_id as string;
+
+    // Checar vacinas — se ultima vacina tem mais de 11 meses (influenza anual como proxy)
+    const vaccinations = (passport.vaccinations as Array<{ date_applied: number; vaccine_name: string }>) ?? [];
+    if (vaccinations.length > 0) {
+      const lastVaccine = vaccinations.reduce((a, b) =>
+        a.date_applied > b.date_applied ? a : b
+      );
+      const daysSince = (now - lastVaccine.date_applied) / (1000 * 60 * 60 * 24);
+      if (daysSince > 335) {
+        const notifRef = db.collection("notifications").doc();
+        batch.set(notifRef, {
+          user_id: userId,
+          company_id: companyId,
+          type: "vaccine_expiring",
+          message: "Sua ultima vacinacao tem mais de 11 meses. Que tal verificar o calendario?",
+          action_url: "/app/passaporte",
+          read: false,
+          created_at: now,
+        });
+        count++;
+      }
+    }
+
+    // Checar modulos abandonados
+    const enrollSnap = await db
+      .collection("enrollments")
+      .where("uid", "==", userId)
+      .where("completed_at", "==", null)
+      .get();
+
+    for (const enroll of enrollSnap.docs) {
+      const data = enroll.data();
+      const startedAt = data.started_at as number;
+      if (now - startedAt > fourteenDaysMs) {
+        const notifRef = db.collection("notifications").doc();
+        batch.set(notifRef, {
+          user_id: userId,
+          company_id: companyId,
+          type: "module_reminder",
+          message: "Voce tem uma trilha em andamento ha mais de 14 dias. Continue de onde parou!",
+          action_url: `/app/trilha/${data.course_id}`,
+          read: false,
+          created_at: now,
+        });
+        count++;
+      }
+    }
+  }
+
+  await batch.commit();
+  console.log(`dailyHealthCheck: ${count} notificacoes criadas`);
+});
+
+/**
+ * Cron mensal: calcula ISPC (Índice de Saúde Preventiva Corporativa) por empresa.
+ * Roda no dia 1 de cada mês às 06:00 BRT.
+ */
+export const calculateISPC = onSchedule("0 9 1 * *", async () => {
+  const companiesSnap = await db.collection("companies").get();
+  const now = Date.now();
+  const period = new Date().toISOString().slice(0, 7); // YYYY-MM
+
+  const batch = db.batch();
+
+  for (const compDoc of companiesSnap.docs) {
+    const companyId = compDoc.id;
+
+    const [enrollSnap, passSnap, usersSnap] = await Promise.all([
+      db.collection("enrollments").where("company_id", "==", companyId).get(),
+      db.collection("health_passports").where("company_id", "==", companyId).get(),
+      db.collection("users").where("company_id", "==", companyId).get(),
+    ]);
+
+    const total = usersSnap.size;
+    if (total === 0) continue;
+
+    const completed = enrollSnap.docs.filter((d) => d.data().completed_at).length;
+    const vaccinated = passSnap.docs.filter(
+      (d) => ((d.data().vaccinations as unknown[]) ?? []).length > 0
+    ).length;
+
+    const educationScore = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const vaccinationScore = total > 0 ? Math.round((vaccinated / total) * 100) : 0;
+    const preventionScore = Math.round((educationScore + vaccinationScore) / 2);
+
+    const overallScore = Math.round(
+      educationScore * 0.4 + vaccinationScore * 0.4 + preventionScore * 0.2
+    );
+
+    const docId = `${companyId}_${period}`;
+    const ref = db.collection("ispc_snapshots").doc(docId);
+    batch.set(ref, {
+      company_id: companyId,
+      period,
+      score: overallScore,
+      breakdown: {
+        education: educationScore,
+        vaccination: vaccinationScore,
+        prevention: preventionScore,
+      },
+      created_at: now,
+    });
+  }
+
+  await batch.commit();
+  console.log(`calculateISPC: periodo ${period} processado`);
+});
+
+/**
  * Envia email de convite para o colaborador.
  * Em produção, configura SMTP_USER / SMTP_PASS / SMTP_HOST via Firebase environment.
  * Em dev/demo, usa Ethereal (captura sem enviar) e retorna preview_url.
@@ -410,4 +815,366 @@ export const sendInviteEmail = onCall(async (request) => {
       ? "Email enviado com sucesso"
       : "Email capturado em modo demo — consulte preview_url para visualizar",
   };
+});
+
+/**
+ * Cron diário às 09:00 BRT: verifica vencimentos de vacinas (30 dias) e
+ * atualiza o status na collection vaccination_records.
+ * Cria notificações na collection notifications para alertas próximos.
+ */
+export const checkComplianceAlerts = onSchedule("0 12 * * *", async () => {
+  const now = Date.now();
+  const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+
+  const vaxSnap = await db.collection("vaccination_records").get();
+  const batch = db.batch();
+  let alertCount = 0;
+
+  for (const vaxDoc of vaxSnap.docs) {
+    const data = vaxDoc.data();
+    const nextDose = data.next_dose_date as number | null;
+    const currentStatus = data.status as string;
+
+    if (!nextDose) continue;
+
+    let newStatus: "up_to_date" | "pending" | "overdue";
+    if (nextDose < now) {
+      newStatus = "overdue";
+    } else if (nextDose <= now + thirtyDaysMs) {
+      newStatus = "pending";
+    } else {
+      newStatus = "up_to_date";
+    }
+
+    // Atualiza status se mudou
+    if (newStatus !== currentStatus) {
+      batch.update(vaxDoc.ref, { status: newStatus, status_updated_at: now });
+    }
+
+    // Cria notificação para pending/overdue
+    if ((newStatus === "pending" || newStatus === "overdue") && currentStatus === "up_to_date") {
+      const notifRef = db.collection("notifications").doc();
+      const daysUntil = Math.round((nextDose - now) / (1000 * 60 * 60 * 24));
+      batch.set(notifRef, {
+        company_id: data.company_id,
+        user_id: data.employee_id,
+        type: "vaccine_expiring",
+        message: newStatus === "overdue"
+          ? `Vacina ${data.vaccine_name} está vencida. Regularize para manter o compliance.`
+          : `Vacina ${data.vaccine_name} vence em ${daysUntil} dias. Agende com antecedência.`,
+        action_url: "/app/compliance/vacinacao",
+        read: false,
+        created_at: now,
+      });
+      alertCount++;
+    }
+  }
+
+  await batch.commit();
+  console.log(`checkComplianceAlerts: ${alertCount} alertas gerados`);
+});
+
+/**
+ * Trigger: recalcula o compliance_score da empresa sempre que um enrollment
+ * ou vaccination_record é criado/atualizado.
+ * Atualiza a collection compliance_scores/{company_id}.
+ */
+export const syncComplianceScore = onDocumentWritten(
+  "{collection}/{docId}",
+  async (event) => {
+    const collection = event.params.collection;
+
+    // Só dispara para as collections relevantes
+    if (collection !== "enrollments" && collection !== "vaccination_records") {
+      return;
+    }
+
+    const data = event.data?.after?.data() ?? event.data?.before?.data();
+    if (!data) return;
+
+    const companyId = data.company_id as string | undefined;
+    if (!companyId) return;
+
+    // Busca dados da empresa para calcular score
+    const [usersSnap, enrollSnap, vaxSnap, assessSnap] = await Promise.all([
+      db.collection("users").where("company_id", "==", companyId).get(),
+      db.collection("enrollments").where("company_id", "==", companyId).get(),
+      db.collection("vaccination_records").where("company_id", "==", companyId).get(),
+      db.collection("health_assessments").where("company_id", "==", companyId).get(),
+    ]);
+
+    const total = usersSnap.size;
+    if (total === 0) return;
+
+    const completedEnrolls = enrollSnap.docs.filter((d) => d.data().completed_at != null).length;
+    const vaccinatedUsers = new Set(vaxSnap.docs.map((d) => d.data().employee_id as string)).size;
+    const assessedUsers = assessSnap.size;
+
+    const educationScore = Math.round((completedEnrolls / total) * 100);
+    const vaccinationScore = Math.round((vaccinatedUsers / total) * 100);
+    const mentalHealthScore = assessedUsers > 0
+      ? Math.min(100, Math.round((assessedUsers / total) * 80 + 20))
+      : 40;
+    const ergonomicsScore = 50; // mock até NR-1 ter tracking específico
+
+    const overallScore = Math.round(
+      educationScore * 0.35 +
+        vaccinationScore * 0.35 +
+        mentalHealthScore * 0.15 +
+        ergonomicsScore * 0.15
+    );
+
+    let riskLevel: "alto" | "atencao" | "bom" | "excelencia";
+    if (overallScore >= 91) riskLevel = "excelencia";
+    else if (overallScore >= 71) riskLevel = "bom";
+    else if (overallScore >= 41) riskLevel = "atencao";
+    else riskLevel = "alto";
+
+    await db.collection("compliance_scores").doc(companyId).set({
+      company_id: companyId,
+      vaccination_coverage: vaccinationScore,
+      training_compliance: educationScore,
+      mental_health_score: mentalHealthScore,
+      ergonomics_score: ergonomicsScore,
+      overall_score: overallScore,
+      risk_level: riskLevel,
+      updated_at: Date.now(),
+    }, { merge: true });
+
+    // Registra evento de auditoria para mudança significativa de score
+    const prevSnap = await db.collection("compliance_scores").doc(companyId).get();
+    const prevScore = prevSnap.data()?.overall_score as number | undefined;
+    if (prevScore !== undefined && Math.abs(overallScore - prevScore) >= 5) {
+      await db.collection("audit_events").add({
+        company_id: companyId,
+        event_type: "compliance_score_changed",
+        payload: {
+          previous_score: prevScore,
+          new_score: overallScore,
+          risk_level: riskLevel,
+          description: `Score de compliance alterado de ${prevScore} para ${overallScore}`,
+        },
+        timestamp: Date.now(),
+      });
+    }
+
+    console.log(`syncComplianceScore: company ${companyId} → score ${overallScore} (${riskLevel})`);
+  }
+);
+
+/**
+ * Gera o Certificado de Empresa Verificada Vegl.ia.
+ * Cria PDF com score de compliance, número de colaboradores certificados e hash SHA-256.
+ * Idempotente por company_id + year.
+ */
+export const generateCompanyCertificate = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
+
+  const callerRole = request.auth.token["role"] as string | undefined;
+  if (callerRole !== "admin" && callerRole !== "admin_rh") {
+    throw new HttpsError("permission-denied", "Apenas admin ou admin_rh pode gerar certificado de empresa");
+  }
+
+  const { company_id, year } = request.data as { company_id: string; year: number };
+  if (!company_id || !year) {
+    throw new HttpsError("invalid-argument", "company_id e year são obrigatórios");
+  }
+
+  // Verifica que o caller pertence à empresa
+  const callerCompanyId = request.auth.token["company_id"] as string | undefined;
+  if (callerCompanyId && callerCompanyId !== company_id) {
+    throw new HttpsError("permission-denied", "Empresa inválida");
+  }
+
+  const certDocId = `${company_id}_${year}`;
+  const certRef = db.collection("company_certificates").doc(certDocId);
+
+  // Idempotente: retorna o existente se já emitido este ano
+  const existing = await certRef.get();
+  if (existing.exists) {
+    return {
+      pdf_url: existing.data()?.pdf_url ?? "",
+      score: existing.data()?.score ?? 0,
+      already_issued: true,
+    };
+  }
+
+  // Busca dados da empresa
+  const [companySnap, complianceSnap, usersSnap, certificatesSnap] = await Promise.all([
+    db.collection("companies").doc(company_id).get(),
+    db.collection("compliance_scores").doc(company_id).get(),
+    db.collection("users").where("company_id", "==", company_id).get(),
+    db.collection("certificates").where("company_id", "==", company_id).get(),
+  ]);
+
+  if (!companySnap.exists) throw new HttpsError("not-found", "Empresa não encontrada");
+
+  const companyData = companySnap.data()!;
+  const complianceData = complianceSnap.exists ? complianceSnap.data()! : null;
+  const overallScore = (complianceData?.overall_score as number) ?? 0;
+  const totalCollaborators = usersSnap.size;
+  const certifiedCollaborators = certificatesSnap.size;
+
+  if (overallScore < 40) {
+    throw new HttpsError(
+      "failed-precondition",
+      `Score mínimo para certificação é 40. Score atual: ${overallScore}`
+    );
+  }
+
+  // Hash de verificação
+  const certPayload = JSON.stringify({
+    company_id,
+    company_name: companyData.name,
+    year,
+    score: overallScore,
+    collaborators_certified: certifiedCollaborators,
+    issued_at: Date.now(),
+  });
+  const hash = crypto.createHash("sha256").update(certPayload).digest("hex");
+
+  // Gera PDF
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([842, 595]); // A4 landscape
+  const { width, height } = page.getSize();
+
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+  // Fundo
+  page.drawRectangle({ x: 0, y: 0, width, height, color: rgb(0.043, 0.145, 0.271) });
+  page.drawRectangle({
+    x: 20, y: 20, width: width - 40, height: height - 40,
+    borderColor: rgb(0.365, 0.827, 0.659), borderWidth: 2,
+    color: rgb(0, 0, 0), opacity: 0,
+  });
+
+  // Título
+  page.drawText("CERTIFICADO DE EMPRESA VERIFICADA", {
+    x: width / 2 - 210, y: height - 100,
+    size: 22, font: fontBold, color: rgb(0.788, 0.663, 0.431),
+  });
+
+  page.drawText("Programa de Compliance Preventivo Corporativo · Lei 15.377/2026", {
+    x: width / 2 - 210, y: height - 135,
+    size: 13, font: fontRegular, color: rgb(0.7, 0.7, 0.7),
+  });
+
+  // Nome da empresa
+  page.drawText("Certificamos que", {
+    x: width / 2 - 60, y: height / 2 + 50,
+    size: 13, font: fontRegular, color: rgb(0.6, 0.6, 0.6),
+  });
+
+  const nome = companyData.name as string;
+  page.drawText(nome, {
+    x: Math.max(40, width / 2 - nome.length * 7), y: height / 2 + 10,
+    size: 26, font: fontBold, color: rgb(1, 1, 1),
+  });
+
+  page.drawText("implementou com êxito o Programa de Compliance Preventivo Corporativo", {
+    x: width / 2 - 235, y: height / 2 - 30,
+    size: 13, font: fontRegular, color: rgb(0.7, 0.7, 0.7),
+  });
+
+  // Score e estatísticas
+  page.drawText(`Score de Compliance: ${overallScore}/100  ·  ${certifiedCollaborators} colaboradores certificados`, {
+    x: width / 2 - 170, y: height / 2 - 70,
+    size: 12, font: fontBold, color: rgb(0.365, 0.827, 0.659),
+  });
+
+  // Validade
+  const issued = new Date();
+  const expires = new Date(issued);
+  expires.setFullYear(expires.getFullYear() + 1);
+
+  page.drawText(
+    `Emitido em ${issued.toLocaleDateString("pt-BR")} · Válido até ${expires.toLocaleDateString("pt-BR")}`,
+    { x: width / 2 - 130, y: height / 2 - 110, size: 11, font: fontRegular, color: rgb(0.5, 0.5, 0.5) }
+  );
+
+  // Hash e rodapé
+  page.drawText(`Verificacao: ${hash.substring(0, 32)}...`, {
+    x: 40, y: 35, size: 8, font: fontRegular, color: rgb(0.3, 0.3, 0.3),
+  });
+  page.drawText("Powered by Vacivitta", {
+    x: width - 150, y: 35, size: 9, font: fontBold, color: rgb(0.365, 0.827, 0.659),
+  });
+
+  const pdfBytes = await pdfDoc.save();
+
+  // Salva no Storage
+  const bucket = admin.storage().bucket();
+  const file = bucket.file(`company_certificates/${certDocId}.pdf`);
+  await file.save(Buffer.from(pdfBytes), { metadata: { contentType: "application/pdf" } });
+  await file.makePublic();
+
+  const pdfUrl = `https://storage.googleapis.com/${bucket.name}/company_certificates/${certDocId}.pdf`;
+
+  // Persiste no Firestore
+  await certRef.set({
+    company_id,
+    year,
+    score: overallScore,
+    collaborators_certified: certifiedCollaborators,
+    total_collaborators: totalCollaborators,
+    pdf_url: pdfUrl,
+    hash,
+    issued_at: Date.now(),
+    expires_at: expires.getTime(),
+  });
+
+  return { pdf_url: pdfUrl, score: overallScore, already_issued: false };
+});
+
+/**
+ * Calcula o Preventive Health Score do colaborador a partir das respostas
+ * do diagnóstico. Chamado pelo DiagnosticoColaborador.tsx como alternativa
+ * ao cálculo client-side (para garantir integridade do score).
+ */
+export const calculatePreventiveScore = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
+
+  const { answers } = request.data as {
+    answers: Record<string, number>;
+  };
+
+  if (!answers || typeof answers !== "object") {
+    throw new HttpsError("invalid-argument", "answers object required");
+  }
+
+  // Mapeamento de scores por pergunta (mesma lógica do client)
+  const SCORE_MAPS: Record<string, number[]> = {
+    q_sleep:     [0, 33, 66, 100],
+    q_exercise:  [0, 33, 66, 100],
+    q_stress:    [0, 33, 66, 100],
+    q_smoking:   [0, 40, 70, 100],
+    q_alcohol:   [0, 33, 66, 100],
+    q_diet:      [0, 33, 66, 100],
+    q_vaccine_flu:   [0, 20, 100],
+    q_vaccine_covid: [0, 33, 66, 100],
+    q_chronic:   [0, 40, 60, 100],
+    q_checkup:   [0, 33, 66, 100],
+    q_water:     [0, 33, 66, 100],
+    q_mental:    [0, 25, 66, 100],
+  };
+
+  const scores = Object.entries(answers).map(([key, idx]) => {
+    const map = SCORE_MAPS[key];
+    return map && idx >= 0 && idx < map.length ? map[idx] : 50;
+  });
+
+  if (scores.length === 0) throw new HttpsError("invalid-argument", "No valid answers");
+
+  const preventive_score = Math.round(
+    scores.reduce((a, b) => a + b, 0) / scores.length
+  );
+
+  let classification: string;
+  if (preventive_score >= 91) classification = "excelencia";
+  else if (preventive_score >= 71) classification = "bom";
+  else if (preventive_score >= 41) classification = "atencao";
+  else classification = "alto_risco";
+
+  return { preventive_score, classification };
 });

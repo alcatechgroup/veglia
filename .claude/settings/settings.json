@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "_comment": "Vegl.ia Command Center · Configuração do Claude Code",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npx:*)",
+      "Bash(git status)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(gh:*)",
+      "Bash(firebase:*)",
+      "Bash(turbo:*)",
+      "Bash(ls:*)",
+      "Bash(pwd)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(node:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ]
+  },
+  "_documentation": "Sub-agents: ceo, dev, comunicacao, edu. Slash commands: sprint-status, briefing-equipe, content-semana, decisao-ceo, feature-spec."
+}

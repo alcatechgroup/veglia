@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { doc, onSnapshot, setDoc, serverTimestamp } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { db, app } from "@veglia/firebase-config";
@@ -137,6 +138,7 @@ function Quiz({ questions, onComplete }: QuizProps) {
 
 export default function TrilhaNr1() {
   const { firebaseUser, claims } = useAuth();
+  const navigate = useNavigate();
   const uid = firebaseUser?.uid ?? "";
   const enrollmentId = `${uid}_${NR1_COURSE_ID}`;
 
@@ -146,6 +148,7 @@ export default function TrilhaNr1() {
   const [activeModuleId, setActiveModuleId] = useState<string>(NR1_MODULES[0].id);
   const [showQuiz, setShowQuiz] = useState(false);
   const [enrollmentLoading, setEnrollmentLoading] = useState(true);
+  const [certToast, setCertToast] = useState(false);
 
   // Observa enrollment em tempo real
   useEffect(() => {
@@ -236,6 +239,11 @@ export default function TrilhaNr1() {
             const functions = getFunctions(app, "southamerica-east1");
             const generateCert = httpsCallable(functions, "generateCertificate");
             await generateCert({ courseId: NR1_COURSE_ID });
+            setCertToast(true);
+            setTimeout(() => {
+              setCertToast(false);
+              navigate("/app/certificados");
+            }, 3000);
           } catch {
             // Falha silenciosa — usuário pode tentar novamente pela tela de certificado
           }
@@ -267,6 +275,17 @@ export default function TrilhaNr1() {
 
   return (
     <div className="space-y-6">
+      {/* Toast de certificado gerado */}
+      {certToast && (
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-[#5DD3A8] text-[#0B2545] font-semibold px-5 py-3.5 rounded-2xl shadow-xl animate-in slide-in-from-top-2">
+          <span className="text-lg">✓</span>
+          <div>
+            <p className="text-sm font-bold">Certificado gerado!</p>
+            <p className="text-xs font-medium opacity-70">Redirecionando para seus certificados...</p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <p className="text-xs text-[#5DD3A8]/70 font-medium tracking-wide uppercase mb-1">
