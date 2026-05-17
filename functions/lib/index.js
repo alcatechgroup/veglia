@@ -41,6 +41,8 @@ const pdf_lib_1 = require("pdf-lib");
 const firestore_1 = require("firebase-functions/v2/firestore");
 const https_1 = require("firebase-functions/v2/https");
 const scheduler_1 = require("firebase-functions/v2/scheduler");
+const params_1 = require("firebase-functions/params");
+const anthropicApiKey = (0, params_1.defineSecret)("ANTHROPIC_API_KEY");
 admin.initializeApp();
 const db = admin.firestore();
 /**
@@ -135,7 +137,7 @@ exports.awardPoints = (0, https_1.onCall)(async (request) => {
  * Usa Anthropic Claude API via HTTP direto (sem SDK, para evitar dependencia extra).
  * Busca contexto do usuario e mantém histórico das últimas 10 mensagens.
  */
-exports.chatWithVeglia = (0, https_1.onCall)(async (request) => {
+exports.chatWithVeglia = (0, https_1.onCall)({ secrets: [anthropicApiKey] }, async (request) => {
     if (!request.auth)
         throw new https_1.HttpsError("unauthenticated", "Login required");
     const { message } = request.data;
@@ -200,7 +202,7 @@ Seu papel:
 ${userContext}
 
 IMPORTANTE: Quando não souber algo, diga "consulte um profissional de saúde". Nunca diagnostique condições médicas individuais.`;
-    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    const anthropicKey = anthropicApiKey.value();
     if (!anthropicKey) {
         throw new https_1.HttpsError("failed-precondition", "Assistente IA não configurado");
     }

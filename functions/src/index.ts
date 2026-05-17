@@ -5,6 +5,9 @@ import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { onCall, HttpsError, onRequest } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { defineSecret } from "firebase-functions/params";
+
+const anthropicApiKey = defineSecret("ANTHROPIC_API_KEY");
 // Local type definitions (avoids workspace:* protocol incompatibility with Firebase Cloud Build)
 type UserRole = "admin" | "admin_rh" | "rh" | "collaborator";
 interface CustomClaims {
@@ -135,7 +138,7 @@ export const awardPoints = onCall(async (request) => {
  * Usa Anthropic Claude API via HTTP direto (sem SDK, para evitar dependencia extra).
  * Busca contexto do usuario e mantém histórico das últimas 10 mensagens.
  */
-export const chatWithVeglia = onCall(async (request) => {
+export const chatWithVeglia = onCall({ secrets: [anthropicApiKey] }, async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
 
   const { message } = request.data as { message: string };
@@ -211,7 +214,7 @@ ${userContext}
 
 IMPORTANTE: Quando não souber algo, diga "consulte um profissional de saúde". Nunca diagnostique condições médicas individuais.`;
 
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  const anthropicKey = anthropicApiKey.value();
   if (!anthropicKey) {
     throw new HttpsError("failed-precondition", "Assistente IA não configurado");
   }
