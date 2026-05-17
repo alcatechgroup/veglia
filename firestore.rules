@@ -121,5 +121,15 @@ service cloud.firestore {
       allow read:   if request.auth != null && request.auth.token.email != null;
       allow update, delete: if false;
     }
+
+    // ── Leads (capturados pelo chat Vela e formulário da landing page) ────────
+    // Leitura e escrita de status/notas: apenas admin.
+    // Criação via Cloud Function usa Admin SDK (ignora estas rules).
+    // allow create: if true — fallback caso o client precise criar diretamente
+    // (ex: se Cloud Function estiver indisponível), mas fluxo normal é via CF.
+    match /leads/{leadId} {
+      allow read, write: if isAdmin();
+      allow create: if true;
+    }
   }
 }

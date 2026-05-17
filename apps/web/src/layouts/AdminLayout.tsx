@@ -1,4 +1,7 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "@veglia/firebase-config";
 import { useAuth } from "@/contexts/AuthContext";
 
 const NAV = [
@@ -21,6 +24,8 @@ const NAV = [
   { to: "/admin/marketplace", label: "Marketplace", icon: "◐", group: "Plataforma" },
   { to: "/admin/beneficios", label: "Beneficios", icon: "◻", group: "Plataforma" },
   { to: "/admin/analytics", label: "Analytics", icon: "◆", group: "Plataforma" },
+  // Comercial
+  { to: "/admin/leads", label: "Leads", icon: "◉", group: "Comercial" },
 ];
 
 const BREADCRUMB: Record<string, string> = {
@@ -40,6 +45,7 @@ const BREADCRUMB: Record<string, string> = {
   "/admin/marketplace": "Marketplace",
   "/admin/beneficios": "Beneficios",
   "/admin/analytics": "Analytics",
+  "/admin/leads": "Leads",
 };
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -47,6 +53,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const pageLabel = BREADCRUMB[location.pathname] ?? "Command Center";
+
+  // Badge: contagem de leads com status "novo"
+  const [newLeadsCount, setNewLeadsCount] = useState(0);
+  useEffect(() => {
+    const q = query(collection(db, "leads"), where("status", "==", "novo"));
+    const unsub = onSnapshot(q, snap => setNewLeadsCount(snap.size), () => {});
+    return unsub;
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -69,7 +83,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
         {/* Nav com grupos */}
         <nav className="flex flex-col gap-0.5 overflow-y-auto">
-          {["Estrategia", "Conteudo", "Plataforma"].map((group) => (
+          {["Estrategia", "Conteudo", "Plataforma", "Comercial"].map((group) => (
             <div key={group} className="mb-2">
               <p className="text-[10px] text-white/20 px-3 py-1 uppercase tracking-wide">
                 {group}
@@ -88,7 +102,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                   }
                 >
                   <span className="text-base leading-none">{item.icon}</span>
-                  {item.label}
+                  <span className="flex-1">{item.label}</span>
+                  {item.to === "/admin/leads" && newLeadsCount > 0 && (
+                    <span className="bg-[#5DD3A8] text-[#0B2545] text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                      {newLeadsCount}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>

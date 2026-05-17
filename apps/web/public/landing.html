@@ -579,17 +579,18 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
     <div class="cta-inner">
       <h2>Comece hoje.<br>Seu RH <em>agradece</em> amanhã.</h2>
       <p>Preencha o formulário e nossa equipe entra em contato em até 24 horas úteis. Sem compromisso.</p>
-      <form class="lead-form" action="mailto:contato@vegl.ia" method="post" enctype="text/plain">
+      <form class="lead-form" id="cta-form">
         <div class="form-row">
-          <input type="text" name="nome" placeholder="Nome completo" required class="form-field">
-          <input type="text" name="empresa" placeholder="Empresa" required class="form-field">
+          <input type="text" id="lead-nome" name="nome" placeholder="Nome completo" required class="form-field">
+          <input type="text" id="lead-empresa" name="empresa" placeholder="Empresa" required class="form-field">
         </div>
-        <input type="email" name="email" placeholder="E-mail corporativo" required class="form-field">
-        <select name="porte" required class="form-field">
+        <input type="email" id="lead-email" name="email" placeholder="E-mail corporativo" required class="form-field">
+        <select id="lead-porte" name="porte" required class="form-field">
           <option value="" disabled selected>Porte da empresa</option>
-          <option>100 – 500 colaboradores</option>
-          <option>500 – 2.000 colaboradores</option>
-          <option>Acima de 2.000 colaboradores</option>
+          <option value="50">Até 50 colaboradores</option>
+          <option value="200">100 – 500 colaboradores</option>
+          <option value="600">500 – 2.000 colaboradores</option>
+          <option value="2000">Acima de 2.000 colaboradores</option>
         </select>
         <button type="submit" class="btn-form">Quero conhecer a Vegl.ia →</button>
         <p class="form-note">Seus dados são usados apenas para entrar em contato. Sem spam.</p>
@@ -626,19 +627,188 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
   </div>
 </footer>
 
+<!-- ── VELA CHAT WIDGET ─────────────────────────────────────────────────── -->
+<style>
+/* ── VELA: Reset base ── */
+#vela-widget *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',-apple-system,sans-serif}
+
+/* ── VELA: Botão flutuante ── */
+#vela-btn{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  width:56px;height:56px;border-radius:50%;
+  background:#0B2545;border:2px solid #5DD3A8;
+  box-shadow:0 4px 20px rgba(11,37,69,.45);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:transform .2s,box-shadow .2s;
+  outline:none;
+}
+#vela-btn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(93,211,168,.35)}
+#vela-badge{
+  position:absolute;top:-4px;right:-4px;
+  width:20px;height:20px;border-radius:50%;
+  background:#E53E3E;color:#fff;
+  font-size:11px;font-weight:700;
+  display:none;align-items:center;justify-content:center;
+  border:2px solid #0B2545;
+}
+@keyframes vela-pulse{
+  0%{box-shadow:0 4px 20px rgba(11,37,69,.45),0 0 0 0 rgba(93,211,168,.4)}
+  70%{box-shadow:0 4px 20px rgba(11,37,69,.45),0 0 0 10px rgba(93,211,168,0)}
+  100%{box-shadow:0 4px 20px rgba(11,37,69,.45),0 0 0 0 rgba(93,211,168,0)}
+}
+#vela-btn.pulse{animation:vela-pulse 1.5s ease-out}
+
+/* ── VELA: Janela de chat ── */
+#vela-window{
+  position:fixed;bottom:90px;right:24px;
+  width:360px;height:520px;
+  background:#060F1A;border-radius:20px;
+  border:1px solid rgba(93,211,168,.2);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  display:none;flex-direction:column;
+  z-index:9998;overflow:hidden;
+}
+#vela-window.open{display:flex}
+@media(max-width:480px){
+  #vela-window{width:calc(100vw - 32px);left:16px;right:16px;height:70vh;bottom:80px}
+  #vela-btn{bottom:16px;right:16px}
+}
+
+/* ── Header ── */
+#vela-header{
+  background:#0B2545;padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(93,211,168,.12);
+  flex-shrink:0;
+}
+.vela-hdr-left{display:flex;align-items:center;gap:10px}
+.vela-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(93,211,168,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:#5DD3A8;
+  flex-shrink:0;
+}
+.vela-name{font-size:14px;font-weight:700;color:#FBF8F1}
+.vela-status{font-size:11px;color:rgba(251,248,241,.45);display:flex;align-items:center;gap:5px;margin-top:1px}
+.vela-dot{width:6px;height:6px;border-radius:50%;background:#48BB78;display:inline-block}
+#vela-close{
+  background:none;border:none;cursor:pointer;
+  color:rgba(255,255,255,.35);font-size:20px;line-height:1;
+  padding:4px;transition:color .15s;
+}
+#vela-close:hover{color:rgba(255,255,255,.75)}
+
+/* ── Mensagens ── */
+#vela-msgs{
+  flex:1;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:12px;
+  scroll-behavior:smooth;
+}
+#vela-msgs::-webkit-scrollbar{width:4px}
+#vela-msgs::-webkit-scrollbar-track{background:transparent}
+#vela-msgs::-webkit-scrollbar-thumb{background:rgba(93,211,168,.2);border-radius:4px}
+
+.vela-msg{display:flex;flex-direction:column;gap:4px;max-width:80%}
+.vela-msg.vela{align-self:flex-start}
+.vela-msg.user{align-self:flex-end}
+.vela-bubble{
+  padding:10px 14px;border-radius:14px;
+  font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;
+}
+.vela-msg.vela .vela-bubble{
+  background:#1A3A5C;color:#FBF8F1;
+  border-bottom-left-radius:4px;
+}
+.vela-msg.user .vela-bubble{
+  background:rgba(93,211,168,.15);
+  border:1px solid rgba(93,211,168,.25);
+  color:#FBF8F1;
+  border-bottom-right-radius:4px;
+}
+
+/* ── Typing indicator ── */
+#vela-typing{display:none;align-self:flex-start;padding:10px 14px;background:#1A3A5C;border-radius:14px;border-bottom-left-radius:4px}
+#vela-typing.show{display:flex}
+.typing-dots{display:flex;gap:4px;align-items:center}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:rgba(93,211,168,.6)}
+@keyframes vela-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+.typing-dot:nth-child(1){animation:vela-bounce 1.2s .0s infinite}
+.typing-dot:nth-child(2){animation:vela-bounce 1.2s .2s infinite}
+.typing-dot:nth-child(3){animation:vela-bounce 1.2s .4s infinite}
+
+/* ── Input ── */
+#vela-input-area{
+  padding:12px;border-top:1px solid rgba(93,211,168,.1);
+  display:flex;gap:8px;flex-shrink:0;background:#0B2545;
+}
+#vela-input{
+  flex:1;padding:10px 14px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(93,211,168,.2);
+  border-radius:12px;color:#FBF8F1;
+  font-size:13.5px;font-family:'Inter',sans-serif;
+  outline:none;resize:none;
+  transition:border-color .2s;
+  line-height:1.4;
+}
+#vela-input::placeholder{color:rgba(255,255,255,.3)}
+#vela-input:focus{border-color:rgba(93,211,168,.5)}
+#vela-send{
+  width:38px;height:38px;border-radius:10px;
+  background:#5DD3A8;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .2s;
+  align-self:flex-end;
+}
+#vela-send:hover{background:#C9A96E}
+</style>
+
+<!-- Widget HTML -->
+<div id="vela-widget">
+  <!-- Botão flutuante -->
+  <button id="vela-btn" aria-label="Falar com a Vela">
+    <span id="vela-badge"></span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#5DD3A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <!-- Janela -->
+  <div id="vela-window" role="dialog" aria-label="Chat Vela">
+    <div id="vela-header">
+      <div class="vela-hdr-left">
+        <div class="vela-avatar">V</div>
+        <div>
+          <div class="vela-name">Vela</div>
+          <div class="vela-status"><span class="vela-dot"></span>Online</div>
+        </div>
+      </div>
+      <button id="vela-close" aria-label="Fechar chat">×</button>
+    </div>
+    <div id="vela-msgs">
+      <div id="vela-typing"><div class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>
+    </div>
+    <div id="vela-input-area">
+      <textarea id="vela-input" rows="1" placeholder="Digite sua mensagem..." aria-label="Mensagem para a Vela"></textarea>
+      <button id="vela-send" aria-label="Enviar mensagem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#0B2545" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ── THEME TOGGLE ──────────────────────────────────────────────────────────── */
 (function(){
-  const STORAGE_KEY = 'veglia-theme';
-  const html = document.documentElement;
-  const saved = localStorage.getItem(STORAGE_KEY);
-  // Apply saved preference immediately (before paint) to avoid flash
+  var STORAGE_KEY = 'veglia-theme';
+  var html = document.documentElement;
+  var saved = localStorage.getItem(STORAGE_KEY);
   if (saved === 'dark') html.setAttribute('data-theme', 'dark');
   window.addEventListener('DOMContentLoaded', function(){
-    const btn = document.getElementById('themeToggle');
+    var btn = document.getElementById('themeToggle');
     if (!btn) return;
     btn.addEventListener('click', function(){
-      const isDark = html.getAttribute('data-theme') === 'dark';
+      var isDark = html.getAttribute('data-theme') === 'dark';
       if (isDark) {
         html.removeAttribute('data-theme');
         localStorage.setItem(STORAGE_KEY, 'light');
@@ -652,11 +822,373 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
 
 /* ── FAQ ───────────────────────────────────────────────────────────────────── */
 function toggleFaq(btn) {
-  const item = btn.parentElement;
-  const isOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  var item = btn.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(el){ el.classList.remove('open'); });
   if (!isOpen) item.classList.add('open');
 }
+
+/* ── FORMULÁRIO CTA — integração createLandingLead ─────────────────────────── */
+(function(){
+  var CF_URL = 'https://us-central1-veglia-6e734.cloudfunctions.net/createLandingLead';
+  window.addEventListener('DOMContentLoaded', function(){
+    var form = document.getElementById('cta-form');
+    if (!form) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var data = {
+        name:    document.getElementById('lead-nome').value,
+        company: document.getElementById('lead-empresa').value,
+        email:   document.getElementById('lead-email').value,
+        size:    document.getElementById('lead-porte').value,
+        source:  'landing_form',
+        timestamp: new Date().toISOString()
+      };
+      var btn = form.querySelector('.btn-form');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      fetch(CF_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(){
+        form.innerHTML = '<div style="text-align:center;padding:40px 20px"><div style="color:#5DD3A8;font-size:40px;margin-bottom:16px">✓</div><p style="color:#FBF8F1;font-size:18px;font-weight:600">Recebemos seus dados!</p><p style="color:rgba(255,255,255,.55);margin-top:8px">Em até 1 dia útil nossa equipe entra em contato.</p></div>';
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = 'Quero conhecer a Vegl.ia →';
+        alert('Erro ao enviar. Tente novamente ou envie para contato@vegl.ia');
+      });
+    });
+  });
+})();
+
+/* ── VELA CHAT WIDGET ──────────────────────────────────────────────────────── */
+(function(){
+  var CF_URL = 'https://us-central1-veglia-6e734.cloudfunctions.net/createLandingLead';
+  var SESSION_KEY = 'vela_chat_history';
+  var OPENED_KEY  = 'vela_opened';
+
+  /* ── Knowledge base ── */
+  var velaKnowledge = [
+    {
+      keywords: ['lei 15377','lei 15.377','lei trabalhista','o que é a lei','o que muda'],
+      response: 'A Lei 15.377/2026 está em vigor desde 6 de abril. Ela obriga toda empresa com vínculo CLT a documentar campanhas de vacinação, orientar prevenção de cânceres, garantir ausência remunerada para exames preventivos e manter tudo auditável para fiscalização. Não é recomendação — é obrigação com risco de autuação. Quer ver o que sua empresa precisa ter para estar em dia?'
+    },
+    {
+      keywords: ['irregular','inadimplente','descumprir','multada','autuação','já estou'],
+      response: 'Provavelmente sim, se você ainda não tem um processo documentado e auditável. A lei chegou sem campanha federal — o texto foi publicado no Diário Oficial e boa parte do RH ainda não recebeu orientação. Faça o diagnóstico gratuito: em menos de 5 minutos você sabe exatamente onde está a lacuna.'
+    },
+    {
+      keywords: ['nr-1','nr 1','riscos psicossociais','pgr','gro','saude mental no trabalho'],
+      response: 'A NR-1 revisada em 2024 tornou obrigatório o mapeamento de riscos psicossociais dentro do PGR — estresse, assédio, sobrecarga. Antes era opcional. Agora precisa estar documentado e ter ações de prevenção. A Vegl.ia inclui o módulo NR-1 já no plano de Compliance. Quantos funcionários tem sua equipe?'
+    },
+    {
+      keywords: ['como funciona','como resolve','o que faz','o que é a veglia','veglia'],
+      response: 'A plataforma centraliza tudo que a Lei 15.377 e a NR-1 exigem: campanhas vacinais documentadas, trilhas educacionais certificadas, agendamento in-company com a Vacivitta e painel de auditoria com rastreabilidade completa. O RH tem o dossiê pronto; o colaborador recebe o cuidado. Powered by Vacivitta — 10 anos de operação real em saúde corporativa.'
+    },
+    {
+      keywords: ['preço','preco','custo','quanto custa','plano','valor','mensalidade'],
+      response: 'Depende do porte da sua empresa:\n• Starter — até 50 funcionários: R$ 299/mês\n• Compliance — até 250: R$ 799/mês\n• Professional — até 1.000: R$ 1.800/mês\n• Enterprise — acima de 1.000: proposta personalizada\n\nO diagnóstico de compliance é gratuito e já mostra qual plano faz sentido. Quantos funcionários CLT sua empresa tem?'
+    },
+    {
+      keywords: ['vacivitta','vacina','vacinação','quem é'],
+      response: 'A Vacivitta é a maior rede de vacinação corporativa do Brasil — 10 anos de operação, milhares de colaboradores vacinados em empresas de todos os portes. A Vegl.ia é construída sobre essa operação real. Toda campanha vacinal documentada na plataforma pode ser executada in-company pela Vacivitta. Você não contrata só um software — contrata a infraestrutura de saúde junto.'
+    },
+    {
+      keywords: ['teste','trial','gratuito','free','experimentar','avaliar'],
+      response: 'O diagnóstico de compliance é gratuito e permanente — não expira, não precisa de cartão. Ele já mostra sua situação real frente à Lei 15.377 e à NR-1. Para a plataforma completa, trabalhamos com uma demo guiada onde você vê o painel do RH funcionando. Prefere fazer o diagnóstico agora ou agendar a demo diretamente?'
+    },
+    {
+      keywords: ['demo','demonstração','apresentação','ver funcionando','agendar','quero conhecer'],
+      response: 'Perfeito. Preciso de três informações rápidas para encaminhar para o time: seu nome, o nome da empresa e quantos funcionários CLT vocês têm. Com isso a demo já chega personalizada para o seu porte.\n\nQual é o seu nome?'
+    },
+    {
+      keywords: ['dra amanda','médico','médica','validação médica','quem valida'],
+      response: 'Todo conteúdo educacional da Vegl.ia é desenvolvido e validado pela Dra. Amanda Conde Perez Fernandes — pediatra, membro da Sociedade Brasileira de Imunizações (SBIm) e diretora médica da Vacivitta. Compliance sem base médica é formulário. Compliance com Vacivitta é proteção real.'
+    }
+  ];
+
+  var CONVERSION_KW = ['demo','quero','agendar','proposta','contratar'];
+  var FALLBACK = 'Entendi. Pode me contar mais sobre o que você precisa? Posso ajudar com dúvidas sobre a Lei 15.377, NR-1, os planos da Vegl.ia ou agendar uma demo com o time.';
+
+  /* ── Estado ── */
+  var isOpen      = false;
+  var badgeShown  = false;
+  var captureStep = 0; // 0=não iniciado,1=nome,2=empresa,3=size,4=email,5=done
+  var leadData    = { name:'', company:'', size:'', email:'' };
+  var history     = [];
+  var autoGreeted = false;
+
+  /* ── Persistência de sessão ── */
+  function loadHistory(){
+    try { history = JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]'); } catch(e){ history = []; }
+  }
+  function saveHistory(){
+    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(history)); } catch(e){}
+  }
+
+  /* ── DOM ── */
+  var velaBtn    = document.getElementById('vela-btn');
+  var velaWindow = document.getElementById('vela-window');
+  var velaMsgs   = document.getElementById('vela-msgs');
+  var velaTyping = document.getElementById('vela-typing');
+  var velaInput  = document.getElementById('vela-input');
+  var velaSend   = document.getElementById('vela-send');
+  var velaClose  = document.getElementById('vela-close');
+  var velaBadge  = document.getElementById('vela-badge');
+
+  function scrollBottom(){
+    velaMsgs.scrollTop = velaMsgs.scrollHeight;
+  }
+
+  /* ── Renderiza bolha ── */
+  function addBubble(role, text, save){
+    var div = document.createElement('div');
+    div.className = 'vela-msg ' + role;
+    div.innerHTML = '<div class="vela-bubble">' + escHtml(text) + '</div>';
+    velaMsgs.insertBefore(div, velaTyping);
+    scrollBottom();
+    if (save !== false) {
+      history.push({ role: role, text: text });
+      saveHistory();
+    }
+  }
+
+  function escHtml(str){
+    return String(str)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  /* ── Typing indicator ── */
+  function showTyping(){ velaTyping.classList.add('show'); scrollBottom(); }
+  function hideTyping(){ velaTyping.classList.remove('show'); }
+
+  /* ── Resposta com delay realista ── */
+  function addVelaMessage(text, delay){
+    delay = delay || 800;
+    showTyping();
+    setTimeout(function(){
+      hideTyping();
+      addBubble('vela', text);
+    }, delay);
+  }
+
+  /* ── Detectar intenção ── */
+  function detectIntent(msg){
+    var lower = msg.toLowerCase();
+    for (var i=0; i<velaKnowledge.length; i++){
+      var kb = velaKnowledge[i];
+      for (var j=0; j<kb.keywords.length; j++){
+        if (lower.indexOf(kb.keywords[j]) !== -1) return kb.response;
+      }
+    }
+    return null;
+  }
+
+  function hasConversionKw(msg){
+    var lower = msg.toLowerCase();
+    for (var i=0; i<CONVERSION_KW.length; i++){
+      if (lower.indexOf(CONVERSION_KW[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  /* ── Submit lead ── */
+  function submitLead(){
+    var summary = history.map(function(m){ return (m.role==='vela'?'Vela: ':'Você: ') + m.text; }).join('\n');
+    fetch(CF_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: leadData.name,
+        company: leadData.company,
+        size: leadData.size,
+        email: leadData.email,
+        source: 'chat_vela',
+        timestamp: new Date().toISOString(),
+        conversation_summary: summary
+      })
+    })
+    .then(function(){ addVelaMessage('Registrado! Em até 1 dia útil alguém do time Vegl.ia entra em contato pelo e-mail informado. Enquanto isso, o diagnóstico gratuito já está disponível — leva menos de 5 minutos. Quem vela, cuida.', 600); })
+    .catch(function(){ addVelaMessage('Tive um problema técnico ao registrar seus dados. Por favor, envie um e-mail para contato@vegl.ia e nossa equipe retorna em breve.', 600); });
+  }
+
+  /* ── Fluxo de captura ── */
+  function processCaptureStep(userMsg){
+    if (captureStep === 1){
+      leadData.name = userMsg;
+      captureStep = 2;
+      addVelaMessage('Prazer, ' + userMsg.split(' ')[0] + '. Qual é o nome da empresa?', 700);
+      return true;
+    }
+    if (captureStep === 2){
+      leadData.company = userMsg;
+      captureStep = 3;
+      addVelaMessage('Ótimo! Quantos funcionários CLT tem a ' + userMsg + '?', 700);
+      return true;
+    }
+    if (captureStep === 3){
+      leadData.size = userMsg;
+      captureStep = 4;
+      addVelaMessage('Perfeito. Por último: qual é o e-mail para a gente entrar em contato?', 700);
+      return true;
+    }
+    if (captureStep === 4){
+      if (userMsg.indexOf('@') === -1){
+        addVelaMessage('Preciso de um e-mail válido para conseguir te contatar. Pode tentar novamente?', 500);
+        return true;
+      }
+      leadData.email = userMsg;
+      captureStep = 5;
+      submitLead();
+      return true;
+    }
+    return false;
+  }
+
+  /* ── Processar mensagem do usuário ── */
+  function handleUserMsg(msg){
+    if (!msg.trim()) return;
+    addBubble('user', msg);
+
+    // Captura de lead em andamento
+    if (captureStep >= 1 && captureStep <= 4){
+      processCaptureStep(msg);
+      return;
+    }
+
+    // Verificar se intenção de conversão inicia captura
+    if (hasConversionKw(msg) && captureStep === 0){
+      var intent = detectIntent(msg);
+      if (intent){
+        addVelaMessage(intent, 800);
+      } else {
+        addVelaMessage(FALLBACK, 800);
+      }
+      // Iniciar captura após pequena pausa
+      captureStep = 1;
+      setTimeout(function(){
+        addVelaMessage('Para encaminhar para o time, preciso do seu nome. Como posso te chamar?', 1800);
+      }, 1200);
+      return;
+    }
+
+    var response = detectIntent(msg) || FALLBACK;
+    addVelaMessage(response, 900);
+
+    // Se resposta leva à demo, iniciar captura
+    if (response.indexOf('Qual é o seu nome?') !== -1){
+      captureStep = 1;
+    }
+  }
+
+  /* ── Abrir / fechar ── */
+  function openChat(){
+    isOpen = true;
+    velaWindow.classList.add('open');
+    velaBtn.style.display = 'none';
+    velaBadge.style.display = 'none';
+    badgeShown = false;
+    velaInput.focus();
+    sessionStorage.setItem(OPENED_KEY, '1');
+    scrollBottom();
+  }
+
+  function closeChat(){
+    isOpen = false;
+    velaWindow.classList.remove('open');
+    velaBtn.style.display = 'flex';
+  }
+
+  /* ── Restaurar histórico da sessão ── */
+  function restoreHistory(){
+    if (!history.length) return;
+    history.forEach(function(m){
+      addBubble(m.role, m.text, false);
+    });
+    // Restaurar estado de captura se havia lead em andamento
+    // (simplificado — não restaura mid-capture, apenas marca como done se email presente)
+    if (leadData.email) captureStep = 5;
+  }
+
+  /* ── Badge de notificação ── */
+  function showBadge(){
+    if (badgeShown || isOpen) return;
+    velaBadge.textContent = '1';
+    velaBadge.style.display = 'flex';
+    badgeShown = true;
+    velaBtn.classList.add('pulse');
+    setTimeout(function(){ velaBtn.classList.remove('pulse'); }, 1500);
+  }
+
+  /* ── Inicialização ── */
+  window.addEventListener('DOMContentLoaded', function(){
+    loadHistory();
+
+    velaBtn.addEventListener('click', function(){
+      if (!isOpen) openChat();
+    });
+    velaClose.addEventListener('click', closeChat);
+
+    velaSend.addEventListener('click', function(){
+      handleUserMsg(velaInput.value.trim());
+      velaInput.value = '';
+      velaInput.style.height = 'auto';
+    });
+
+    velaInput.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        handleUserMsg(velaInput.value.trim());
+        velaInput.value = '';
+        velaInput.style.height = 'auto';
+      }
+    });
+
+    // Auto-resize textarea
+    velaInput.addEventListener('input', function(){
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+    });
+
+    // Se há histórico da sessão, restaurar
+    if (history.length > 0){
+      restoreHistory();
+    }
+
+    // Saudação automática após 3s (apenas na primeira visita da sessão)
+    var alreadyOpened = sessionStorage.getItem(OPENED_KEY);
+    if (!alreadyOpened && !autoGreeted){
+      autoGreeted = true;
+      setTimeout(function(){
+        if (!isOpen){
+          // Mostra badge
+          showBadge();
+          // Adiciona mensagem invisível no chat para quando abrir
+          history.push({
+            role: 'vela',
+            text: 'Olá, sou a Vela. Sua empresa tem vínculo CLT? A Lei 15.377/2026 está em vigor desde abril — e a maioria das empresas ainda não está em compliance. Posso te explicar em 2 minutos o que ela exige e como resolver.'
+          });
+          saveHistory();
+        }
+      }, 3000);
+
+      // Pulse periódico a cada 12s
+      setTimeout(function(){
+        setInterval(function(){
+          if (!isOpen) velaBtn.classList.add('pulse');
+          setTimeout(function(){ velaBtn.classList.remove('pulse'); }, 1500);
+        }, 12000);
+      }, 12000);
+    }
+  });
+})();
 </script>
 </body>
 </html>

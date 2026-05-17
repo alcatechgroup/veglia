@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculatePreventiveScore = exports.generateCompanyCertificate = exports.syncComplianceScore = exports.checkComplianceAlerts = exports.sendInviteEmail = exports.calculateISPC = exports.dailyHealthCheck = exports.createInvite = exports.generateCertificate = exports.acceptInvite = exports.createCompany = exports.chatWithVeglia = exports.awardPoints = exports.syncUserClaims = void 0;
+exports.calculatePreventiveScore = exports.createLandingLead = exports.generateCompanyCertificate = exports.syncComplianceScore = exports.checkComplianceAlerts = exports.sendInviteEmail = exports.calculateISPC = exports.dailyHealthCheck = exports.createInvite = exports.generateCertificate = exports.acceptInvite = exports.createCompany = exports.chatWithVeglia = exports.awardPoints = exports.syncUserClaims = void 0;
 const admin = __importStar(require("firebase-admin"));
 const crypto = __importStar(require("crypto"));
 const nodemailer = __importStar(require("nodemailer"));
@@ -971,6 +971,48 @@ exports.generateCompanyCertificate = (0, https_1.onCall)(async (request) => {
         expires_at: expires.getTime(),
     });
     return { pdf_url: pdfUrl, score: overallScore, already_issued: false };
+});
+/**
+ * Recebe lead capturado pelo chat Vela ou formulário da landing page.
+ * Salva em /leads com status inicial "novo" para o Kanban de leads no admin.
+ * Não requer autenticação — é endpoint público da landing page.
+ */
+exports.createLandingLead = (0, https_1.onRequest)({ cors: true }, async (req, res) => {
+    if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+    }
+    const { name, company, size, email, source, timestamp, conversation_summary } = req.body;
+    if (!email || !name || !company) {
+        res.status(400).json({ success: false, error: "name, company e email são obrigatórios" });
+        return;
+    }
+    // Determinar plano recomendado pelo porte
+    const sizeNum = parseInt(size ?? "0") || 0;
+    let recommended_plan = "starter";
+    if (sizeNum > 1000)
+        recommended_plan = "enterprise";
+    else if (sizeNum > 250)
+        recommended_plan = "professional";
+    else if (sizeNum > 50)
+        recommended_plan = "compliance";
+    const leadData = {
+        name: name.trim(),
+        company: company.trim(),
+        size: size || "não informado",
+        email: email.trim().toLowerCase(),
+        source: source || "landing_page",
+        original_timestamp: timestamp || null,
+        conversation_summary: conversation_summary || "",
+        recommended_plan,
+        status: "novo",
+        assignee: null,
+        notes: [],
+        created_at: admin.firestore.Timestamp.now(),
+        updated_at: admin.firestore.Timestamp.now(),
+    };
+    const docRef = await db.collection("leads").add(leadData);
+    res.json({ success: true, lead_id: docRef.id });
 });
 /**
  * Calcula o Preventive Health Score do colaborador a partir das respostas

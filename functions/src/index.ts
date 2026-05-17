@@ -3,7 +3,7 @@ import * as crypto from "crypto";
 import * as nodemailer from "nodemailer";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
-import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onCall, HttpsError, onRequest } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 // Local type definitions (avoids workspace:* protocol incompatibility with Firebase Cloud Build)
 type UserRole = "admin" | "admin_rh" | "rh" | "collaborator";
@@ -1125,6 +1125,59 @@ export const generateCompanyCertificate = onCall(async (request) => {
   });
 
   return { pdf_url: pdfUrl, score: overallScore, already_issued: false };
+});
+
+/**
+ * Recebe lead capturado pelo chat Vela ou formulário da landing page.
+ * Salva em /leads com status inicial "novo" para o Kanban de leads no admin.
+ * Não requer autenticação — é endpoint público da landing page.
+ */
+export const createLandingLead = onRequest({ cors: true }, async (req, res) => {
+  if (req.method !== "POST") {
+    res.status(405).send("Method Not Allowed");
+    return;
+  }
+
+  const { name, company, size, email, source, timestamp, conversation_summary } = req.body as {
+    name?: string;
+    company?: string;
+    size?: string;
+    email?: string;
+    source?: string;
+    timestamp?: string;
+    conversation_summary?: string;
+  };
+
+  if (!email || !name || !company) {
+    res.status(400).json({ success: false, error: "name, company e email são obrigatórios" });
+    return;
+  }
+
+  // Determinar plano recomendado pelo porte
+  const sizeNum = parseInt(size ?? "0") || 0;
+  let recommended_plan = "starter";
+  if (sizeNum > 1000) recommended_plan = "enterprise";
+  else if (sizeNum > 250) recommended_plan = "professional";
+  else if (sizeNum > 50) recommended_plan = "compliance";
+
+  const leadData = {
+    name: name.trim(),
+    company: company.trim(),
+    size: size || "não informado",
+    email: email.trim().toLowerCase(),
+    source: source || "landing_page",
+    original_timestamp: timestamp || null,
+    conversation_summary: conversation_summary || "",
+    recommended_plan,
+    status: "novo",
+    assignee: null,
+    notes: [] as Array<{ text: string; author: string; created_at: number }>,
+    created_at: admin.firestore.Timestamp.now(),
+    updated_at: admin.firestore.Timestamp.now(),
+  };
+
+  const docRef = await db.collection("leads").add(leadData);
+  res.json({ success: true, lead_id: docRef.id });
 });
 
 /**

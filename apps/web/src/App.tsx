@@ -74,6 +74,7 @@ import AdminCanal from "@/pages/admin/AdminCanal";
 import AdminMarketplace from "@/pages/admin/AdminMarketplace";
 import AdminBeneficios from "@/pages/admin/AdminBeneficios";
 import Analytics from "@/pages/admin/Analytics";
+import Leads from "@/pages/admin/Leads";
 
 // ─── Redirect inteligente por role ────────────────────────────────────────────
 
@@ -154,6 +155,14 @@ function AdminApp() {
             element={
               <ProtectedRoute requiredRole={["admin"]}>
                 <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="leads"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <Leads />
               </ProtectedRoute>
             }
           />
