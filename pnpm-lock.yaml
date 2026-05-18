@@ -88,9 +88,6 @@ importers:
       '@types/nodemailer':
         specifier: ^8.0.0
         version: 8.0.0
-      '@veglia/shared':
-        specifier: workspace:*
-        version: link:../packages/shared
       typescript:
         specifier: ^5.5.0
         version: 5.9.3
