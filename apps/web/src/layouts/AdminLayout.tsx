@@ -26,6 +26,8 @@ const NAV = [
   { to: "/admin/analytics", label: "Analytics", icon: "◆", group: "Plataforma" },
   // Comercial
   { to: "/admin/leads", label: "Leads", icon: "◉", group: "Comercial" },
+  { to: "/admin/vela", label: "Atendente Vela", icon: "◎", group: "Comercial" },
+  { to: "/admin/empresas", label: "Empresas / Matriz", icon: "◈", group: "Comercial" },
 ];
 
 const BREADCRUMB: Record<string, string> = {
@@ -46,6 +48,8 @@ const BREADCRUMB: Record<string, string> = {
   "/admin/beneficios": "Beneficios",
   "/admin/analytics": "Analytics",
   "/admin/leads": "Leads",
+  "/admin/vela": "Atendente Vela",
+  "/admin/empresas": "Empresas / Matriz",
 };
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -1,5 +1,5 @@
 // ─── Roles ────────────────────────────────────────────────────────────────────
-export type UserRole = "admin" | "admin_rh" | "rh" | "collaborator";
+export type UserRole = "admin" | "admin_rh" | "rh" | "rh_filial" | "collaborator";
 
 // ─── Course / Enrollment ──────────────────────────────────────────────────────
 
@@ -48,6 +48,9 @@ export interface Company {
   theme?: Record<string, string>;
   adminUid: string;
   createdAt: number; // epoch ms
+  parent_id?: string | null;  // null/undefined = matriz; preenchido = filial
+  is_matrix?: boolean;        // true se tem ou pode ter filiais
+  webhook_token?: string;     // token de autenticação para importação via webhook
 }
 
 export interface VegliaUser {
@@ -290,4 +293,53 @@ export interface Dependent {
   birth_date: number;
   relationship: "spouse" | "child" | "parent" | "other";
   vaccinations: VaccinationRecord[];
+}
+
+// ─── Vela Chat Config ─────────────────────────────────────────────────────────
+
+export interface VelaKnowledgeItem {
+  id: string;
+  keywords: string[];
+  response: string;
+  order: number;
+  active: boolean;
+}
+
+export interface VelaKnowledgeBase {
+  items: VelaKnowledgeItem[];
+  updated_at: number;
+  updated_by: string;
+}
+
+export interface VelaSettings {
+  greeting: string;
+  fallback: string;
+  conversion_kw: string[];
+  updated_at: number;
+  updated_by: string;
+}
+
+// ─── Company (extended) ───────────────────────────────────────────────────────
+
+// ─── Employee Import ──────────────────────────────────────────────────────────
+
+export interface ImportBatch {
+  id: string;
+  company_id: string;
+  created_by: string;
+  created_at: number;
+  total: number;
+  imported: number;
+  duplicates: number;
+  errors: Array<{ row: number; email: string; reason: string }>;
+  source: "csv" | "webhook";
+}
+
+export interface ImportEmployeePayload {
+  name: string;
+  email: string;
+  cpf?: string;
+  cargo?: string;
+  filial_id?: string;
+  departamento?: string;
 }

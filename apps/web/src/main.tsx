@@ -15,33 +15,45 @@ async function applyWhiteLabel(): Promise<void> {
   try {
     const auth = getAuth(firebaseApp);
     await new Promise<void>((resolve) => {
+      // Timeout de segurança: garante que o app sempre renderiza,
+      // mesmo se onAuthStateChanged nunca disparar.
+      const timeout = setTimeout(resolve, 3000);
+
       const unsub = onAuthStateChanged(auth, async (user) => {
+        clearTimeout(timeout);
         unsub();
-        if (!user) { resolve(); return; }
+        // try-catch interno: qualquer erro no async callback chama resolve()
+        // para que o Promise nunca fique pendurado indefinidamente.
+        try {
+          if (!user) { resolve(); return; }
 
-        const token = await user.getIdTokenResult();
-        const companyId = token.claims["company_id"] as string | undefined;
-        if (!companyId) { resolve(); return; }
+          const token = await user.getIdTokenResult();
+          const companyId = token.claims["company_id"] as string | undefined;
+          if (!companyId) { resolve(); return; }
 
-        const companySnap = await getDoc(doc(db, "companies", companyId));
-        if (!companySnap.exists()) { resolve(); return; }
+          const companySnap = await getDoc(doc(db, "companies", companyId));
+          if (!companySnap.exists()) { resolve(); return; }
 
-        const theme = companySnap.data()?.theme as Record<string, string> | undefined;
-        if (!theme) { resolve(); return; }
+          const theme = companySnap.data()?.theme as Record<string, string> | undefined;
+          if (!theme) { resolve(); return; }
 
-        const root = document.documentElement;
-        if (theme.primary) {
-          root.style.setProperty("--color-mint", theme.primary);
-          root.style.setProperty("--tw-color-mint", theme.primary);
+          const root = document.documentElement;
+          if (theme.primary) {
+            root.style.setProperty("--color-mint", theme.primary);
+            root.style.setProperty("--tw-color-mint", theme.primary);
+          }
+          if (theme.secondary) {
+            root.style.setProperty("--color-champagne", theme.secondary);
+          }
+          if (theme.platform_name) {
+            document.title = theme.platform_name;
+          }
+
+          resolve();
+        } catch {
+          // Erro silencioso — usa tema padrão Vegl.ia e renderiza normalmente
+          resolve();
         }
-        if (theme.secondary) {
-          root.style.setProperty("--color-champagne", theme.secondary);
-        }
-        if (theme.platform_name) {
-          document.title = theme.platform_name;
-        }
-
-        resolve();
       });
     });
   } catch {

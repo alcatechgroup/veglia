@@ -20,7 +20,7 @@ service cloud.firestore {
     }
 
     function isRH() {
-      return isAuthenticated() && (myRole() == 'admin' || myRole() == 'rh' || myRole() == 'admin_rh');
+      return isAuthenticated() && (myRole() == 'admin' || myRole() == 'rh' || myRole() == 'admin_rh' || myRole() == 'rh_filial');
     }
 
     function belongsToCompany(company_id) {
@@ -29,8 +29,13 @@ service cloud.firestore {
 
     // ── Companies ─────────────────────────────────────────────────────────────
     match /companies/{company_id} {
-      allow read: if belongsToCompany(company_id);
-      allow create: if false; // apenas via Cloud Function createCompany
+      allow read: if isAdmin()
+                  || belongsToCompany(company_id)
+                  || (isAuthenticated()
+                      && resource.data.parent_id != null
+                      && resource.data.parent_id == myCompany()
+                      && (myRole() == 'admin_rh' || myRole() == 'rh'));
+      allow create: if false; // apenas via Cloud Function createCompany/createBranch
       allow update: if isAdmin() && belongsToCompany(company_id);
       allow delete: if false;
     }
@@ -211,6 +216,22 @@ service cloud.firestore {
     match /audit_events/{eventId} {
       allow read: if isAdmin();
       allow write: if false;
+    }
+
+    // ── Vela Config (script do chat) ─────────────────────────────────────────
+    // Leitura pública (landing.html lê sem autenticação).
+    // Escrita exclusiva do admin interno.
+    match /vela_config/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ── Import Batches ────────────────────────────────────────────────────────
+    // Criado exclusivamente via Cloud Function importEmployees.
+    // RH lê apenas batches da própria empresa.
+    match /import_batches/{batchId} {
+      allow read: if isRH() && resource.data.company_id == myCompany();
+      allow write: if false; // somente Cloud Function
     }
   }
 }

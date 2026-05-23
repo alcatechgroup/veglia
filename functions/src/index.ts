@@ -9,7 +9,7 @@ import { defineSecret } from "firebase-functions/params";
 
 const anthropicApiKey = defineSecret("ANTHROPIC_API_KEY");
 // Local type definitions (avoids workspace:* protocol incompatibility with Firebase Cloud Build)
-type UserRole = "admin" | "admin_rh" | "rh" | "collaborator";
+type UserRole = "admin" | "admin_rh" | "rh" | "rh_filial" | "collaborator";
 interface CustomClaims {
   company_id: string;
   role: UserRole;
@@ -304,6 +304,67 @@ export const createCompany = onCall(async (request) => {
   });
 
   return { company_id: companyRef.id };
+});
+
+/**
+ * Cria uma filial de empresa existente.
+ * Apenas admin ou admin_rh da empresa matriz pode chamar.
+ * Cria a empresa filial + convite para o RH responsável.
+ */
+export const createBranch = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Login necessário");
+  const { role, company_id } = request.auth.token as { role?: string; company_id?: string };
+  if (role !== "admin" && role !== "admin_rh") {
+    throw new HttpsError("permission-denied", "Apenas admin ou admin_rh pode criar filiais");
+  }
+
+  const { branchName, cnpj, rhEmail, rhName } = request.data as {
+    branchName: string;
+    cnpj?: string;
+    rhEmail: string;
+    rhName?: string;
+  };
+
+  if (!branchName?.trim()) throw new HttpsError("invalid-argument", "Nome da filial obrigatório");
+  if (!rhEmail?.trim()) throw new HttpsError("invalid-argument", "E-mail do RH da filial obrigatório");
+
+  const matrixId = company_id ?? "";
+  if (!matrixId) throw new HttpsError("failed-precondition", "company_id ausente no token");
+
+  const matrixSnap = await db.collection("companies").doc(matrixId).get();
+  if (!matrixSnap.exists) throw new HttpsError("not-found", "Empresa matriz não encontrada");
+  const matrix = matrixSnap.data()!;
+
+  const branchRef = db.collection("companies").doc();
+  const branchId = branchRef.id;
+
+  await branchRef.set({
+    id: branchId,
+    name: branchName.trim(),
+    cnpj: cnpj ? cnpj.replace(/\D/g, "") : null,
+    plan: matrix.plan || "starter",
+    parent_id: matrixId,
+    is_matrix: false,
+    adminUid: "",
+    createdAt: Date.now(),
+  });
+
+  const inviteRef = db.collection("invites").doc();
+  await inviteRef.set({
+    id: inviteRef.id,
+    company_id: branchId,
+    email: rhEmail.trim().toLowerCase(),
+    role: "rh_filial" as UserRole,
+    createdBy: request.auth.uid,
+    createdAt: Date.now(),
+    usedAt: null,
+    displayName: rhName?.trim() || rhEmail.trim(),
+    cargo: "Operador RH",
+  });
+
+  await db.collection("companies").doc(matrixId).update({ is_matrix: true });
+
+  return { branchId, inviteId: inviteRef.id };
 });
 
 /**
@@ -1135,17 +1196,27 @@ export const generateCompanyCertificate = onCall(async (request) => {
  * Salva em /leads com status inicial "novo" para o Kanban de leads no admin.
  * Não requer autenticação — é endpoint público da landing page.
  */
+function inferPlan(size: string): string {
+  const n = parseInt(size, 10);
+  if (isNaN(n) || n <= 30) return "starter";
+  if (n <= 250) return "compliance";
+  if (n <= 1000) return "professional";
+  return "enterprise";
+}
+
 export const createLandingLead = onRequest({ cors: true }, async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method Not Allowed");
     return;
   }
 
-  const { name, company, size, email, source, timestamp, conversation_summary } = req.body as {
+  const { name, company, size, email, phone, message, source, timestamp, conversation_summary } = req.body as {
     name?: string;
     company?: string;
     size?: string;
     email?: string;
+    phone?: string;
+    message?: string;
     source?: string;
     timestamp?: string;
     conversation_summary?: string;
@@ -1156,18 +1227,15 @@ export const createLandingLead = onRequest({ cors: true }, async (req, res) => {
     return;
   }
 
-  // Determinar plano recomendado pelo porte
-  const sizeNum = parseInt(size ?? "0") || 0;
-  let recommended_plan = "starter";
-  if (sizeNum > 1000) recommended_plan = "enterprise";
-  else if (sizeNum > 250) recommended_plan = "professional";
-  else if (sizeNum > 50) recommended_plan = "compliance";
+  const recommended_plan = inferPlan(size ?? "0");
 
   const leadData = {
     name: name.trim(),
     company: company.trim(),
     size: size || "não informado",
     email: email.trim().toLowerCase(),
+    phone: phone?.trim() || "",
+    message: message?.trim() || "",
     source: source || "landing_page",
     original_timestamp: timestamp || null,
     conversation_summary: conversation_summary || "",
@@ -1234,3 +1302,298 @@ export const calculatePreventiveScore = onCall(async (request) => {
 
   return { preventive_score, classification };
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// F4 · importEmployees — Importação batch de colaboradores (CSV / JSON)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface EmployeePayload {
+  name: string;
+  email: string;
+  department?: string;
+  role?: string;
+  cpf?: string;
+}
+
+interface ImportResult {
+  batch_id: string;
+  total: number;
+  created: number;
+  skipped: number;
+  errors: string[];
+}
+
+export const importEmployees = onCall(async (request): Promise<ImportResult> => {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Login required");
+  const role = request.auth.token.role as string;
+  if (!["admin", "admin_rh", "rh"].includes(role))
+    throw new HttpsError("permission-denied", "RH role required");
+
+  const company_id = request.auth.token.company_id as string;
+  const { employees } = request.data as { employees: EmployeePayload[] };
+
+  if (!Array.isArray(employees) || employees.length === 0)
+    throw new HttpsError("invalid-argument", "employees array required");
+
+  if (employees.length > 500)
+    throw new HttpsError("invalid-argument", "Max 500 employees per batch");
+
+  const batchRef = db.collection("import_batches").doc();
+  const errors: string[] = [];
+  let created = 0;
+  let skipped = 0;
+
+  // Cria o documento de batch primeiro (status processing)
+  await batchRef.set({
+    company_id,
+    total: employees.length,
+    created: 0,
+    skipped: 0,
+    errors: [],
+    status: "processing",
+    created_at: admin.firestore.FieldValue.serverTimestamp(),
+    created_by: request.auth.uid,
+  });
+
+  // Processa em chunks de 100 (limite de batch do Firestore)
+  const CHUNK = 100;
+  for (let i = 0; i < employees.length; i += CHUNK) {
+    const chunk = employees.slice(i, i + CHUNK);
+    const batch = db.batch();
+
+    for (const emp of chunk) {
+      if (!emp.email || !emp.name) {
+        errors.push(`Linha ${i + chunk.indexOf(emp) + 1}: email e nome obrigatórios`);
+        skipped++;
+        continue;
+      }
+
+      const email = emp.email.trim().toLowerCase();
+      const existing = await db
+        .collection("invites")
+        .where("email", "==", email)
+        .where("company_id", "==", company_id)
+        .limit(1)
+        .get();
+
+      if (!existing.empty) {
+        skipped++;
+        continue;
+      }
+
+      const inviteRef = db.collection("invites").doc();
+      batch.set(inviteRef, {
+        email,
+        name: emp.name.trim(),
+        department: emp.department?.trim() ?? "",
+        role: "collaborator" as UserRole,
+        company_id,
+        cpf: emp.cpf?.replace(/\D/g, "") ?? null,
+        employee_status: "importado",
+        invite_token: crypto.randomUUID(),
+        email_sent_at: null,
+        used_at: null,
+        source: "import",
+        batch_id: batchRef.id,
+        created_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      created++;
+    }
+
+    await batch.commit();
+  }
+
+  // Atualiza batch com resultado final
+  await batchRef.update({
+    created,
+    skipped,
+    errors,
+    status: "done",
+    finished_at: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { batch_id: batchRef.id, total: employees.length, created, skipped, errors };
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// F4b · importEmployeesWebhook — Endpoint HTTP para integração folha de pag.
+// Autenticação: Authorization: Bearer <webhook_token> (armazenado em companies)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const importEmployeesWebhook = onRequest({ cors: false }, async (req, res) => {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
+  }
+
+  // Extrai token do header Authorization
+  const authHeader = req.headers.authorization ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Authorization header required" });
+    return;
+  }
+  const token = authHeader.slice(7).trim();
+
+  // Busca empresa pelo webhook_token
+  const companySnap = await db
+    .collection("companies")
+    .where("webhook_token", "==", token)
+    .limit(1)
+    .get();
+
+  if (companySnap.empty) {
+    res.status(401).json({ error: "Invalid token" });
+    return;
+  }
+
+  const company_id = companySnap.docs[0].id;
+  const { employees } = req.body as { employees?: EmployeePayload[] };
+
+  if (!Array.isArray(employees) || employees.length === 0) {
+    res.status(400).json({ error: "employees array required" });
+    return;
+  }
+
+  if (employees.length > 1000) {
+    res.status(400).json({ error: "Max 1000 employees per request" });
+    return;
+  }
+
+  const batchRef = db.collection("import_batches").doc();
+  let created = 0;
+  let skipped = 0;
+  const errors: string[] = [];
+
+  await batchRef.set({
+    company_id,
+    total: employees.length,
+    created: 0,
+    skipped: 0,
+    errors: [],
+    status: "processing",
+    source: "webhook",
+    created_at: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  const CHUNK = 100;
+  for (let i = 0; i < employees.length; i += CHUNK) {
+    const chunk = employees.slice(i, i + CHUNK);
+    const batch = db.batch();
+
+    for (const emp of chunk) {
+      if (!emp.email || !emp.name) { skipped++; continue; }
+      const email = emp.email.trim().toLowerCase();
+      const existing = await db
+        .collection("invites")
+        .where("email", "==", email)
+        .where("company_id", "==", company_id)
+        .limit(1)
+        .get();
+
+      if (!existing.empty) { skipped++; continue; }
+
+      const inviteRef = db.collection("invites").doc();
+      batch.set(inviteRef, {
+        email,
+        name: emp.name.trim(),
+        department: emp.department?.trim() ?? "",
+        role: "collaborator" as UserRole,
+        company_id,
+        cpf: emp.cpf?.replace(/\D/g, "") ?? null,
+        employee_status: "importado",
+        invite_token: crypto.randomUUID(),
+        email_sent_at: null,
+        used_at: null,
+        source: "webhook",
+        batch_id: batchRef.id,
+        created_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      created++;
+    }
+
+    await batch.commit();
+  }
+
+  await batchRef.update({
+    created,
+    skipped,
+    errors,
+    status: "done",
+    finished_at: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  res.json({ success: true, batch_id: batchRef.id, total: employees.length, created, skipped });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// F5 · syncEmployeeStatus — Trigger que mantém employee_status em invites
+//      atualizado conforme enrollments e certificates são criados.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const syncEmployeeStatus = onDocumentWritten(
+  "{collection}/{docId}",
+  async (event) => {
+    const collection = event.params.collection;
+    const data = event.data?.after?.data();
+    if (!data) return;
+
+    // Só interessa enrollments e certificates
+    if (collection !== "enrollments" && collection !== "certificates") return;
+
+    const uid = data.uid as string | undefined;
+    if (!uid) return;
+
+    // Busca o convite correspondente ao email do usuário
+    const userDoc = await db.collection("users").doc(uid).get();
+    if (!userDoc.exists) return;
+    const email = userDoc.data()?.email as string | undefined;
+    if (!email) return;
+
+    const inviteSnap = await db
+      .collection("invites")
+      .where("email", "==", email)
+      .where("company_id", "==", data.company_id)
+      .limit(1)
+      .get();
+
+    if (inviteSnap.empty) return;
+    const inviteRef = inviteSnap.docs[0].ref;
+    const invite = inviteSnap.docs[0].data();
+
+    // Determina o novo status baseado no estado atual e no evento
+    let newStatus: string | null = null;
+
+    if (collection === "certificates") {
+      newStatus = "certificado_emitido";
+    } else if (collection === "enrollments") {
+      const watchPct = data.watch_percent_last as number | undefined;
+      const completed = data.completed as boolean | undefined;
+
+      if (completed) {
+        newStatus = "concluido";
+      } else if ((watchPct ?? 0) > 0) {
+        newStatus = "em_andamento";
+      }
+    }
+
+    if (!newStatus) return;
+
+    // Só avança no pipeline, nunca regride
+    const STATUS_ORDER = [
+      "importado",
+      "convite_enviado",
+      "acesso_aceito",
+      "em_andamento",
+      "concluido",
+      "certificado_emitido",
+    ];
+
+    const current = invite.employee_status as string | undefined;
+    const currentIdx = STATUS_ORDER.indexOf(current ?? "importado");
+    const newIdx = STATUS_ORDER.indexOf(newStatus);
+
+    if (newIdx > currentIdx) {
+      await inviteRef.update({ employee_status: newStatus });
+    }
+  }
+);

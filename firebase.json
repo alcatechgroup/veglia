@@ -1,5 +1,8 @@
 {
   "hosting": {
+    "predeploy": [
+      "cp apps/web/dist/landing.html apps/web/dist/index.html"
+    ],
     "public": "apps/web/dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [

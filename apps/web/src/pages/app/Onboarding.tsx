@@ -1,9 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { httpsCallable } from "firebase/functions";
-import { getFunctions } from "firebase/functions";
-import { app } from "@veglia/firebase-config";
-import { auth } from "@veglia/firebase-config";
+import { httpsCallable, getFunctions } from "firebase/functions";
+import { app, auth } from "@veglia/firebase-config";
+
+// ─── CNPJ helpers (mirror de AcessoRH para consistência) ─────────────────────
+
+function applyCnpjMask(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 14);
+  return digits
+    .replace(/^(\d{2})(\d)/, "$1.$2")
+    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/\.(\d{3})(\d)/, ".$1/$2")
+    .replace(/(\d{4})(\d)/, "$1-$2");
+}
+
+function stripCnpj(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+function isValidCnpj(cnpj: string): boolean {
+  return cnpj.length === 0 || cnpj.length === 14; // vazio = opcional; 14 = válido
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -12,27 +31,44 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handleCnpjChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCnpj(applyCnpjMask(e.target.value));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!companyName.trim()) return;
+
+    const cnpjClean = stripCnpj(cnpj);
+
+    // Validação: CNPJ preenchido deve ter 14 dígitos (máscara garante isso)
+    if (cnpj && !isValidCnpj(cnpjClean)) {
+      setError("CNPJ inválido. Verifique os dígitos e tente novamente.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
       const functions = getFunctions(app, "southamerica-east1");
       const createCompany = httpsCallable(functions, "createCompany");
-      await createCompany({ companyName: companyName.trim(), cnpj: cnpj.trim() || undefined });
 
-      // Poll até o syncUserClaims trigger propagar company_id no JWT.
-      // O trigger Firestore é assíncrono — um único getIdToken(true) pode
-      // retornar antes de os claims serem gravados pelo Admin SDK.
+      // QW2: passa CNPJ sempre sem formatação (14 dígitos) para garantir
+      // que a busca em AcessoRH (where cnpj == cnpjClean) funcione.
+      await createCompany({
+        companyName: companyName.trim(),
+        cnpj: cnpjClean || undefined,
+      });
+
+      // Polling: aguarda syncUserClaims propagar company_id no JWT
       const waitForClaims = async (maxAttempts = 5, delayMs = 1500): Promise<boolean> => {
         for (let i = 0; i < maxAttempts; i++) {
-          const token = await auth.currentUser?.getIdTokenResult(true); // force refresh
+          const token = await auth.currentUser?.getIdTokenResult(true);
           if (token?.claims?.company_id) return true;
           await new Promise<void>((r) => setTimeout(r, delayMs));
         }
-        return false; // timeout — navegar mesmo assim com aviso de console
+        return false;
       };
 
       const claimsReady = await waitForClaims();
@@ -51,6 +87,7 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen bg-[#0B2545] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
+
         {/* Logo */}
         <div className="flex items-baseline gap-0.5 justify-center mb-8">
           <span className="text-4xl font-bold text-white tracking-tight">Vegl</span>
@@ -65,6 +102,7 @@ export default function Onboarding() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Nome da empresa */}
             <div>
               <label className="block text-xs font-medium text-white/60 mb-1.5">
                 Nome da empresa *
@@ -78,17 +116,27 @@ export default function Onboarding() {
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#5DD3A8]/50 focus:bg-white/8 transition-colors"
               />
             </div>
+
+            {/* CNPJ com máscara — QW3 */}
             <div>
               <label className="block text-xs font-medium text-white/60 mb-1.5">
-                CNPJ (opcional)
+                CNPJ
+                <span className="ml-1 text-white/30 font-normal">(necessário para login)</span>
               </label>
               <input
                 type="text"
+                inputMode="numeric"
                 value={cnpj}
-                onChange={(e) => setCnpj(e.target.value)}
+                onChange={handleCnpjChange}
                 placeholder="00.000.000/0000-00"
+                autoComplete="off"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#5DD3A8]/50 transition-colors"
+                onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(93,211,168,0.5)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
               />
+              <p className="text-[10px] text-white/25 mt-1">
+                O CNPJ é usado para identificar a empresa no login do RH.
+              </p>
             </div>
 
             {error && (
@@ -102,7 +150,7 @@ export default function Onboarding() {
               disabled={loading || !companyName.trim()}
               className="w-full bg-[#5DD3A8] hover:bg-[#4BC495] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B2545] font-semibold py-3 rounded-xl text-sm transition-colors"
             >
-              {loading ? "Criando empresa..." : "Começar"}
+              {loading ? "Criando empresa…" : "Começar →"}
             </button>
           </form>
         </div>

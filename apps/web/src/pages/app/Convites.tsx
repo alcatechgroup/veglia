@@ -214,6 +214,14 @@ export default function Convites() {
   // ── Enviar email de convite ───────────────────────────────────────────────
   const handleSendEmail = async (invite: InviteDoc) => {
     if (sendingEmailId === invite.id) return;
+    // QW6: confirmação para evitar reenvio acidental
+    const jaEnviado = !!invite.email_sent_at;
+    if (jaEnviado) {
+      const ok = window.confirm(
+        `Enviar novamente o convite para ${invite.email}?\n\nUm email já foi enviado anteriormente.`
+      );
+      if (!ok) return;
+    }
     setSendingEmailId(invite.id);
     try {
       const functions = getFunctions();

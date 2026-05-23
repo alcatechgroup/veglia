@@ -14,6 +14,10 @@ import Diagnostico from "@/pages/Diagnostico";
 import CalculadoraVacinal from "@/pages/CalculadoraVacinal";
 import PassaportePublico from "@/pages/PassaportePublico";
 
+// ─── Pages: app — Gestão RH (Fluxos 4+5) ────────────────────────────────────
+import ImportarFuncionarios from "@/pages/app/ImportarFuncionarios";
+import ColaboradoresRH from "@/pages/app/ColaboradoresRH";
+
 // ─── Pages: app — S1 Core ────────────────────────────────────────────────────
 import Onboarding from "@/pages/app/Onboarding";
 import Trilhas from "@/pages/app/Trilhas";
@@ -75,6 +79,8 @@ import AdminMarketplace from "@/pages/admin/AdminMarketplace";
 import AdminBeneficios from "@/pages/admin/AdminBeneficios";
 import Analytics from "@/pages/admin/Analytics";
 import Leads from "@/pages/admin/Leads";
+import AdminVela from "@/pages/admin/AdminVela";
+import AdminEmpresas from "@/pages/admin/AdminEmpresas";
 
 // ─── Redirect inteligente por role ────────────────────────────────────────────
 
@@ -84,6 +90,37 @@ function AppRedirect() {
     return <Navigate to="/app/dashboard" replace />;
   }
   return <Navigate to="/app/trilhas" replace />;
+}
+
+// ─── Root redirect por role ────────────────────────────────────────────────────
+
+function RootRedirect() {
+  const { firebaseUser, claims, loading } = useAuth();
+  if (loading) return null;
+  if (!firebaseUser) return <Navigate to="/acesso" replace />;
+  if (claims?.role === "admin") return <Navigate to="/admin" replace />;
+  if (claims?.role === "admin_rh" || claims?.role === "rh") return <Navigate to="/app/dashboard" replace />;
+  return <Navigate to="/app/trilhas" replace />;
+}
+
+// ─── 404 — rota não encontrada ─────────────────────────────────────────────────
+
+function NotFound() {
+  const { firebaseUser, claims, loading } = useAuth();
+
+  // Enquanto resolve auth, não redireciona
+  if (loading) return null;
+
+  const destino = !firebaseUser
+    ? "/acesso"
+    : claims?.role === "admin"
+    ? "/admin"
+    : claims?.role === "admin_rh" || claims?.role === "rh"
+    ? "/app/dashboard"
+    : "/app/trilhas";
+
+  // Redireciona para o destino correto por role
+  return <Navigate to={destino} replace />;
 }
 
 // ─── Area dos socios (Command Center interno) ─────────────────────────────────
@@ -166,6 +203,22 @@ function AdminApp() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="vela"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <AdminVela />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="empresas"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <AdminEmpresas />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </AdminLayout>
     </ProtectedRoute>
@@ -237,6 +290,22 @@ function ClientApp() {
           <Route path="certificados" element={<Certificados />} />
 
           {/* ── S1: Gestão RH ── */}
+          <Route
+            path="colaboradores"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh", "rh_filial"]}>
+                <ColaboradoresRH />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="importar"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh", "rh_filial"]}>
+                <ImportarFuncionarios />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="convites"
             element={
@@ -360,9 +429,10 @@ export default function App() {
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/app/*" element={<ClientApp />} />
 
-        {/* Fallbacks */}
-        <Route path="/" element={<Navigate to="/admin" replace />} />
-        <Route path="*" element={<Navigate to="/admin" replace />} />
+        {/* Fallback: / redireciona para o destino correto por role */}
+        <Route path="/" element={<RootRedirect />} />
+        {/* 404 — rota desconhecida */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>
   );

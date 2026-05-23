@@ -599,6 +599,7 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
           <input type="text" id="lead-empresa" name="empresa" placeholder="Empresa" required class="form-field">
         </div>
         <input type="email" id="lead-email" name="email" placeholder="E-mail corporativo" required class="form-field">
+        <input type="tel" id="lead-phone" name="phone" placeholder="(11) 99999-9999" class="form-field">
         <select id="lead-porte" name="porte" required class="form-field">
           <option value="" disabled selected>Porte da empresa</option>
           <option value="50">Até 50 colaboradores</option>
@@ -606,9 +607,17 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
           <option value="600">500 – 2.000 colaboradores</option>
           <option value="2000">Acima de 2.000 colaboradores</option>
         </select>
+        <textarea id="lead-message" name="message" placeholder="O que você quer resolver com a Vegl.ia?" rows="3" class="form-field" style="resize:vertical;min-height:80px;"></textarea>
         <button type="submit" class="btn-form">Quero conhecer a Vegl.ia →</button>
         <p class="form-note">Seus dados são usados apenas para entrar em contato. Sem spam.</p>
       </form>
+      <div id="cta-success" style="display:none; text-align:center; padding:32px 0;">
+        <p style="color:#5DD3A8; font-size:18px; font-weight:600; margin-bottom:8px;">&#10003; Solicitação recebida!</p>
+        <p style="color:rgba(255,255,255,0.6); font-size:14px;">Nossa equipe entrará em contato em até 24 horas.</p>
+      </div>
+      <div id="cta-error" style="display:none; text-align:center; padding:12px 0; color:#FC8181; font-size:14px;">
+        Erro ao enviar. Tente novamente ou escreva para contato@vegl.ia
+      </div>
     </div>
   </div>
 </section>
@@ -850,11 +859,16 @@ function toggleFaq(btn) {
     if (!form) return;
     form.addEventListener('submit', function(e){
       e.preventDefault();
+      var successEl = document.getElementById('cta-success');
+      var errorEl   = document.getElementById('cta-error');
+      if (errorEl) errorEl.style.display = 'none';
       var data = {
         name:    document.getElementById('lead-nome').value,
         company: document.getElementById('lead-empresa').value,
         email:   document.getElementById('lead-email').value,
         size:    document.getElementById('lead-porte').value,
+        phone:   (document.getElementById('lead-phone') ? document.getElementById('lead-phone').value.trim() : ''),
+        message: (document.getElementById('lead-message') ? document.getElementById('lead-message').value.trim() : ''),
         source:  'landing_form',
         timestamp: new Date().toISOString()
       };
@@ -868,12 +882,13 @@ function toggleFaq(btn) {
       })
       .then(function(r){ return r.json(); })
       .then(function(){
-        form.innerHTML = '<div style="text-align:center;padding:40px 20px"><div style="color:#5DD3A8;font-size:40px;margin-bottom:16px">✓</div><p style="color:#FBF8F1;font-size:18px;font-weight:600">Recebemos seus dados!</p><p style="color:rgba(255,255,255,.55);margin-top:8px">Em até 1 dia útil nossa equipe entra em contato.</p></div>';
+        form.style.display = 'none';
+        if (successEl) successEl.style.display = 'block';
       })
       .catch(function(){
         btn.disabled = false;
         btn.textContent = 'Quero conhecer a Vegl.ia →';
-        alert('Erro ao enviar. Tente novamente ou envie para contato@vegl.ia');
+        if (errorEl) errorEl.style.display = 'block';
       });
     });
   });
@@ -927,6 +942,43 @@ function toggleFaq(btn) {
 
   var CONVERSION_KW = ['demo','quero','agendar','proposta','contratar'];
   var FALLBACK = 'Entendi. Pode me contar mais sobre o que você precisa? Posso ajudar com dúvidas sobre a Lei 15.377, NR-1, os planos da Vegl.ia ou agendar uma demo com o time.';
+
+  /* ── Carrega config dinâmica do Firestore (admin edita sem redeploy) ── */
+  (function loadVelaConfig(){
+    var BASE = 'https://firestore.googleapis.com/v1/projects/veglia-6e734/databases/(default)/documents/vela_config/';
+    // Carrega settings (greeting, fallback, conversion_kw) e knowledge_base em paralelo
+    Promise.all([
+      fetch(BASE + 'settings').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+      fetch(BASE + 'knowledge_base').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+    ]).then(function(results){
+      var settings = results[0], kb = results[1];
+      // -- settings
+      if (settings && settings.fields) {
+        var f = settings.fields;
+        if (f.greeting && f.greeting.stringValue) window.__velaGreeting = f.greeting.stringValue;
+        if (f.fallback && f.fallback.stringValue) FALLBACK = f.fallback.stringValue;
+        if (f.conversion_kw && f.conversion_kw.arrayValue && f.conversion_kw.arrayValue.values) {
+          CONVERSION_KW = f.conversion_kw.arrayValue.values
+            .map(function(v){ return v.stringValue || ''; })
+            .filter(Boolean);
+        }
+      }
+      // -- knowledge_base
+      if (kb && kb.fields && kb.fields.items && kb.fields.items.arrayValue) {
+        var newKb = [];
+        (kb.fields.items.arrayValue.values || []).forEach(function(v){
+          var m = v.mapValue && v.mapValue.fields;
+          if (!m || (m.active && m.active.booleanValue === false)) return;
+          var kws = [];
+          if (m.keywords && m.keywords.arrayValue && m.keywords.arrayValue.values)
+            m.keywords.arrayValue.values.forEach(function(kv){ kws.push(kv.stringValue||''); });
+          if (kws.length > 0 && m.response && m.response.stringValue)
+            newKb.push({ keywords: kws, response: m.response.stringValue });
+        });
+        if (newKb.length > 0) velaKnowledge = newKb;
+      }
+    });
+  })();
 
   /* ── Estado ── */
   var isOpen      = false;

@@ -6,6 +6,17 @@ import fs from "fs";
 export default defineConfig({
   plugins: [
     react(),
+    // Renomeia index.html → app.html no dist para que o Firebase Hosting
+    // possa servir a landing em / e o SPA em /admin, /app, /login, etc.
+    {
+      name: "rename-index-to-app",
+      closeBundle() {
+        const dist = path.resolve(__dirname, "dist");
+        const src  = path.join(dist, "index.html");
+        const dest = path.join(dist, "app.html");
+        if (fs.existsSync(src)) fs.renameSync(src, dest);
+      },
+    },
     {
       // Serve os docs do projeto em /project-docs/* para visualização no admin
       name: "serve-project-docs",

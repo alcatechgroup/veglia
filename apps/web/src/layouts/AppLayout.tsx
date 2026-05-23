@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
 import { db } from "@veglia/firebase-config";
 import { useAuth } from "@/contexts/AuthContext";
+
+// ─── Notification Bell ────────────────────────────────────────────────────────
 
 function NotificationBell({ uid }: { uid: string }) {
   const [count, setCount] = useState(0);
@@ -39,10 +41,47 @@ function NotificationBell({ uid }: { uid: string }) {
   );
 }
 
+// ─── Nav item active ──────────────────────────────────────────────────────────
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+    isActive
+      ? "bg-[#5DD3A8]/15 text-[#5DD3A8] font-medium"
+      : "text-white/45 hover:text-white/80 hover:bg-white/5"
+  }`;
+
+// ─── Nav item "em breve" — QW1 ────────────────────────────────────────────────
+// Renderiza item desabilitado com badge "Em breve" para features S2+.
+// Evita que o usuário clique em telas stub durante demos.
+
+function NavItemComingSoon({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm opacity-35 cursor-not-allowed select-none">
+      <span className="text-base leading-none">{icon}</span>
+      <span className="flex-1 text-white/50">{label}</span>
+      <span className="text-[9px] px-1.5 py-0.5 rounded border border-white/15 text-white/30 font-medium tracking-wide uppercase">
+        Em breve
+      </span>
+    </div>
+  );
+}
+
+// ─── AppLayout ────────────────────────────────────────────────────────────────
+
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { firebaseUser, vegliaUser, claims, logout } = useAuth();
   const navigate = useNavigate();
   const uid = firebaseUser?.uid ?? "";
+
+  // QW5 — nome da empresa no footer da sidebar
+  const [companyName, setCompanyName] = useState<string | null>(null);
+  useEffect(() => {
+    const companyId = claims?.company_id;
+    if (!companyId) return;
+    getDoc(doc(db, "companies", companyId)).then((snap) => {
+      if (snap.exists()) setCompanyName(snap.data()?.name ?? null);
+    }).catch(() => {/* silencia erros de permissão */});
+  }, [claims?.company_id]);
 
   const handleLogout = async () => {
     await logout();
@@ -57,17 +96,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const isColaborador = !isRH;
 
-  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-      isActive
-        ? "bg-[#5DD3A8]/15 text-[#5DD3A8] font-medium"
-        : "text-white/45 hover:text-white/80 hover:bg-white/5"
-    }`;
-
   return (
     <div className="flex min-h-screen bg-[#0B2545]">
-      {/* Sidebar */}
+      {/* ── Sidebar ── */}
       <aside className="w-60 shrink-0 flex flex-col border-r border-white/5 px-5 py-8 overflow-y-auto">
+
         {/* Logo */}
         <div className="mb-8">
           <div className="flex items-baseline gap-0.5">
@@ -82,8 +115,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           )}
         </div>
 
-        {/* Nav */}
+        {/* ── Nav ── */}
         <nav className="flex flex-col gap-0.5">
+
           {/* ── RH / Admin ── */}
           {isRH && (
             <>
@@ -113,7 +147,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </NavLink>
               <NavLink to="/app/compliance/relatorio" className={navLinkClass}>
                 <span className="text-base leading-none">▦</span>
-                Auditoria / CSV
+                Auditoria · Exportar CSV
               </NavLink>
 
               <div className="border-t border-white/5 my-2" />
@@ -122,7 +156,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </p>
               <NavLink to="/app/trilhas-rh" className={navLinkClass}>
                 <span className="text-base leading-none">◎</span>
-                Trilhas
+                Trilhas Educacionais
               </NavLink>
               <NavLink to="/app/calendario-vacinal" className={navLinkClass}>
                 <span className="text-base leading-none">◈</span>
@@ -146,17 +180,25 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <p className="text-[10px] text-white/20 px-3 mb-1 uppercase tracking-wide">
                 Gestão
               </p>
+              <NavLink to="/app/colaboradores" className={navLinkClass}>
+                <span className="text-base leading-none">◈</span>
+                Colaboradores
+              </NavLink>
+              <NavLink to="/app/importar" className={navLinkClass}>
+                <span className="text-base leading-none">⬡</span>
+                Importar Funcionários
+              </NavLink>
               <NavLink to="/app/convites" className={navLinkClass}>
                 <span className="text-base leading-none">◻</span>
                 Convites
               </NavLink>
               <NavLink to="/app/certificados" className={navLinkClass}>
                 <span className="text-base leading-none">◆</span>
-                Certificados
+                Certificados da Equipe
               </NavLink>
               <NavLink to="/app/relatorio" className={navLinkClass}>
                 <span className="text-base leading-none">▦</span>
-                Relatório Equipe
+                Relatório de Progresso
               </NavLink>
             </>
           )}
@@ -179,67 +221,36 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </>
           )}
 
-          {/* ── S2+: Features disponíveis para todos ── */}
+          {/* ── Saúde — S2+ (Em breve) — QW1 ── */}
           <div className="border-t border-white/5 my-2" />
-          <p className="text-[10px] text-white/20 px-3 mb-1 uppercase tracking-wide">
-            Saude
+          <p className="text-[10px] text-white/15 px-3 mb-1 uppercase tracking-wide">
+            Saúde · Em breve
           </p>
-          <NavLink to="/app/passaporte" className={navLinkClass}>
-            <span className="text-base leading-none">◆</span>
-            Passaporte Digital
-          </NavLink>
-          <NavLink to="/app/familia" className={navLinkClass}>
-            <span className="text-base leading-none">◑</span>
-            Saude da Familia
-          </NavLink>
-          <NavLink to="/app/canal" className={navLinkClass}>
-            <span className="text-base leading-none">◎</span>
-            Canal de Saude
-          </NavLink>
-          <NavLink to="/app/assistente" className={navLinkClass}>
-            <span className="text-base leading-none">◇</span>
-            Assistente IA
-          </NavLink>
+          <NavItemComingSoon icon="◆" label="Passaporte Digital" />
+          <NavItemComingSoon icon="◑" label="Saúde da Família" />
+          <NavItemComingSoon icon="◎" label="Canal de Saúde" />
+          <NavItemComingSoon icon="◇" label="Assistente IA" />
 
+          {/* ── Engajamento — S2+ (Em breve) — QW1 ── */}
           <div className="border-t border-white/5 my-2" />
-          <p className="text-[10px] text-white/20 px-3 mb-1 uppercase tracking-wide">
-            Engajamento
+          <p className="text-[10px] text-white/15 px-3 mb-1 uppercase tracking-wide">
+            Engajamento · Em breve
           </p>
-          <NavLink to="/app/jornadas" className={navLinkClass}>
-            <span className="text-base leading-none">◈</span>
-            Jornadas
-          </NavLink>
-          <NavLink to="/app/conquistas" className={navLinkClass}>
-            <span className="text-base leading-none">◆</span>
-            Conquistas
-          </NavLink>
-          <NavLink to="/app/beneficios" className={navLinkClass}>
-            <span className="text-base leading-none">◻</span>
-            Beneficios
-          </NavLink>
-          <NavLink to="/app/marketplace" className={navLinkClass}>
-            <span className="text-base leading-none">◐</span>
-            Marketplace
-          </NavLink>
+          <NavItemComingSoon icon="◈" label="Jornadas" />
+          <NavItemComingSoon icon="◆" label="Conquistas" />
+          <NavItemComingSoon icon="◻" label="Benefícios" />
+          <NavItemComingSoon icon="◐" label="Marketplace" />
 
+          {/* ── Ferramentas RH — S2+ ── */}
           {isRH && (
             <>
               <div className="border-t border-white/5 my-2" />
-              <p className="text-[10px] text-white/20 px-3 mb-1 uppercase tracking-wide">
-                Ferramentas RH
+              <p className="text-[10px] text-white/15 px-3 mb-1 uppercase tracking-wide">
+                Ferramentas RH · Em breve
               </p>
-              <NavLink to="/app/campanhas" className={navLinkClass}>
-                <span className="text-base leading-none">◐</span>
-                Campanhas
-              </NavLink>
-              <NavLink to="/app/sipat" className={navLinkClass}>
-                <span className="text-base leading-none">▦</span>
-                SIPAT Automatica
-              </NavLink>
-              <NavLink to="/app/certificacao-empresa" className={navLinkClass}>
-                <span className="text-base leading-none">◆</span>
-                Cert. Empresa
-              </NavLink>
+              <NavItemComingSoon icon="◐" label="Campanhas" />
+              <NavItemComingSoon icon="▦" label="SIPAT Automática" />
+              <NavItemComingSoon icon="◆" label="Cert. Empresa" />
             </>
           )}
 
@@ -273,8 +284,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
         <div className="flex-1" />
 
-        {/* Footer do sidebar */}
+        {/* ── Footer sidebar — QW5: nome da empresa ── */}
         <div className="border-t border-white/5 pt-5 space-y-1">
+          {companyName && (
+            <p className="text-[11px] text-[#5DD3A8]/60 font-medium truncate mb-0.5">
+              {companyName}
+            </p>
+          )}
           <p className="text-xs text-white/40 truncate">
             {vegliaUser?.displayName ?? firebaseUser?.displayName}
           </p>
@@ -288,10 +304,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Main */}
+      {/* ── Main ── */}
       <main className="flex-1 overflow-auto">
         <div className="min-h-full p-8">{children}</div>
-        {/* Footer Powered by Vacivitta */}
         <div className="px-8 pb-6 flex items-center justify-end">
           <span className="text-[10px] text-white/20 tracking-wide">
             Powered by{" "}

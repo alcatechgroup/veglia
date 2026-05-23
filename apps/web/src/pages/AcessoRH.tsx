@@ -44,9 +44,11 @@ export default function AcessoRH() {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetError, setResetError] = useState("");
 
-  // If already authenticated, redirect based on role
+  // Se já autenticado, redirecionar para a área correta
   useEffect(() => {
-    if (authLoading || !claims) return;
+    if (authLoading) return;       // aguarda resolução do estado de auth
+    if (!claims) return;           // não autenticado → mostra o formulário
+    // autenticado → redireciona para área correta
     if (claims.role === "admin") {
       navigate("/admin", { replace: true });
     } else if (claims.role === "admin_rh" || claims.role === "rh") {
@@ -155,6 +157,19 @@ export default function AcessoRH() {
       setResetLoading(false);
     }
   };
+
+  // Enquanto o Firebase resolve o estado de auth, mostra spinner
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#0B2545" }}>
+        <div className="flex items-baseline gap-1 animate-pulse">
+          <span className="text-3xl font-bold text-white">Vegl</span>
+          <span className="text-3xl font-bold" style={{ color: "#C9A96E" }}>.</span>
+          <span className="text-3xl font-bold" style={{ color: "#5DD3A8" }}>ia</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
