@@ -1,7 +1,7 @@
 {
   "$schema": "https://veglia.ai/schemas/project-memory.v1.json",
   "version": "1.0.0",
-  "exported_at": "2026-05-09",
+  "exported_at": "2026-06-13",
   "exported_by": "claude-opus-4-7",
   "project": {
     "name": "Vegl.ia",
@@ -10,8 +10,8 @@
     "manifesto": "O guardião da saúde de seus funcionários. O app de bolso do RH, para quem zela e agora precisa vigiar.",
     "thesis_short": "Plataforma B2B de Compliance Preventivo Corporativo ancorada na Lei 15.377/2026.",
     "thesis_expanded": "Vegl.ia não é uma edtech tradicional nem um LMS. É a infraestrutura de um ecossistema operacional de prevenção contínua, combinando healthtech + edtech + wellness + IA + dados + corporate health + behavioral science. Mistura compliance + educação + IA + dados + vacinação presencial em um único ecossistema com operação própria.",
-    "current_stage": "T1 MVP · Sprint 1",
-    "active_window": "2026-05-09 → 2026-06-09",
+    "current_stage": "T1 MVP · ~95% · conteúdo publicado + provisionamento SaaS",
+    "active_window": "2026-05-09 → 2026-06-13",
     "category": "B2B SaaS · HealthTech · Corporate Compliance",
     "country": "Brasil",
     "powered_by": "Vacivitta Saúde Integrada",
@@ -21,7 +21,10 @@
     "regulatory_trigger": {
       "primary": "Lei 15.377/2026",
       "description": "Lei trabalhista brasileira de 2026 que cria obrigação de compliance preventivo corporativo para 5 milhões de empresas no Brasil",
-      "secondary": ["NR-1 (GRO/PGR + riscos psicossociais)", "Lei 14.831/2024"]
+      "secondary": [
+        "NR-1 (GRO/PGR + riscos psicossociais)",
+        "Lei 14.831/2024"
+      ]
     },
     "ecosystem_vacivitta": {
       "description": "Não é apenas uma rede de vacinação — é um ecossistema com 4 pilares interconectados",
@@ -71,31 +74,55 @@
         "name": "Rodolfo Nascimento",
         "role": "CEO · Tech Lead · Estratégia",
         "background": "CEO Alcatech.ia · Founder RRevela · 14 anos executivo · 2 exits · Autor 'Não Peça Licença' e 'IAgora'",
-        "covers": ["Arquitetura técnica", "Decisões societárias", "Captação", "Autoridade", "Mentor Rumo.IA"]
+        "covers": [
+          "Arquitetura técnica",
+          "Decisões societárias",
+          "Captação",
+          "Autoridade",
+          "Mentor Rumo.IA"
+        ]
       },
       {
         "name": "Fábio",
         "role": "Comercial · Relacionamento",
         "background": "CEO Top Formaturas há 20 anos",
-        "covers": ["Pipeline B2B", "Parcerias com carriers (VR, Alelo, Ticket)", "Base de médicos RRevela"]
+        "covers": [
+          "Pipeline B2B",
+          "Parcerias com carriers (VR, Alelo, Ticket)",
+          "Base de médicos RRevela"
+        ]
       },
       {
         "name": "Thiago",
         "role": "Operação · Saúde",
-        "covers": ["Integração Vacivitta", "Operação ecossistema", "Relacionamento Dra. Amanda"]
+        "covers": [
+          "Integração Vacivitta",
+          "Operação ecossistema",
+          "Relacionamento Dra. Amanda"
+        ]
       },
       {
         "name": "Dra. Amanda Conde Perez Fernandes",
         "role": "Diretora Médica Vacivitta · Autoridade Científica Vegl.ia",
         "credentials": "Pediatra · Neonatologista · Especialista em Nutrologia · Membro SBIm",
-        "covers": ["Validação de conteúdo médico", "Presença pública (vídeos, posts)", "Autoridade técnica da marca"]
+        "covers": [
+          "Validação de conteúdo médico",
+          "Presença pública (vídeos, posts)",
+          "Autoridade técnica da marca"
+        ]
       }
     ],
     "business_model": {
       "type": "B2B SaaS multicamada",
       "gtm_strategy": "White Label B2B2B via HR carriers",
       "anchor_partner": "VR (relacionamento Rodolfo)",
-      "secondary_partners": ["Alelo", "Ticket", "Sólides", "TOTVS RH", "LG"],
+      "secondary_partners": [
+        "Alelo",
+        "Ticket",
+        "Sólides",
+        "TOTVS RH",
+        "LG"
+      ],
       "pricing_model": "Setup fee + revenue share + assinatura escalável por porte",
       "outcome_based": true
     },
@@ -511,15 +538,33 @@
         "project_id": "veglia",
         "url": "console.firebase.google.com",
         "status": "Created",
-        "services_initialized": ["Firestore"],
-        "services_pending": ["Authentication", "Storage", "Hosting", "Cloud Functions"],
+        "services_initialized": [
+          "Firestore"
+        ],
+        "services_pending": [
+          "Authentication",
+          "Storage",
+          "Hosting",
+          "Cloud Functions"
+        ],
         "plan": "to be confirmed (recommended: Blaze)",
         "created_at": "2026-05-09"
       },
       "claude_code": {
         "claude_md": "veglia-platform/CLAUDE.md",
-        "subagents": ["ceo", "dev", "comunicacao", "edu"],
-        "slash_commands": ["sprint-status", "briefing-equipe", "content-semana", "decisao-ceo", "feature-spec"],
+        "subagents": [
+          "ceo",
+          "dev",
+          "comunicacao",
+          "edu"
+        ],
+        "slash_commands": [
+          "sprint-status",
+          "briefing-equipe",
+          "content-semana",
+          "decisao-ceo",
+          "feature-spec"
+        ],
         "settings": "veglia-platform/.claude/settings/settings.json"
       }
     }
@@ -530,52 +575,234 @@
     "by_layer": {
       "1_entrada": {
         "function": "Diagnóstico e personalização",
-        "features": ["F02", "F04"]
+        "features": [
+          "F02",
+          "F04"
+        ]
       },
       "2_experiencia": {
         "function": "Retenção e vínculo emocional",
-        "features": ["F08", "F10", "F14", "F16"]
+        "features": [
+          "F08",
+          "F10",
+          "F14",
+          "F16"
+        ]
       },
       "3_inteligencia": {
         "function": "Personalização e dados",
-        "features": ["F12", "F17", "F18"]
+        "features": [
+          "F12",
+          "F17",
+          "F18"
+        ]
       },
       "4_corporativo": {
         "function": "Receita B2B e compliance",
-        "features": ["F01", "F03", "F05", "F07", "F11"]
+        "features": [
+          "F01",
+          "F03",
+          "F05",
+          "F07",
+          "F11"
+        ]
       },
       "5_engajamento": {
         "function": "Adesão e recorrência",
-        "features": ["F06", "F09", "F15"]
+        "features": [
+          "F06",
+          "F09",
+          "F15"
+        ]
       },
       "6_expansao": {
         "function": "Escala e moat competitivo",
-        "features": ["F13", "F19", "F20", "F21", "F22"]
+        "features": [
+          "F13",
+          "F19",
+          "F20",
+          "F21",
+          "F22"
+        ]
       }
     },
     "list": [
-      {"id": "F01", "name": "Plataforma de Compliance em Saúde", "layer": 4, "phase": "MVP", "monetization": "Assinatura B2B", "priority": 1},
-      {"id": "F02", "name": "Diagnóstico Preventivo Inicial", "layer": 1, "phase": "MVP", "monetization": "Gratuito/Premium", "priority": 2},
-      {"id": "F03", "name": "Modo SIPAT Automática", "layer": 4, "phase": "MVP", "monetization": "Assinatura B2B", "priority": 3},
-      {"id": "F04", "name": "Calculadora de Calendário Vacinal", "layer": 1, "phase": "MVP", "monetization": "Freemium · Lead", "priority": 4},
-      {"id": "F05", "name": "Índice de Saúde Preventiva Corporativa", "layer": 4, "phase": "MVP", "monetization": "Dashboard Premium", "priority": 5},
-      {"id": "F06", "name": "Motor de Campanhas Inteligentes", "layer": 5, "phase": "MVP", "monetization": "Upsell B2B", "priority": 6},
-      {"id": "F07", "name": "Universidade Corporativa White Label", "layer": 4, "phase": "F2", "monetization": "Enterprise B2B", "priority": 7},
-      {"id": "F08", "name": "Jornadas de Vida", "layer": 2, "phase": "F2", "monetization": "Assinatura B2C", "priority": 8},
-      {"id": "F09", "name": "Gamificação Corporativa", "layer": 5, "phase": "F2", "monetization": "Retenção/Upsell", "priority": 9},
-      {"id": "F10", "name": "Passaporte de Saúde Digital", "layer": 2, "phase": "F2", "monetization": "Retenção/Dados", "priority": 10},
-      {"id": "F11", "name": "Certificação para Empresas", "layer": 4, "phase": "F2", "monetization": "Receita direta + ESG", "priority": 11},
-      {"id": "F12", "name": "IA Preventiva Personalizada", "layer": 3, "phase": "F2", "monetization": "Diferencial Premium", "priority": 12},
-      {"id": "F13", "name": "Canal de Conteúdo Médico Autoritativo", "layer": 6, "phase": "F2", "monetization": "Orgânico/Ads/Leads", "priority": 13},
-      {"id": "F14", "name": "Plataforma Multi-Saúde", "layer": 2, "phase": "F2", "monetization": "Assinatura B2C/B2B", "priority": 14},
-      {"id": "F15", "name": "Ecossistema de Benefícios Preventivos", "layer": 5, "phase": "F3", "monetization": "Parcerias + Retenção", "priority": 15},
-      {"id": "F16", "name": "Central de Saúde Familiar", "layer": 2, "phase": "F3", "monetization": "B2C Premium", "priority": 16},
-      {"id": "F17", "name": "Concierge Preventiva Digital", "layer": 3, "phase": "F3", "monetization": "Premium Individual", "priority": 17},
-      {"id": "F18", "name": "Integração com Wearables", "layer": 3, "phase": "F3", "monetization": "Premium + Dados", "priority": 18},
-      {"id": "F19", "name": "Marketplace de Saúde", "layer": 6, "phase": "F3", "monetization": "Comissão/Marketplace", "priority": 19},
-      {"id": "F20", "name": "Motor de Predição de Risco (IA Preditiva)", "layer": 6, "phase": "F4", "monetization": "Enterprise/Analytics", "priority": 20},
-      {"id": "F21", "name": "Plataforma de Dados Epidemiológicos", "layer": 6, "phase": "F4", "monetization": "B2G/B2B Enterprise", "priority": 21},
-      {"id": "F22", "name": "Plataforma de Expansão Física Inteligente", "layer": 6, "phase": "F4", "monetization": "Operacional Vacivitta", "priority": 22}
+      {
+        "id": "F01",
+        "name": "Plataforma de Compliance em Saúde",
+        "layer": 4,
+        "phase": "MVP",
+        "monetization": "Assinatura B2B",
+        "priority": 1
+      },
+      {
+        "id": "F02",
+        "name": "Diagnóstico Preventivo Inicial",
+        "layer": 1,
+        "phase": "MVP",
+        "monetization": "Gratuito/Premium",
+        "priority": 2
+      },
+      {
+        "id": "F03",
+        "name": "Modo SIPAT Automática",
+        "layer": 4,
+        "phase": "MVP",
+        "monetization": "Assinatura B2B",
+        "priority": 3
+      },
+      {
+        "id": "F04",
+        "name": "Calculadora de Calendário Vacinal",
+        "layer": 1,
+        "phase": "MVP",
+        "monetization": "Freemium · Lead",
+        "priority": 4
+      },
+      {
+        "id": "F05",
+        "name": "Índice de Saúde Preventiva Corporativa",
+        "layer": 4,
+        "phase": "MVP",
+        "monetization": "Dashboard Premium",
+        "priority": 5
+      },
+      {
+        "id": "F06",
+        "name": "Motor de Campanhas Inteligentes",
+        "layer": 5,
+        "phase": "MVP",
+        "monetization": "Upsell B2B",
+        "priority": 6
+      },
+      {
+        "id": "F07",
+        "name": "Universidade Corporativa White Label",
+        "layer": 4,
+        "phase": "F2",
+        "monetization": "Enterprise B2B",
+        "priority": 7
+      },
+      {
+        "id": "F08",
+        "name": "Jornadas de Vida",
+        "layer": 2,
+        "phase": "F2",
+        "monetization": "Assinatura B2C",
+        "priority": 8
+      },
+      {
+        "id": "F09",
+        "name": "Gamificação Corporativa",
+        "layer": 5,
+        "phase": "F2",
+        "monetization": "Retenção/Upsell",
+        "priority": 9
+      },
+      {
+        "id": "F10",
+        "name": "Passaporte de Saúde Digital",
+        "layer": 2,
+        "phase": "F2",
+        "monetization": "Retenção/Dados",
+        "priority": 10
+      },
+      {
+        "id": "F11",
+        "name": "Certificação para Empresas",
+        "layer": 4,
+        "phase": "F2",
+        "monetization": "Receita direta + ESG",
+        "priority": 11
+      },
+      {
+        "id": "F12",
+        "name": "IA Preventiva Personalizada",
+        "layer": 3,
+        "phase": "F2",
+        "monetization": "Diferencial Premium",
+        "priority": 12
+      },
+      {
+        "id": "F13",
+        "name": "Canal de Conteúdo Médico Autoritativo",
+        "layer": 6,
+        "phase": "F2",
+        "monetization": "Orgânico/Ads/Leads",
+        "priority": 13
+      },
+      {
+        "id": "F14",
+        "name": "Plataforma Multi-Saúde",
+        "layer": 2,
+        "phase": "F2",
+        "monetization": "Assinatura B2C/B2B",
+        "priority": 14
+      },
+      {
+        "id": "F15",
+        "name": "Ecossistema de Benefícios Preventivos",
+        "layer": 5,
+        "phase": "F3",
+        "monetization": "Parcerias + Retenção",
+        "priority": 15
+      },
+      {
+        "id": "F16",
+        "name": "Central de Saúde Familiar",
+        "layer": 2,
+        "phase": "F3",
+        "monetization": "B2C Premium",
+        "priority": 16
+      },
+      {
+        "id": "F17",
+        "name": "Concierge Preventiva Digital",
+        "layer": 3,
+        "phase": "F3",
+        "monetization": "Premium Individual",
+        "priority": 17
+      },
+      {
+        "id": "F18",
+        "name": "Integração com Wearables",
+        "layer": 3,
+        "phase": "F3",
+        "monetization": "Premium + Dados",
+        "priority": 18
+      },
+      {
+        "id": "F19",
+        "name": "Marketplace de Saúde",
+        "layer": 6,
+        "phase": "F3",
+        "monetization": "Comissão/Marketplace",
+        "priority": 19
+      },
+      {
+        "id": "F20",
+        "name": "Motor de Predição de Risco (IA Preditiva)",
+        "layer": 6,
+        "phase": "F4",
+        "monetization": "Enterprise/Analytics",
+        "priority": 20
+      },
+      {
+        "id": "F21",
+        "name": "Plataforma de Dados Epidemiológicos",
+        "layer": 6,
+        "phase": "F4",
+        "monetization": "B2G/B2B Enterprise",
+        "priority": 21
+      },
+      {
+        "id": "F22",
+        "name": "Plataforma de Expansão Física Inteligente",
+        "layer": 6,
+        "phase": "F4",
+        "monetization": "Operacional Vacivitta",
+        "priority": 22
+      }
     ]
   },
   "phases": [
@@ -584,7 +811,14 @@
       "name": "MVP · Fundação",
       "months": "1-3",
       "window": "2026-05-09 → 2026-08-09",
-      "features": ["F01", "F02", "F03", "F04", "F05", "F06"],
+      "features": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06"
+      ],
       "kpis": {
         "empresas_ativas": 50,
         "colaboradores": 2000,
@@ -599,7 +833,16 @@
       "phase": "T2",
       "name": "Diferenciação",
       "months": "4-6",
-      "features": ["F07", "F08", "F09", "F10", "F11", "F12", "F13", "F14"],
+      "features": [
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F12",
+        "F13",
+        "F14"
+      ],
       "kpis": {
         "empresas_ativas": 150,
         "colaboradores": 8000,
@@ -614,7 +857,13 @@
       "phase": "T3",
       "name": "Escala",
       "months": "7-9",
-      "features": ["F15", "F16", "F17", "F18", "F19"],
+      "features": [
+        "F15",
+        "F16",
+        "F17",
+        "F18",
+        "F19"
+      ],
       "kpis": {
         "empresas_ativas": 400,
         "colaboradores": 25000,
@@ -630,7 +879,11 @@
       "phase": "T4",
       "name": "Moat",
       "months": "10-12+",
-      "features": ["F20", "F21", "F22"],
+      "features": [
+        "F20",
+        "F21",
+        "F22"
+      ],
       "kpis": {
         "empresas_ativas": "1000+",
         "colaboradores": "80000+",
@@ -648,35 +901,78 @@
         "name": "Starter",
         "monthly_brl": 299,
         "company_size": "Até 50 colaboradores",
-        "includes": ["Vegl.ia Core", "Dashboard básico", "Suporte chat"]
+        "includes": [
+          "Vegl.ia Core",
+          "Dashboard básico",
+          "Suporte chat"
+        ]
       },
       {
         "name": "Compliance",
         "monthly_brl": 799,
         "company_size": "51–250 colaboradores",
-        "includes": ["Core + NR-1", "SIPAT", "Dashboard completo", "Suporte chat + email"]
+        "includes": [
+          "Core + NR-1",
+          "SIPAT",
+          "Dashboard completo",
+          "Suporte chat + email"
+        ]
       },
       {
         "name": "Professional",
         "monthly_brl": 1800,
         "company_size": "251–1.000 colaboradores",
-        "includes": ["Tudo + Multi-Saúde", "IA v1", "Certificação", "CS dedicado"]
+        "includes": [
+          "Tudo + Multi-Saúde",
+          "IA v1",
+          "Certificação",
+          "CS dedicado"
+        ]
       },
       {
         "name": "Enterprise",
         "monthly_brl_min": 5000,
         "monthly_brl_max": 20000,
         "company_size": "1.000+ colaboradores ou White Label",
-        "includes": ["Customizado", "IA v2 Full", "API", "CS + Implementação"]
+        "includes": [
+          "Customizado",
+          "IA v2 Full",
+          "API",
+          "CS + Implementação"
+        ]
       }
     ],
     "complementary_revenue": [
-      {"name": "Certificação Vegl.ia", "model": "Anual", "range_brl": "2000-8000"},
-      {"name": "Marketplace", "model": "Comissão", "range_pct": "15-30"},
-      {"name": "B2C Individual", "model": "Mensal", "range_brl": "29-99"},
-      {"name": "Analytics Premium", "model": "Adicional mensal", "range_brl": "500-2000"},
-      {"name": "Lead Vacivitta", "model": "Por lead qualificado", "range_brl": "variable"},
-      {"name": "White Label Setup", "model": "Setup único + recorrente", "setup_brl": "3000-10000"}
+      {
+        "name": "Certificação Vegl.ia",
+        "model": "Anual",
+        "range_brl": "2000-8000"
+      },
+      {
+        "name": "Marketplace",
+        "model": "Comissão",
+        "range_pct": "15-30"
+      },
+      {
+        "name": "B2C Individual",
+        "model": "Mensal",
+        "range_brl": "29-99"
+      },
+      {
+        "name": "Analytics Premium",
+        "model": "Adicional mensal",
+        "range_brl": "500-2000"
+      },
+      {
+        "name": "Lead Vacivitta",
+        "model": "Por lead qualificado",
+        "range_brl": "variable"
+      },
+      {
+        "name": "White Label Setup",
+        "model": "Setup único + recorrente",
+        "setup_brl": "3000-10000"
+      }
     ]
   },
   "tech_stack": {
@@ -718,82 +1014,334 @@
       "email": "SendGrid (transacionais · lembretes)",
       "ai": "Claude API (insights F3+)",
       "ocr": "Document AI (upload carteira vacinal)",
-      "wearables_f3": ["Apple Health", "Google Fit", "Garmin", "Fitbit", "Whoop", "Samsung Health"],
-      "hr_carriers_f2": ["VR (anchor)", "Alelo", "Ticket", "Sólides", "TOTVS RH", "LG"]
+      "wearables_f3": [
+        "Apple Health",
+        "Google Fit",
+        "Garmin",
+        "Fitbit",
+        "Whoop",
+        "Samsung Health"
+      ],
+      "hr_carriers_f2": [
+        "VR (anchor)",
+        "Alelo",
+        "Ticket",
+        "Sólides",
+        "TOTVS RH",
+        "LG"
+      ]
     }
   },
   "data_model": {
     "firestore_collections": [
       {
         "name": "companies",
-        "fields": ["name", "cnpj", "plan", "white_label_partner", "modules_active", "branding"]
+        "fields": [
+          "name",
+          "cnpj",
+          "plan",
+          "white_label_partner",
+          "modules_active",
+          "branding"
+        ]
       },
       {
         "name": "users",
-        "fields": ["company_id", "role", "percurso", "name", "email", "cargo", "departamento", "stats"],
-        "roles": ["colaborador", "gestor", "admin_empresa", "admin_carrier", "admin_master"]
+        "fields": [
+          "company_id",
+          "role",
+          "percurso",
+          "name",
+          "email",
+          "cargo",
+          "departamento",
+          "stats"
+        ],
+        "roles": [
+          "colaborador",
+          "gestor",
+          "admin_empresa",
+          "admin_carrier",
+          "admin_master"
+        ]
       },
       {
         "name": "modules",
-        "fields": ["track", "percurso", "videos", "quiz"],
-        "tracks": ["lei_15377", "nr1"]
+        "fields": [
+          "track",
+          "percurso",
+          "videos",
+          "quiz"
+        ],
+        "tracks": [
+          "lei_15377",
+          "nr1"
+        ]
       },
       {
         "name": "enrollments",
-        "fields": ["user_id", "module_id", "company_id", "progress_pct", "status", "started_at", "completed_at"]
+        "fields": [
+          "user_id",
+          "module_id",
+          "company_id",
+          "progress_pct",
+          "status",
+          "started_at",
+          "completed_at"
+        ]
       },
       {
         "name": "video_progress",
         "key": "{user_id}_{video_id}",
-        "fields": ["watched_seconds", "completion_pct", "first_watched_at", "last_watched_at", "completed"]
+        "fields": [
+          "watched_seconds",
+          "completion_pct",
+          "first_watched_at",
+          "last_watched_at",
+          "completed"
+        ]
       },
       {
         "name": "quiz_attempts",
-        "fields": ["user_id", "module_id", "score", "answers", "passed"]
+        "fields": [
+          "user_id",
+          "module_id",
+          "score",
+          "answers",
+          "passed"
+        ]
       },
       {
         "name": "certificates",
-        "fields": ["user_id", "module_id", "company_id", "sha256_hash", "pdf_storage_path", "issued_at", "valid_until"]
+        "fields": [
+          "user_id",
+          "module_id",
+          "company_id",
+          "sha256_hash",
+          "pdf_storage_path",
+          "issued_at",
+          "valid_until"
+        ]
       },
       {
         "name": "audit_logs",
-        "fields": ["event_type", "user_id", "ip", "timestamp", "payload"],
+        "fields": [
+          "event_type",
+          "user_id",
+          "ip",
+          "timestamp",
+          "payload"
+        ],
         "purpose": "Compliance Lei 15.377/2026 — base imutável para auditoria trabalhista"
       }
     ]
   },
   "timeline": [
-    {"date": "2026-05-03", "event": "Tese de Monetização Vacivitta × RRevela construída", "category": "strategy"},
-    {"date": "2026-05-07", "event": "Pivô para EdTech / Compliance Preventivo Corporativo ancorado na Lei 15.377/2026", "category": "strategy"},
-    {"date": "2026-05-07", "event": "Análise EdTech original recebida e estudada", "category": "strategy"},
-    {"date": "2026-05-07", "event": "Tripartite acordada: Rodolfo + Fábio + Thiago a 33,33% cada", "category": "operations"},
-    {"date": "2026-05-07", "event": "Naming definido: Vegl.ia (anteriormente Vitta Academy)", "category": "brand"},
-    {"date": "2026-05-08", "event": "Brandbook (19 slides) Arnold-style · Twilight Blue + Mint + Champagne", "category": "design"},
-    {"date": "2026-05-08", "event": "Sistema Linecraft de iconografia (42 ícones, 7 categorias)", "category": "design"},
-    {"date": "2026-05-08", "event": "Landing Page completa (14 seções)", "category": "design"},
-    {"date": "2026-05-08", "event": "MVP App Pedagogia · 4 phone mockups + 3 dashboards RH", "category": "design"},
-    {"date": "2026-05-08", "event": "Term Sheet PDF tripartite (8 páginas A4) com cláusula 07 de receitas adjacentes", "category": "operations"},
-    {"date": "2026-05-08", "event": "Roteiro de Produção Audiovisual (12 vídeos para 6 módulos)", "category": "content"},
-    {"date": "2026-05-08", "event": "Vídeos educacionais Lei 15.377 (4 módulos) e NR-1 (2 módulos) escritos e validados", "category": "content"},
-    {"date": "2026-05-09", "event": "Roadmap Estratégico de Produto (PDF mestre · 22 funcionalidades · 21 páginas)", "category": "strategy"},
-    {"date": "2026-05-09", "event": "Tese expandida: Vegl.ia como ecossistema operacional de prevenção contínua, não edtech", "category": "strategy"},
-    {"date": "2026-05-09", "event": "Briefing Tese Expandida com distribuição de trabalho por agente xquads", "category": "strategy"},
-    {"date": "2026-05-09", "event": "Arquitetura do Protótipo · Stack Firebase + GitHub + YouTube embedded", "category": "tech"},
-    {"date": "2026-05-09", "event": "Roadmap Operacional 30 dias com swim lanes CEO + Dev + Comunicação", "category": "strategy"},
-    {"date": "2026-05-09", "event": "VaciVitta rebranding aprovado (opção A · símbolo Pulsar · V duplo em mint)", "category": "brand"},
-    {"date": "2026-05-09", "event": "Repositório GitHub veglia/veglia-platform criado", "category": "infrastructure"},
-    {"date": "2026-05-09", "event": "Projeto Firebase veglia criado", "category": "infrastructure"},
-    {"date": "2026-05-09", "event": "Firestore inicializado", "category": "infrastructure"},
-    {"date": "2026-05-09", "event": "Migração para Claude Code · Command Center estruturado em veglia-platform/", "category": "infrastructure"},
-    {"date": "2026-05-09", "event": "55+ documentos migrados · CLAUDE.md mestre · 4 sub-agents · 5 slash commands · settings", "category": "infrastructure"},
-    {"date": "2026-05-16", "event": "Checkpoint 01 — Fundação no ar (planejado)", "category": "checkpoint", "future": true},
-    {"date": "2026-05-23", "event": "Checkpoint 02 — Esqueleto técnico + ritmo de conteúdo (planejado)", "category": "checkpoint", "future": true},
-    {"date": "2026-05-30", "event": "Checkpoint 03 — MVP funcional + autoridade Dra. Amanda (planejado)", "category": "checkpoint", "future": true},
-    {"date": "2026-06-09", "event": "Marco final · Demo VR · MVP Sprint 1 (planejado)", "category": "milestone", "future": true},
-    {"date": "2026-08-09", "event": "Fim T1 MVP · KPIs alvo (50 empresas, 2k col., MRR R$35k)", "category": "milestone", "future": true},
-    {"date": "2026-11-09", "event": "Fim T2 Diferenciação · KPIs alvo (150 empresas, 8k col., MRR R$120k)", "category": "milestone", "future": true},
-    {"date": "2027-02-09", "event": "Fim T3 Escala · captação seed recomendada · KPIs alvo (400 empresas, 25k col., MRR R$350k)", "category": "milestone", "future": true},
-    {"date": "2027-05-09", "event": "Fim T4 Moat · KPIs alvo (1000+ empresas, 80k+ col., MRR R$900k+)", "category": "milestone", "future": true}
+    {
+      "date": "2026-05-03",
+      "event": "Tese de Monetização Vacivitta × RRevela construída",
+      "category": "strategy"
+    },
+    {
+      "date": "2026-05-07",
+      "event": "Pivô para EdTech / Compliance Preventivo Corporativo ancorado na Lei 15.377/2026",
+      "category": "strategy"
+    },
+    {
+      "date": "2026-05-07",
+      "event": "Análise EdTech original recebida e estudada",
+      "category": "strategy"
+    },
+    {
+      "date": "2026-05-07",
+      "event": "Tripartite acordada: Rodolfo + Fábio + Thiago a 33,33% cada",
+      "category": "operations"
+    },
+    {
+      "date": "2026-05-07",
+      "event": "Naming definido: Vegl.ia (anteriormente Vitta Academy)",
+      "category": "brand"
+    },
+    {
+      "date": "2026-05-08",
+      "event": "Brandbook (19 slides) Arnold-style · Twilight Blue + Mint + Champagne",
+      "category": "design"
+    },
+    {
+      "date": "2026-05-08",
+      "event": "Sistema Linecraft de iconografia (42 ícones, 7 categorias)",
+      "category": "design"
+    },
+    {
+      "date": "2026-05-08",
+      "event": "Landing Page completa (14 seções)",
+      "category": "design"
+    },
+    {
+      "date": "2026-05-08",
+      "event": "MVP App Pedagogia · 4 phone mockups + 3 dashboards RH",
+      "category": "design"
+    },
+    {
+      "date": "2026-05-08",
+      "event": "Term Sheet PDF tripartite (8 páginas A4) com cláusula 07 de receitas adjacentes",
+      "category": "operations"
+    },
+    {
+      "date": "2026-05-08",
+      "event": "Roteiro de Produção Audiovisual (12 vídeos para 6 módulos)",
+      "category": "content"
+    },
+    {
+      "date": "2026-05-08",
+      "event": "Vídeos educacionais Lei 15.377 (4 módulos) e NR-1 (2 módulos) escritos e validados",
+      "category": "content"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Roadmap Estratégico de Produto (PDF mestre · 22 funcionalidades · 21 páginas)",
+      "category": "strategy"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Tese expandida: Vegl.ia como ecossistema operacional de prevenção contínua, não edtech",
+      "category": "strategy"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Briefing Tese Expandida com distribuição de trabalho por agente xquads",
+      "category": "strategy"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Arquitetura do Protótipo · Stack Firebase + GitHub + YouTube embedded",
+      "category": "tech"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Roadmap Operacional 30 dias com swim lanes CEO + Dev + Comunicação",
+      "category": "strategy"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "VaciVitta rebranding aprovado (opção A · símbolo Pulsar · V duplo em mint)",
+      "category": "brand"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Repositório GitHub veglia/veglia-platform criado",
+      "category": "infrastructure"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Projeto Firebase veglia criado",
+      "category": "infrastructure"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Firestore inicializado",
+      "category": "infrastructure"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "Migração para Claude Code · Command Center estruturado em veglia-platform/",
+      "category": "infrastructure"
+    },
+    {
+      "date": "2026-05-09",
+      "event": "55+ documentos migrados · CLAUDE.md mestre · 4 sub-agents · 5 slash commands · settings",
+      "category": "infrastructure"
+    },
+    {
+      "date": "2026-05-16",
+      "event": "Checkpoint 01 — Fundação no ar (planejado)",
+      "category": "checkpoint",
+      "future": true
+    },
+    {
+      "date": "2026-05-23",
+      "event": "Checkpoint 02 — Esqueleto técnico + ritmo de conteúdo (planejado)",
+      "category": "checkpoint",
+      "future": true
+    },
+    {
+      "date": "2026-05-30",
+      "event": "Checkpoint 03 — MVP funcional + autoridade Dra. Amanda (planejado)",
+      "category": "checkpoint",
+      "future": true
+    },
+    {
+      "date": "2026-06-09",
+      "event": "Marco final · Demo VR · MVP Sprint 1 (planejado)",
+      "category": "milestone",
+      "future": true
+    },
+    {
+      "date": "2026-08-09",
+      "event": "Fim T1 MVP · KPIs alvo (50 empresas, 2k col., MRR R$35k)",
+      "category": "milestone",
+      "future": true
+    },
+    {
+      "date": "2026-11-09",
+      "event": "Fim T2 Diferenciação · KPIs alvo (150 empresas, 8k col., MRR R$120k)",
+      "category": "milestone",
+      "future": true
+    },
+    {
+      "date": "2027-02-09",
+      "event": "Fim T3 Escala · captação seed recomendada · KPIs alvo (400 empresas, 25k col., MRR R$350k)",
+      "category": "milestone",
+      "future": true
+    },
+    {
+      "date": "2027-05-09",
+      "event": "Fim T4 Moat · KPIs alvo (1000+ empresas, 80k+ col., MRR R$900k+)",
+      "category": "milestone",
+      "future": true
+    },
+    {
+      "date": "2026-06-12",
+      "event": "Conteúdo gravado: 9 módulos / 18 aulas em 4K + 9 PDFs",
+      "category": "content",
+      "future": false
+    },
+    {
+      "date": "2026-06-13",
+      "event": "16 videoIds publicados (dois percursos RH/Colaborador)",
+      "category": "content",
+      "future": false
+    },
+    {
+      "date": "2026-06-13",
+      "event": "Bugs de produção corrigidos: região das functions + invoker IAM das callable",
+      "category": "tech",
+      "future": false
+    },
+    {
+      "date": "2026-06-13",
+      "event": "Provisionamento SaaS no Command Center (provisionClient) + Empresa 01 (RHHUB)",
+      "category": "milestone",
+      "future": false
+    },
+    {
+      "date": "2026-06-13",
+      "event": "Módulo RH sem mockups + Colaborador com Minhas Vacinas",
+      "category": "tech",
+      "future": false
+    },
+    {
+      "date": "2026-06-13",
+      "event": "Fluxo das trilhas (galeria → assistir → quiz) + tema clean (light)",
+      "category": "tech",
+      "future": false
+    },
+    {
+      "date": "2026-06-13",
+      "event": "Hardening de segurança: aceite de convite validado (anti-escalonamento)",
+      "category": "tech",
+      "future": false
+    }
   ],
   "moat_competitivo": [
     {
@@ -893,11 +1441,11 @@
     }
   },
   "next_actions_48h": [
-    "Aprovar este memory.json com Fábio e Thiago",
-    "Registrar domínios vegl.ia e veglia.com.br",
-    "Listar 3 candidatos a dev React/Firebase via LinkedIn",
-    "Ativar Firebase Blaze com cartão da empresa",
-    "Adicionar Fábio e Thiago como owners do GitHub Org veglia",
-    "Reunião dos 3 sócios (1h) para aprovar 5 decisões CEO + revisar term sheet"
+    "Configurar DNS www.veglia.com.br → Firebase Hosting",
+    "Subir MOD 09 no YouTube (limite diário atingido) e registrar videoIds",
+    "Demo ao vivo para VR usando a Empresa 01 (RHHUB)",
+    "Implementar envio por WhatsApp (wa.me): link de acesso e certificado",
+    "Configurar SMTP real (convite/onboarding saem do modo demo)",
+    "Coletar número de WhatsApp da Vacivitta para o In-Company"
   ]
 }

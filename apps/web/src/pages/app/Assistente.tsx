@@ -67,7 +67,7 @@ export default function Assistente() {
     setLoading(true);
 
     try {
-      const functions = getFunctions(app, "southamerica-east1");
+      const functions = getFunctions(app, "us-central1");
       const chat = httpsCallable<{ message: string }, { response: string }>(
         functions,
         "chatWithVeglia"

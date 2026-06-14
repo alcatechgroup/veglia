@@ -4,16 +4,26 @@ import { db } from "@veglia/firebase-config";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/** Percurso de aprendizado: gestor de RH ou colaborador CLT. */
+export type Percurso = "rh" | "colaborador";
+
+/**
+ * Slot de vídeo de um módulo. Cada módulo tem um vídeo por percurso.
+ * Aceita também `string` legado (estrutura antiga, 1 vídeo por módulo) para
+ * compatibilidade com documentos gravados antes da separação de percursos.
+ */
+export type VideoSlot = { rh?: string; colaborador?: string } | string;
+
 export interface VideoIdsConfig {
   lei15377: {
-    m01: string;
-    m02: string;
-    m03: string;
-    m04: string;
+    m01: VideoSlot;
+    m02: VideoSlot;
+    m03: VideoSlot;
+    m04: VideoSlot;
   };
   nr1: {
-    m01: string;
-    m02: string;
+    m01: VideoSlot;
+    m02: VideoSlot;
   };
 }
 
@@ -22,18 +32,44 @@ interface UseVideoIdsResult {
   loading: boolean;
 }
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+/**
+ * Mapeia o role do usuário para o percurso de conteúdo.
+ * `collaborator` (e o legado `colaborador`) → percurso colaborador.
+ * Qualquer papel de gestão (admin, admin_rh, rh, rh_filial) → percurso RH.
+ */
+export function percursoFromRole(role?: string | null): Percurso {
+  return role === "collaborator" || role === "colaborador" ? "colaborador" : "rh";
+}
+
+/**
+ * Resolve o videoId de um slot para o percurso desejado.
+ * Ordem de fallback: percurso pedido → outro percurso → undefined.
+ * Aceita slot legado em formato string (vale para os dois percursos).
+ */
+export function resolveSlotVideoId(
+  slot: VideoSlot | undefined,
+  percurso: Percurso
+): string | undefined {
+  if (!slot) return undefined;
+  if (typeof slot === "string") return slot || undefined;
+  const other: Percurso = percurso === "rh" ? "colaborador" : "rh";
+  return slot[percurso] || slot[other] || undefined;
+}
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 /**
- * Busca os videoIds de `/config/courses` (doc "videoIds") no Firestore.
+ * Busca os videoIds de `/config/videoIds` no Firestore.
  *
  * Retorna null enquanto carrega ou se o documento não existir.
  * O consumidor deve fazer fallback para os videoIds hardcoded quando null.
  *
- * Estrutura esperada no Firestore:
- *   /config/courses  (doc ID: "videoIds")
- *     lei15377: { m01: "ytId", m02: "ytId", m03: "ytId", m04: "ytId" }
- *     nr1: { m01: "ytId", m02: "ytId" }
+ * Estrutura esperada no Firestore (1 vídeo por percurso):
+ *   /config/videoIds
+ *     lei15377: { m01: { rh: "ytId", colaborador: "ytId" }, m02: {...}, ... }
+ *     nr1:      { m01: { rh: "ytId", colaborador: "ytId" }, m02: {...} }
  */
 export function useVideoIds(): UseVideoIdsResult {
   const [videoIds, setVideoIds] = useState<VideoIdsConfig | null>(null);

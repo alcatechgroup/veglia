@@ -50,22 +50,6 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : "text-white/45 hover:text-white/80 hover:bg-white/5"
   }`;
 
-// ─── Nav item "em breve" — QW1 ────────────────────────────────────────────────
-// Renderiza item desabilitado com badge "Em breve" para features S2+.
-// Evita que o usuário clique em telas stub durante demos.
-
-function NavItemComingSoon({ icon, label }: { icon: string; label: string }) {
-  return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm opacity-35 cursor-not-allowed select-none">
-      <span className="text-base leading-none">{icon}</span>
-      <span className="flex-1 text-white/50">{label}</span>
-      <span className="text-[9px] px-1.5 py-0.5 rounded border border-white/15 text-white/30 font-medium tracking-wide uppercase">
-        Em breve
-      </span>
-    </div>
-  );
-}
-
 // ─── AppLayout ────────────────────────────────────────────────────────────────
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -88,6 +72,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     navigate("/login");
   };
 
+  // Tema visual: "clean" (light) ou "dark". Persistido em localStorage.
+  const [theme, setTheme] = useState<"clean" | "dark">(
+    () => (localStorage.getItem("veglia_theme") as "clean" | "dark") || "clean"
+  );
+  useEffect(() => {
+    localStorage.setItem("veglia_theme", theme);
+  }, [theme]);
+
   const isRH =
     claims?.role === "admin_rh" ||
     claims?.role === "admin" ||
@@ -97,22 +89,40 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const isColaborador = !isRH;
 
   return (
-    <div className="flex min-h-screen bg-[#0B2545]">
+    <div className={`flex min-h-screen bg-[#0B2545] ${theme === "clean" ? "theme-clean" : ""}`}>
       {/* ── Sidebar ── */}
       <aside className="w-60 shrink-0 flex flex-col border-r border-white/5 px-5 py-8 overflow-y-auto">
 
-        {/* Logo */}
+        {/* Logo + toggle de tema */}
         <div className="mb-8">
-          <div className="flex items-baseline gap-0.5">
-            <span className="text-2xl font-bold text-white tracking-tight">Vegl</span>
-            <span className="text-2xl font-bold text-[#C9A96E]">.</span>
-            <span className="text-2xl font-bold text-[#5DD3A8]">ia</span>
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <div className="flex items-baseline gap-0.5">
+                <span className="text-2xl font-bold text-white tracking-tight">Vegl</span>
+                <span className="text-2xl font-bold text-[#C9A96E]">.</span>
+                <span className="text-2xl font-bold text-[#5DD3A8]">ia</span>
+              </div>
+              {isRH ? (
+                <p className="text-[10px] text-white/30 mt-0.5">Painel RH</p>
+              ) : (
+                <p className="text-[10px] text-white/30 mt-0.5">Área do Colaborador</p>
+              )}
+            </div>
+            <button
+              onClick={() => setTheme((t) => (t === "clean" ? "dark" : "clean"))}
+              className="shrink-0 w-8 h-8 grid place-items-center rounded-lg text-white/60 hover:text-white hover:bg-white/10 border border-white/10 transition-colors"
+              title={theme === "clean" ? "Mudar para tema escuro" : "Mudar para tema claro"}
+              aria-label="Alternar tema"
+            >
+              {theme === "clean" ? (
+                /* lua — vai para escuro */
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              ) : (
+                /* sol — vai para claro */
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              )}
+            </button>
           </div>
-          {isRH ? (
-            <p className="text-[10px] text-white/30 mt-0.5">Painel RH</p>
-          ) : (
-            <p className="text-[10px] text-white/30 mt-0.5">Área do Colaborador</p>
-          )}
         </div>
 
         {/* ── Nav ── */}
@@ -175,6 +185,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <span className="text-base leading-none">◆</span>
                 Índice Preventivo
               </NavLink>
+              <NavLink to="/app/epidemiologia" className={navLinkClass}>
+                <span className="text-base leading-none">◎</span>
+                Epidemiologia
+              </NavLink>
 
               <div className="border-t border-white/5 my-2" />
               <p className="text-[10px] text-white/20 px-3 mb-1 uppercase tracking-wide">
@@ -210,9 +224,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <span className="text-base leading-none">◎</span>
                 Minhas Trilhas
               </NavLink>
-              <NavLink to="/app/diagnostico" className={navLinkClass}>
-                <span className="text-base leading-none">◇</span>
-                Diagnóstico
+              <NavLink to="/app/minhas-vacinas" className={navLinkClass}>
+                <span className="text-base leading-none">＋</span>
+                Minhas Vacinas
               </NavLink>
               <NavLink to="/app/certificados" className={navLinkClass}>
                 <span className="text-base leading-none">◆</span>
@@ -221,65 +235,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </>
           )}
 
-          {/* ── Saúde — S2+ (Em breve) — QW1 ── */}
-          <div className="border-t border-white/5 my-2" />
-          <p className="text-[10px] text-white/15 px-3 mb-1 uppercase tracking-wide">
-            Saúde · Em breve
-          </p>
-          <NavItemComingSoon icon="◆" label="Passaporte Digital" />
-          <NavItemComingSoon icon="◑" label="Saúde da Família" />
-          <NavItemComingSoon icon="◎" label="Canal de Saúde" />
-          <NavItemComingSoon icon="◇" label="Assistente IA" />
-
-          {/* ── Engajamento — S2+ (Em breve) — QW1 ── */}
-          <div className="border-t border-white/5 my-2" />
-          <p className="text-[10px] text-white/15 px-3 mb-1 uppercase tracking-wide">
-            Engajamento · Em breve
-          </p>
-          <NavItemComingSoon icon="◈" label="Jornadas" />
-          <NavItemComingSoon icon="◆" label="Conquistas" />
-          <NavItemComingSoon icon="◻" label="Benefícios" />
-          <NavItemComingSoon icon="◐" label="Marketplace" />
-
-          {/* ── Ferramentas RH — S2+ ── */}
-          {isRH && (
-            <>
-              <div className="border-t border-white/5 my-2" />
-              <p className="text-[10px] text-white/15 px-3 mb-1 uppercase tracking-wide">
-                Ferramentas RH · Em breve
-              </p>
-              <NavItemComingSoon icon="◐" label="Campanhas" />
-              <NavItemComingSoon icon="▦" label="SIPAT Automática" />
-              <NavItemComingSoon icon="◆" label="Cert. Empresa" />
-            </>
-          )}
+          {/* Áreas "Em breve" (S2+) ocultadas: app exibe apenas o que está disponível. */}
 
           <div className="border-t border-white/5 my-2" />
           <NotificationBell uid={uid} />
-
-          {/* ── Ferramentas freemium ── */}
-          <div className="border-t border-white/5 my-3" />
-          <p className="text-[10px] text-white/25 px-3 mb-1 uppercase tracking-wide">
-            Ferramentas gratuitas
-          </p>
-          <a
-            href="/diagnostico"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/45 hover:text-white/80 hover:bg-white/5 transition-all"
-          >
-            <span className="text-base leading-none">◇</span>
-            Diagnóstico Empresa
-          </a>
-          <a
-            href="/calculadora-vacinal"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-white/45 hover:text-white/80 hover:bg-white/5 transition-all"
-          >
-            <span className="text-base leading-none">◈</span>
-            Calculadora Vacinal
-          </a>
         </nav>
 
         <div className="flex-1" />

@@ -11,7 +11,8 @@ import {
   NR1_COURSE_TITLE,
   NR1_PASSING_SCORE,
 } from "@/data/coursesNr1";
-import { useVideoIds } from "@/hooks/useVideoIds";
+import { useVideoIds, percursoFromRole, resolveSlotVideoId } from "@/hooks/useVideoIds";
+import type { VideoSlot } from "@/hooks/useVideoIds";
 import type { Enrollment, ModuleProgress, QuizQuestion } from "@veglia/shared";
 
 // ─── Quiz ─────────────────────────────────────────────────────────────────────
@@ -147,6 +148,7 @@ export default function TrilhaNr1() {
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [activeModuleId, setActiveModuleId] = useState<string>(NR1_MODULES[0].id);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [view, setView] = useState<"gallery" | "module">("gallery");
   const [enrollmentLoading, setEnrollmentLoading] = useState(true);
   const [certToast, setCertToast] = useState(false);
 
@@ -205,8 +207,22 @@ export default function TrilhaNr1() {
     [getModuleProgress]
   );
 
+  // Marca o módulo como assistido (libera o botão "Fazer quiz"), SEM abrir o quiz.
   const handleWatched = useCallback(() => {
-    setShowQuiz(true);
+    if (!uid) return;
+    const ref = doc(db, "enrollments", enrollmentId);
+    setDoc(
+      ref,
+      { modules: { [activeModuleId]: { watched_at: Date.now() } }, updated_at: serverTimestamp() },
+      { merge: true }
+    ).catch(() => {/* silencia erro de permissão no preview */});
+  }, [uid, enrollmentId, activeModuleId]);
+
+  // Abre um módulo a partir da galeria
+  const openModule = useCallback((moduleId: string) => {
+    setActiveModuleId(moduleId);
+    setShowQuiz(false);
+    setView("module");
   }, []);
 
   const handleQuizComplete = useCallback(
@@ -236,7 +252,7 @@ export default function TrilhaNr1() {
       if (passed) {
         if (isLast) {
           try {
-            const functions = getFunctions(app, "southamerica-east1");
+            const functions = getFunctions(app, "us-central1");
             const generateCert = httpsCallable(functions, "generateCertificate");
             await generateCert({ courseId: NR1_COURSE_ID });
             setCertToast(true);
@@ -250,6 +266,7 @@ export default function TrilhaNr1() {
         }
 
         setShowQuiz(false);
+        setView("gallery");
         // Avança para próximo módulo se existir
         const currentIdx = NR1_MODULES.findIndex((m) => m.id === activeModuleId);
         const next = NR1_MODULES[currentIdx + 1];
@@ -263,14 +280,17 @@ export default function TrilhaNr1() {
   const activeProgress = getModuleProgress(activeModuleId);
   const courseComplete = !!enrollment?.completed_at;
 
-  // Merge Firestore videoIds over hardcoded values — key mapping: nr1-m01, nr1-m02
-  const nr1IdMap: Record<string, string | undefined> = {
+  // Percurso do usuário (RH/gestor vs colaborador) define qual vídeo é exibido
+  const percurso = percursoFromRole(claims?.role);
+
+  // Merge Firestore videoIds (por percurso) sobre os valores hardcoded — key mapping: nr1-m01, nr1-m02
+  const nr1SlotMap: Record<string, VideoSlot | undefined> = {
     "nr1-m01": videoIds?.nr1?.m01,
     "nr1-m02": videoIds?.nr1?.m02,
   };
 
   function resolveVideoId(moduleId: string, hardcoded: string): string {
-    return nr1IdMap[moduleId] ?? hardcoded;
+    return resolveSlotVideoId(nr1SlotMap[moduleId], percurso) ?? hardcoded;
   }
 
   return (
@@ -311,74 +331,69 @@ export default function TrilhaNr1() {
         </div>
       )}
 
-      <div className="flex gap-6">
-        {/* Sidebar módulos */}
-        <aside className="w-64 shrink-0">
-          <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-white/5">
-              <p className="text-xs font-semibold text-white/50 uppercase tracking-wide">
-                Módulos
-              </p>
-            </div>
-            <div className="divide-y divide-white/5">
-              {NR1_MODULES.map((mod, idx) => {
-                const progress = getModuleProgress(mod.id);
-                const unlocked = isModuleUnlocked(mod.id);
-                const done = progress?.quiz_passed === true;
-                const isActive = mod.id === activeModuleId;
+      {/* ── Galeria de módulos ── */}
+      {view === "gallery" && (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {NR1_MODULES.map((mod, idx) => {
+            const progress = getModuleProgress(mod.id);
+            const unlocked = isModuleUnlocked(mod.id);
+            const done = progress?.quiz_passed === true;
+            return (
+              <button
+                key={mod.id}
+                onClick={() => unlocked && openModule(mod.id)}
+                disabled={!unlocked}
+                className={`text-left bg-white/5 border rounded-2xl p-5 transition-all ${
+                  unlocked
+                    ? "border-white/10 hover:border-[#5DD3A8]/40 hover:-translate-y-0.5 cursor-pointer"
+                    : "border-white/5 opacity-50 cursor-not-allowed"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 grid place-items-center text-sm font-bold text-white/70">
+                    {idx + 1}
+                  </span>
+                  {done ? (
+                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-xl bg-[#5DD3A8]/15 text-[#5DD3A8]">Concluído</span>
+                  ) : unlocked ? (
+                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-xl bg-[#0A6CDC]/12 text-[#5DD3A8]">Disponível</span>
+                  ) : (
+                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-xl bg-white/5 text-white/30">Bloqueado</span>
+                  )}
+                </div>
+                <h3 className="text-sm font-semibold text-white leading-snug">{idx + 1}. {mod.title}</h3>
+                <p className="text-xs text-white/40 mt-1">{mod.quizQuestions.length} perguntas no quiz</p>
+                {done && (
+                  <p className="text-[11px] text-[#5DD3A8]/70 mt-2">Concluído com {progress?.quiz_score}%</p>
+                )}
+                {unlocked && (
+                  <span className="inline-flex items-center gap-1 text-xs text-[#5DD3A8] mt-3 font-semibold">
+                    {done ? "Rever módulo" : "Assistir"} <span className="text-[10px]">→</span>
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-                return (
-                  <button
-                    key={mod.id}
-                    onClick={() => {
-                      if (!unlocked) return;
-                      setActiveModuleId(mod.id);
-                      setShowQuiz(false);
-                    }}
-                    disabled={!unlocked}
-                    className={`w-full text-left px-4 py-3.5 flex items-start gap-3 transition-colors ${
-                      isActive
-                        ? "bg-[#5DD3A8]/10"
-                        : unlocked
-                        ? "hover:bg-white/5"
-                        : "opacity-40 cursor-not-allowed"
-                    }`}
-                  >
-                    <span
-                      className={`mt-0.5 text-base shrink-0 ${
-                        done
-                          ? "text-[#5DD3A8]"
-                          : isActive
-                          ? "text-white"
-                          : "text-white/30"
-                      }`}
-                    >
-                      {done ? "✓" : isActive ? "→" : unlocked ? "○" : "○"}
-                    </span>
-                    <div>
-                      <p
-                        className={`text-xs font-medium leading-snug ${
-                          isActive ? "text-white" : "text-white/50"
-                        }`}
-                      >
-                        {idx + 1}. {mod.title}
-                      </p>
-                      {done && (
-                        <p className="text-[10px] text-[#5DD3A8]/60 mt-0.5">Concluido</p>
-                      )}
-                      {!unlocked && (
-                        <p className="text-[10px] text-white/25 mt-0.5">Bloqueado</p>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+      {/* ── Módulo (player → quiz) ── */}
+      {view === "module" && (
+        <div className="space-y-5">
+          <button
+            onClick={() => { setView("gallery"); setShowQuiz(false); }}
+            className="flex items-center gap-1.5 text-sm text-white/50 hover:text-white/80 transition-colors"
+          >
+            ← Voltar aos módulos
+          </button>
+
+          <div>
+            <p className="text-xs text-[#5DD3A8]/70 font-medium tracking-wide uppercase mb-0.5">
+              Módulo {NR1_MODULES.findIndex((m) => m.id === activeModule.id) + 1}
+            </p>
+            <h2 className="text-lg font-bold text-white">{activeModule.title}</h2>
           </div>
-        </aside>
 
-        {/* Conteúdo principal */}
-        <div className="flex-1 space-y-5">
           {/* Vídeo */}
           {!showQuiz && (
             <>
@@ -391,20 +406,31 @@ export default function TrilhaNr1() {
                 companyId={claims?.company_id ?? ""}
                 onWatched={handleWatched}
               />
-              {activeProgress?.watched_at && !activeProgress.quiz_passed && (
-                <div className="flex justify-end">
+              {activeProgress?.quiz_passed ? (
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-sm text-[#5DD3A8]/70">
+                    <span>✓</span>
+                    <span>Módulo concluído com {activeProgress.quiz_score}%</span>
+                  </div>
                   <button
                     onClick={() => setShowQuiz(true)}
-                    className="bg-[#5DD3A8] hover:bg-[#4BC495] text-[#0B2545] font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
+                    className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                  >
+                    Refazer quiz
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs text-white/40">
+                    {activeProgress?.watched_at ? "Assistido. Faça o quiz para concluir o módulo." : "Assista ao vídeo para liberar o quiz."}
+                  </p>
+                  <button
+                    onClick={() => setShowQuiz(true)}
+                    disabled={!activeProgress?.watched_at}
+                    className="bg-[#5DD3A8] hover:bg-[#4BC495] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B2545] font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
                   >
                     Fazer quiz
                   </button>
-                </div>
-              )}
-              {activeProgress?.quiz_passed && (
-                <div className="flex items-center gap-2 text-sm text-[#5DD3A8]/70">
-                  <span>✓</span>
-                  <span>Módulo concluído com {activeProgress.quiz_score}%</span>
                 </div>
               )}
             </>
@@ -418,7 +444,7 @@ export default function TrilhaNr1() {
             />
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

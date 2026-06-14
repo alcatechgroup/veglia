@@ -115,6 +115,7 @@ export default function AceitarConvite() {
         displayName: name.trim(),
         cargo: invite.cargo ?? "",
         status_compliance: "pending",
+        invite_id: token, // vincula o doc ao convite (validado pelas Security Rules)
         createdAt: Date.now(),
       });
 

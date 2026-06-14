@@ -16,7 +16,7 @@ export const SPRINT_ITEMS: CheckItem[] = [
   { id: "ceo-06", label: "Contratar produtor audiovisual freelance", frente: "CEO" },
   { id: "ceo-07", label: "1ª reunião formal VR agendada (call essa semana)", frente: "CEO", tag: "urgente" },
   { id: "ceo-08", label: "DNS veglia.com.br → Firebase Hosting (configurar)", frente: "CEO", tag: "urgente" },
-  { id: "ceo-09", label: "Criar empresa seed no Firestore (demo VR)", frente: "CEO", tag: "urgente" },
+  { id: "ceo-09", label: "Empresa 01 (RHHUB) provisionada no Firestore", frente: "CEO", defaultDone: true },
   { id: "ceo-10", label: "ANTHROPIC_API_KEY configurada no Secret Manager Firebase", frente: "CEO", defaultDone: true },
 
   // ── Dev ───────────────────────────────────────────────────────────────────────
@@ -66,8 +66,16 @@ export const SPRINT_ITEMS: CheckItem[] = [
   { id: "dev-43", label: "IA chatWithVeglia (Claude Anthropic via Secret Manager)", frente: "Dev", defaultDone: true },
   { id: "dev-44", label: "Pricing landing page atualizado (R$29,90 + por-vida)", frente: "Dev", defaultDone: true },
   { id: "dev-45", label: "Git remote migrado para alcatechgroup/veglia", frente: "Dev", defaultDone: true },
-  { id: "dev-46", label: "Registrar videoIds Dra. Amanda em /admin/conteudo", frente: "Dev", tag: "hoje" },
-  { id: "dev-47", label: "firebase login --reauth + redeploy staging após gravação", frente: "Dev", tag: "hoje" },
+  { id: "dev-46", label: "16 videoIds registrados em /config/videoIds (dois percursos RH/Colaborador)", frente: "Dev", defaultDone: true },
+  { id: "dev-47", label: "Bug região corrigido: client → us-central1 (era southamerica-east1)", frente: "Dev", defaultDone: true },
+  { id: "dev-48", label: "Bug IAM corrigido: 11 callable recriadas com invoker público", frente: "Dev", defaultDone: true },
+  { id: "dev-49", label: "Dois percursos por módulo (RH/Colaborador) nas trilhas", frente: "Dev", defaultDone: true },
+  { id: "dev-50", label: "Provisionamento SaaS: provisionClient + /admin/provisionar", frente: "Dev", defaultDone: true },
+  { id: "dev-51", label: "Fluxo trilha: galeria de módulos → assistir → quiz", frente: "Dev", defaultDone: true },
+  { id: "dev-52", label: "Colaborador: Minhas Vacinas (auto-report + solicitar ao RH)", frente: "Dev", defaultDone: true },
+  { id: "dev-53", label: "Módulo RH sem mockups (Trilhas/Calendário/In-Company reais)", frente: "Dev", defaultDone: true },
+  { id: "dev-54", label: "Hardening rule users: aceite de convite validado (anti-escalonamento)", frente: "Dev", defaultDone: true },
+  { id: "dev-55", label: "Tema clean (light) + sidebar navy + toggle", frente: "Dev", defaultDone: true },
 
   // ── Comunicação ───────────────────────────────────────────────────────────────
   { id: "com-01", label: "Landing page no ar (veglia-6e734.web.app — DNS pendente)", frente: "Comunicacao", defaultDone: true },
@@ -82,11 +90,11 @@ export const SPRINT_ITEMS: CheckItem[] = [
   // ── Conteúdo ──────────────────────────────────────────────────────────────────
   { id: "cnt-01", label: "6 roteiros percurso Colaborador escritos (Lei 15.377 + NR-1)", frente: "Conteudo", defaultDone: true },
   { id: "cnt-02", label: "6 roteiros percurso Gestor de RH escritos (Lei 15.377 + NR-1)", frente: "Conteudo", defaultDone: true },
-  { id: "cnt-03", label: "Dra. Amanda valida roteiros Colaborador (4 Lei + 2 NR-1)", frente: "Conteudo" },
-  { id: "cnt-04", label: "Dra. Amanda valida roteiros Gestor de RH", frente: "Conteudo" },
-  { id: "cnt-05", label: "Gravação vídeos com Dra. Amanda (hoje 22/05)", frente: "Conteudo", tag: "hoje" },
-  { id: "cnt-06", label: "Edição + upload YouTube canal Não Listado", frente: "Conteudo" },
-  { id: "cnt-07", label: "videoIds registrados no /admin/conteudo (Firestore)", frente: "Conteudo" },
+  { id: "cnt-03", label: "Dra. Amanda valida roteiros Colaborador (4 Lei + 2 NR-1)", frente: "Conteudo", defaultDone: true },
+  { id: "cnt-04", label: "Dra. Amanda valida roteiros Gestor de RH", frente: "Conteudo", defaultDone: true },
+  { id: "cnt-05", label: "Gravação 4K com Dra. Amanda — 9 módulos / 18 aulas", frente: "Conteudo", defaultDone: true },
+  { id: "cnt-06", label: "Upload YouTube (Não Listado) — MVP completo (falta MOD 09)", frente: "Conteudo", defaultDone: true },
+  { id: "cnt-07", label: "videoIds registrados em /config/videoIds (dois percursos)", frente: "Conteudo", defaultDone: true },
 ];
 
 export const FRENTES = {
@@ -98,15 +106,15 @@ export const FRENTES = {
 
 export const SPRINT_META = {
   numero: 1,
-  semana: 3,
+  semana: 4,
   totalSemanas: 4,
   inicio: "2026-05-09",
-  fim: "2026-06-09",
-  objetivo: "Demo MVP funcional para VR + presença pública + Dra. Amanda gravada + 30+ leads",
+  fim: "2026-06-13",
+  objetivo: "MVP funcional ponta a ponta + conteúdo gravado e publicado + fluxo SaaS de provisionamento operacional",
   proximosMarcos: [
-    { data: "22/05 (hoje)", descricao: "Gravação Dra. Amanda — 1º vídeo educacional" },
-    { data: "Esta semana", descricao: "Call 1ª reunião formal com VR" },
-    { data: "Pendente", descricao: "DNS veglia.com.br → Firebase Hosting" },
-    { data: "Sem 4", descricao: "Demo MVP ao vivo para VR" },
+    { data: "Pendente", descricao: "DNS www.veglia.com.br → Firebase Hosting" },
+    { data: "Pendente", descricao: "Upload MOD 09 no YouTube (limite diário atingido)" },
+    { data: "Próximo", descricao: "Demo ao vivo para VR com Empresa 01" },
+    { data: "Próximo", descricao: "Integração WhatsApp (wa.me) para envio de links e certificados" },
   ],
 };

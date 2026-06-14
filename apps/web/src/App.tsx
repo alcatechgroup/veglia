@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 // ─── Pages: public ────────────────────────────────────────────────────────────
 import Login from "@/pages/Login";
 import AcessoRH from "@/pages/AcessoRH";
+import AcessoColaborador from "@/pages/AcessoColaborador";
 import Unauthorized from "@/pages/Unauthorized";
 import AceitarConvite from "@/pages/AceitarConvite";
 import Diagnostico from "@/pages/Diagnostico";
@@ -40,6 +41,7 @@ import ComplianceRelatorio from "@/pages/app/ComplianceRelatorio";
 
 // ─── F02 Diagnóstico do colaborador (S1) ─────────────────────────────────────
 import DiagnosticoColaborador from "@/pages/app/DiagnosticoColaborador";
+import MinhasVacinas from "@/pages/app/MinhasVacinas";
 
 // ─── F13 Índice Preventivo Corporativo (S2) ──────────────────────────────────
 import IndicePreventivo from "@/pages/app/IndicePreventivo";
@@ -81,6 +83,7 @@ import Analytics from "@/pages/admin/Analytics";
 import Leads from "@/pages/admin/Leads";
 import AdminVela from "@/pages/admin/AdminVela";
 import AdminEmpresas from "@/pages/admin/AdminEmpresas";
+import AdminProvisionar from "@/pages/admin/AdminProvisionar";
 
 // ─── Redirect inteligente por role ────────────────────────────────────────────
 
@@ -219,6 +222,14 @@ function AdminApp() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="provisionar"
+            element={
+              <ProtectedRoute requiredRole={["admin"]}>
+                <AdminProvisionar />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </AdminLayout>
     </ProtectedRoute>
@@ -281,6 +292,7 @@ function ClientApp() {
 
           {/* ── S1: F02 Diagnóstico colaborador ── */}
           <Route path="diagnostico" element={<DiagnosticoColaborador />} />
+          <Route path="minhas-vacinas" element={<MinhasVacinas />} />
 
           {/* ── S1: F03 Trilhas ── */}
           <Route path="trilhas" element={<Trilhas />} />
@@ -356,6 +368,14 @@ function ClientApp() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="epidemiologia"
+            element={
+              <ProtectedRoute requiredRole={["admin", "admin_rh", "rh"]}>
+                <Epidemiologia />
+              </ProtectedRoute>
+            }
+          />
 
           {/* ── F06: Certificacao Empresa ── */}
           <Route
@@ -413,7 +433,11 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* Rotas públicas */}
+        {/* Rotas públicas — três portas de acesso */}
+        <Route path="/command" element={<Login />} />        {/* Time Vegl.ia (sócios/admin) */}
+        <Route path="/acessorh" element={<AcessoRH />} />     {/* Cliente RH (CNPJ + e-mail) */}
+        <Route path="/colaborador" element={<AcessoColaborador />} /> {/* Colaborador (e-mail) */}
+        {/* Aliases retrocompatíveis */}
         <Route path="/login" element={<Login />} />
         <Route path="/acesso" element={<AcessoRH />} />
         <Route path="/onboarding" element={<Onboarding />} />

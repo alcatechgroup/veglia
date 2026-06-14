@@ -40,3 +40,10 @@ pnpm-debug.log*
 # Firebase service account keys (NEVER commit)
 *firebase-adminsdk*.json
 *service-account*.json
+
+# Conteúdo audiovisual pesado (vai para YouTube/Storage, não para o git)
+conteudos_veglia/
+
+# Segredos / chaves expostas acidentalmente (NEVER commit)
+*sk-ant-api*
+docs/sk-ant-*

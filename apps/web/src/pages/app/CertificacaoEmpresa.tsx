@@ -118,7 +118,7 @@ export default function CertificacaoEmpresa() {
     setSuccess(null);
 
     try {
-      const functions = getFunctions(app, "southamerica-east1");
+      const functions = getFunctions(app, "us-central1");
       const generate = httpsCallable<
         { company_id: string; year: number },
         { pdf_url: string; score: number }

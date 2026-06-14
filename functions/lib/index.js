@@ -33,7 +33,8 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.syncEmployeeStatus = exports.importEmployeesWebhook = exports.importEmployees = exports.calculatePreventiveScore = exports.createLandingLead = exports.generateCompanyCertificate = exports.syncComplianceScore = exports.checkComplianceAlerts = exports.sendInviteEmail = exports.calculateISPC = exports.dailyHealthCheck = exports.createInvite = exports.generateCertificate = exports.acceptInvite = exports.createBranch = exports.createCompany = exports.chatWithVeglia = exports.awardPoints = exports.syncUserClaims = void 0;
+exports.syncEmployeeStatus = exports.importEmployeesWebhook = exports.importEmployees = exports.calculatePreventiveScore = exports.createLandingLead = exports.generateCompanyCertificate = exports.syncComplianceScore = exports.checkComplianceAlerts = exports.sendInviteEmail = exports.calculateISPC = exports.dailyHealthCheck = exports.createInvite = exports.generateCertificate = exports.acceptInvite = exports.createBranch = exports.provisionClient = exports.createCompany = exports.chatWithVeglia = exports.awardPoints = exports.syncUserClaims = void 0;
+// Deploy bump 2026-06-13: reaplica invoker público das callable (us-central1).
 const admin = __importStar(require("firebase-admin"));
 const crypto = __importStar(require("crypto"));
 const nodemailer = __importStar(require("nodemailer"));
@@ -270,13 +271,139 @@ exports.createCompany = (0, https_1.onCall)(async (request) => {
         tx.set(userRef, {
             uid,
             company_id: companyRef.id,
-            role: "admin",
+            // RH que cria a empresa é admin_rh (admin do próprio tenant), não "admin".
+            // "admin" é reservado aos sócios Vegl.ia (Command Center interno).
+            role: "admin_rh",
             email,
             displayName: request.auth.token.name ?? email,
             createdAt: Date.now(),
         });
     });
     return { company_id: companyRef.id };
+});
+/**
+ * Provisiona um novo cliente (fluxo SaaS) — APENAS time Vegl.ia (role admin).
+ * Cria a empresa, cria/recupera o usuário RH (role admin_rh) vinculado ao CNPJ,
+ * e gera um link de definição de senha enviado por e-mail ao RH.
+ * Retorna o link sempre (fallback caso o SMTP não esteja configurado).
+ */
+exports.provisionClient = (0, https_1.onCall)(async (request) => {
+    if (!request.auth)
+        throw new https_1.HttpsError("unauthenticated", "Login necessário");
+    if (request.auth.token.role !== "admin") {
+        throw new https_1.HttpsError("permission-denied", "Apenas o time Vegl.ia (admin) pode provisionar clientes");
+    }
+    const { companyName, cnpj, rhEmail, rhName, plan } = request.data;
+    if (!companyName?.trim())
+        throw new https_1.HttpsError("invalid-argument", "Nome da empresa obrigatório");
+    if (!rhEmail?.trim())
+        throw new https_1.HttpsError("invalid-argument", "E-mail do RH obrigatório");
+    const email = rhEmail.trim().toLowerCase();
+    const cnpjClean = cnpj ? cnpj.replace(/\D/g, "") : null;
+    // CNPJ não pode estar duplicado
+    if (cnpjClean) {
+        const dup = await db.collection("companies").where("cnpj", "==", cnpjClean).limit(1).get();
+        if (!dup.empty)
+            throw new https_1.HttpsError("already-exists", "Já existe empresa com este CNPJ");
+    }
+    // Cria ou recupera o usuário RH no Firebase Auth
+    let rhUid;
+    try {
+        const existing = await admin.auth().getUserByEmail(email);
+        rhUid = existing.uid;
+        // Se já tem doc de usuário (já pertence a uma empresa), bloqueia
+        const existingDoc = await db.collection("users").doc(rhUid).get();
+        if (existingDoc.exists) {
+            throw new https_1.HttpsError("already-exists", "Este e-mail de RH já está vinculado a uma empresa");
+        }
+    }
+    catch (e) {
+        if (e instanceof https_1.HttpsError)
+            throw e;
+        // Usuário não existe — cria (sem senha; será definida pelo link de convite)
+        const created = await admin.auth().createUser({
+            email,
+            displayName: rhName?.trim() || email,
+            emailVerified: false,
+        });
+        rhUid = created.uid;
+    }
+    // Cria empresa + doc do usuário RH (admin_rh) em transação
+    const companyRef = db.collection("companies").doc();
+    await db.runTransaction(async (tx) => {
+        tx.set(companyRef, {
+            id: companyRef.id,
+            name: companyName.trim(),
+            cnpj: cnpjClean,
+            plan: plan || "starter",
+            adminUid: rhUid,
+            is_matrix: false,
+            parent_id: null,
+            createdAt: Date.now(),
+        });
+        tx.set(db.collection("users").doc(rhUid), {
+            uid: rhUid,
+            company_id: companyRef.id,
+            role: "admin_rh",
+            email,
+            displayName: rhName?.trim() || email,
+            createdAt: Date.now(),
+        });
+    });
+    // Gera link para o RH definir a senha
+    const appUrl = process.env.APP_URL || "https://veglia-6e734.web.app";
+    const resetLink = await admin.auth().generatePasswordResetLink(email, {
+        url: `${appUrl}/acessorh`,
+    });
+    // Envia e-mail (SMTP real se configurado; senão Ethereal com preview)
+    let previewUrl = null;
+    try {
+        const smtpUser = process.env.SMTP_USER;
+        const smtpPass = process.env.SMTP_PASS;
+        let transporter;
+        if (smtpUser && smtpPass) {
+            transporter = nodemailer.createTransport({
+                host: process.env.SMTP_HOST ?? "smtp.gmail.com",
+                port: 587,
+                secure: false,
+                auth: { user: smtpUser, pass: smtpPass },
+            });
+        }
+        else {
+            const testAccount = await nodemailer.createTestAccount();
+            transporter = nodemailer.createTransport({
+                host: "smtp.ethereal.email",
+                port: 587,
+                secure: false,
+                auth: { user: testAccount.user, pass: testAccount.pass },
+            });
+        }
+        const html = `
+      <div style="font-family: Inter, Arial, sans-serif; background:#0B2545; color:#fff; padding:40px; max-width:600px; margin:0 auto; border-radius:12px;">
+        <h1 style="color:#5DD3A8; font-size:24px; margin-bottom:8px;">Bem-vindo(a) à Vegl.ia, ${rhName?.trim() || "RH"}!</h1>
+        <p style="color:rgba(255,255,255,.7); font-size:16px; line-height:1.6;">
+          A <strong style="color:#fff;">${companyName.trim()}</strong> foi habilitada na plataforma
+          <strong style="color:#5DD3A8;">Vegl.ia</strong> de Compliance Preventivo.
+          Defina sua senha de acesso de RH para começar a cadastrar seus colaboradores.
+        </p>
+        <div style="text-align:center; margin:32px 0;">
+          <a href="${resetLink}" style="background:#5DD3A8; color:#0B2545; padding:14px 32px; border-radius:8px; text-decoration:none; font-weight:700; font-size:16px;">Definir minha senha →</a>
+        </div>
+        <p style="color:rgba(255,255,255,.4); font-size:12px; text-align:center;">Powered by Vacivitta · Quem vela, cuida.</p>
+      </div>`;
+        const info = await transporter.sendMail({
+            from: `"Vegl.ia · Onboarding" <noreply@veglia.com.br>`,
+            to: email,
+            subject: `Sua empresa foi habilitada na Vegl.ia — defina sua senha`,
+            html,
+        });
+        previewUrl = nodemailer.getTestMessageUrl(info) || null;
+    }
+    catch {
+        // Falha de e-mail não impede o provisionamento — o time usa o resetLink retornado
+        previewUrl = null;
+    }
+    return { company_id: companyRef.id, rhUid, resetLink, previewUrl };
 });
 /**
  * Cria uma filial de empresa existente.

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@700&display=swap');
+      .logo-text { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 64px; }
+    </style>
+  </defs>
+  <!-- Vegl in Warm White -->
+  <text class="logo-text" x="0" y="66" fill="#FBF8F1">Vegl</text>
+  <!-- · in Champagne -->
+  <text class="logo-text" x="186" y="66" fill="#C9A96E">·</text>
+  <!-- ia in Mint -->
+  <text class="logo-text" x="216" y="66" fill="#5DD3A8">ia</text>
+</svg>

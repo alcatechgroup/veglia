@@ -51,7 +51,7 @@ export default function Onboarding() {
     setError(null);
 
     try {
-      const functions = getFunctions(app, "southamerica-east1");
+      const functions = getFunctions(app, "us-central1");
       const createCompany = httpsCallable(functions, "createCompany");
 
       // QW2: passa CNPJ sempre sem formatação (14 dígitos) para garantir

@@ -27,6 +27,7 @@ const NAV = [
   // Comercial
   { to: "/admin/leads", label: "Leads", icon: "◉", group: "Comercial" },
   { to: "/admin/vela", label: "Atendente Vela", icon: "◎", group: "Comercial" },
+  { to: "/admin/provisionar", label: "Provisionar Cliente", icon: "✛", group: "Comercial" },
   { to: "/admin/empresas", label: "Empresas / Matriz", icon: "◈", group: "Comercial" },
 ];
 
@@ -49,6 +50,7 @@ const BREADCRUMB: Record<string, string> = {
   "/admin/analytics": "Analytics",
   "/admin/leads": "Leads",
   "/admin/vela": "Atendente Vela",
+  "/admin/provisionar": "Provisionar Cliente",
   "/admin/empresas": "Empresas / Matriz",
 };
 
@@ -87,7 +89,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
         {/* Nav com grupos */}
         <nav className="flex flex-col gap-0.5 overflow-y-auto">
-          {["Estrategia", "Conteudo", "Plataforma", "Comercial"].map((group) => (
+          {["Comercial", "Estrategia", "Conteudo", "Plataforma"].map((group) => (
             <div key={group} className="mb-2">
               <p className="text-[10px] text-white/20 px-3 py-1 uppercase tracking-wide">
                 {group}

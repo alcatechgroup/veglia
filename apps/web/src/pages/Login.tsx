@@ -117,7 +117,7 @@ export default function Login() {
 
         <div className="flex items-center justify-between mt-8">
           <a
-            href="/acesso"
+            href="/acessorh"
             className="text-xs text-twilight/35 hover:text-twilight/60 transition-colors flex items-center gap-1"
           >
             ← Acesso RH/Clientes

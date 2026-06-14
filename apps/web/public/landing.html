@@ -113,6 +113,12 @@ html[data-theme="dark"] .icon-sun{opacity:0;transform:rotate(-20deg) scale(.7)}
 .nav-admin:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.45);color:#fff}
 .nav-acesso-rh{padding:9px 20px;border-radius:99px;font-size:13px;font-weight:600;border:1px solid rgba(93,211,168,.4);color:var(--mint);transition:all .2s;flex-shrink:0}
 .nav-acesso-rh:hover{background:rgba(93,211,168,.1);border-color:var(--mint)}
+.acesso-dd{position:relative}
+.acesso-menu{position:absolute;right:0;top:calc(100% + 8px);min-width:248px;background:rgba(11,37,69,.98);backdrop-filter:blur(12px);border:1px solid rgba(93,211,168,.25);border-radius:14px;padding:6px;display:none;flex-direction:column;gap:2px;box-shadow:0 24px 48px -18px rgba(0,0,0,.55);z-index:60}
+.acesso-menu.open{display:flex}
+.acesso-menu a{padding:11px 14px;border-radius:10px;font-size:13px;font-weight:600;color:rgba(255,255,255,.88)}
+.acesso-menu a:hover{background:rgba(93,211,168,.12);color:var(--mint)}
+.acesso-menu a span{color:rgba(255,255,255,.45);font-weight:400}
 .hero-already-client{font-size:13px;color:rgba(255,255,255,.45);margin-top:12px}
 .hero-already-client a{color:var(--mint);text-decoration:none}
 .hero-already-client a:hover{text-decoration:underline}
@@ -311,7 +317,14 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
         <!-- Lua — tema escuro -->
         <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
       </button>
-      <a href="/acesso" class="nav-acesso-rh">Acesso RH</a>
+      <div class="acesso-dd">
+        <button class="nav-acesso-rh" id="acessoBtn" aria-haspopup="true" aria-expanded="false">Acesso ▾</button>
+        <div class="acesso-menu" id="acessoMenu">
+          <a href="/acessorh">Acesso RH <span>(Cliente)</span></a>
+          <a href="/colaborador">Acesso Colaborador <span>(do Cliente)</span></a>
+          <a href="/command">Acesso Admin Vegl.ia</a>
+        </div>
+      </div>
       <a href="#contato" class="nav-cta">Solicitar demo</a>
     </div>
   </nav>
@@ -330,9 +343,6 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
       <div class="hero-actions">
         <a href="#contato" class="btn-primary">Fazer diagnóstico gratuito <span class="arrow">→</span></a>
         <a href="#como" class="btn-ghost">Ver como funciona</a>
-      </div>
-      <div class="hero-already-client">
-        Já é cliente? <a href="/acesso">Acesse a plataforma →</a>
       </div>
     </div>
     <div class="hero-card">
@@ -645,7 +655,7 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
     </div>
     <div class="footer-bottom">
       <span>© 2026 Vegl.ia · Todos os direitos reservados</span>
-      <span>Powered by <a href="#vacivitta">Vacivitta</a> · <a href="#">Política de privacidade</a></span>
+      <span>Powered by <a href="#vacivitta">Vacivitta</a> · <a href="#">Política de privacidade</a> · <a href="/command">Acesso Admin Vegl.ia</a></span>
     </div>
   </div>
 </footer>
@@ -821,6 +831,24 @@ footer{background:var(--navy);padding:56px 0 32px;border-top:1px solid rgba(255,
 </div>
 
 <script>
+/* ── MENU DE ACESSO (dropdown) ─────────────────────────────────────────────── */
+(function(){
+  window.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('acessoBtn');
+    var menu = document.getElementById('acessoMenu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', function(){
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+
 /* ── THEME TOGGLE ──────────────────────────────────────────────────────────── */
 (function(){
   var STORAGE_KEY = 'veglia-theme';

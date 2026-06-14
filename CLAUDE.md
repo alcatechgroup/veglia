@@ -168,6 +168,17 @@ veglia-platform/
 | 41 | Atendente Vela implementada na landing page com Kanban de leads em /admin/leads | Executada 2026-05-17 | apps/web/public/landing.html · apps/web/src/pages/admin/ |
 | 42 | ANTHROPIC_API_KEY configurada no Firebase Secret Manager — IA preventiva ativa | Executada 2026-05-17 | functions/src/index.ts |
 | 43 | T1 MVP dev ~75% completo — gaps críticos de Firestore Rules sendo corrigidos em 17/05 | Em progresso 2026-05-17 | firestore.rules |
+| 44 | Conteúdo gravado: 9 módulos (18 aulas) 4K + 9 PDFs em conteudos_veglia/. 6 do MVP + 3 de T2 | Executada 2026-06-13 | conteudos_veglia/ · GUIA-PUBLICACAO-YOUTUBE.md |
+| 45 | Dois percursos por módulo (RH/Colaborador): videoIds `{rh, colaborador}` por papel; useVideoIds + trilhas + GerenciarConteudo | Executada 2026-06-13 | useVideoIds.ts · TrilhaLei15377/Nr1 · GerenciarConteudo.tsx |
+| 46 | 16 videoIds gravados em /config/videoIds (12 MVP + 4 T2), dois percursos | Executada 2026-06-13 | scripts/seed-videoids.mjs |
+| 47 | BUG corrigido: cliente chamava functions em southamerica-east1, mas estão em us-central1 | Executada 2026-06-13 | apps/web/src/pages/app/*.tsx |
+| 48 | BUG corrigido: callable (onCall) sem invoker público (403 IAM) — recriadas as 12 callable. Quebrava Onboarding/chat/certificados/provisionamento | Executada 2026-06-13 | functions (delete+recreate) |
+| 49 | BUG corrigido: createCompany setava role `admin` (jogava cliente RH no Command Center); agora seta `admin_rh`. `admin` reservado aos sócios | Executada 2026-06-13 | functions/src/index.ts |
+| 50 | Três portas de acesso: /acessorh (RH, CNPJ), /colaborador (e-mail), /command (time). Aliases /acesso e /login mantidos | Executada 2026-06-13 | App.tsx · firebase.json · landing.html · AcessoColaborador.tsx |
+| 51 | Provisionamento SaaS: Cloud Function provisionClient (admin-only) + tela /admin/provisionar. Time cria empresa+CNPJ+RH e envia link de senha | Executada 2026-06-13 | functions/src/index.ts · AdminProvisionar.tsx |
+| 52 | Empresa 01 de teste: RHHUB (CNPJ 46009860000197). RH rodolfo@rhhub.com.br (admin_rh) + colaborador alexandro@rhhub.com.br, senha 123mudar | Executada 2026-06-13 | scripts/seed-empresa01.mjs |
+| 53 | Módulo RH sem mockups: Trilhas RH (players reais + progresso), Calendário Vacinal (referência SBIm + cobertura real), In-Company (incompany_requests no Firestore + ligação 0800) | Executada 2026-06-13 | TrilhasRH/CalendarioVacinalRH/InCompanyVaciVitta.tsx |
+| 54 | Hardening rule `users create`: vinculada a convite válido (email+empresa+role conferem) e role não-elevado. Fecha escalonamento de privilégio (auto-atribuir admin) | Executada 2026-06-13 | firestore.rules · AceitarConvite.tsx (invite_id) |
 
 ## 6. Decisões pendentes
 
@@ -246,10 +257,15 @@ Detalhamento por frente em `docs/strategy/03-roadmap-operacional-30dias.html`.
 |---|---|---|
 | Produção | https://veglia-6e734.web.app | Firebase Hosting ativo |
 | Landing Page | www.veglia.com.br (pendente DNS) | landing.html |
-| Acesso RH | www.veglia.com.br/acesso | Login clientes CNPJ+email+senha |
-| Admin interno | www.veglia.com.br/login | Socios/admin role=admin |
+| Acesso RH | www.veglia.com.br/acessorh | Login cliente RH CNPJ+email+senha (alias: /acesso) |
+| Acesso Colaborador | www.veglia.com.br/colaborador | Login colaborador email+senha (sem CNPJ) |
+| Acesso Time Vegl.ia | www.veglia.com.br/command | Sócios/admin role=admin (alias: /login) |
 | App colaborador | www.veglia.com.br/app/trilhas | Plataforma logada |
+| App RH | www.veglia.com.br/app/dashboard | Cockpit RH (admin_rh/rh) |
 | Command Center | www.veglia.com.br/admin | role=admin obrigatório |
+| Provisionar cliente | www.veglia.com.br/admin/provisionar | Time habilita empresa+CNPJ+RH (SaaS) |
+
+**Funções:** todas as Cloud Functions estão em **us-central1** (não southamerica-east1). Callable exigem invoker público (`allUsers`), setado na criação — se reaparecer 403 de IAM, recriar a função (delete+deploy).
 
 ---
 
@@ -304,4 +320,4 @@ Ou invoque diretamente os sub-agents:
 
 ---
 
-**Última atualização:** 2026-05-17 · Fase ativa: T1 MVP · Sprint: Semana 2 de 12.
+**Última atualização:** 2026-06-13 · Fase ativa: T1 MVP · Conteúdo gravado e publicado, fluxo SaaS de provisionamento operacional. Pendências: MOD 09 no YouTube, DNS www.veglia.com.br, hardening da rule `users update`.

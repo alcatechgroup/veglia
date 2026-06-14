@@ -27,6 +27,11 @@ service cloud.firestore {
       return isAuthenticated() && myCompany() == company_id;
     }
 
+    // Dados de um convite (para validar o aceite client-side)
+    function inviteOf(id) {
+      return get(/databases/$(database)/documents/invites/$(id)).data;
+    }
+
     // ── Companies ─────────────────────────────────────────────────────────────
     match /companies/{company_id} {
       allow read: if isAdmin()
@@ -44,8 +49,19 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if request.auth.uid == uid
                   || (isRH() && resource.data.company_id == myCompany());
-      // Permite create para o fluxo de aceite de convite (client-side no MVP)
-      allow create: if request.auth != null && request.auth.uid == uid;
+      // Aceite de convite (client-side): o usuário só cria o PRÓPRIO doc, com o
+      // próprio e-mail, role não-elevado, e vinculado a um convite válido que
+      // confere e-mail, empresa e role. Bloqueia auto-atribuição de admin/admin_rh
+      // e ingresso em empresa para a qual não foi convidado.
+      // RH/admin são provisionados via Cloud Function (Admin SDK, ignora estas regras).
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.email == request.auth.token.email
+                    && request.resource.data.role in ['collaborator', 'rh_filial']
+                    && exists(/databases/$(database)/documents/invites/$(request.resource.data.invite_id))
+                    && inviteOf(request.resource.data.invite_id).email == request.resource.data.email
+                    && inviteOf(request.resource.data.invite_id).company_id == request.resource.data.company_id
+                    && inviteOf(request.resource.data.invite_id).role == request.resource.data.role;
       allow update: if false;
       allow delete: if false;
     }
@@ -112,6 +128,16 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ── In-Company Requests (solicitações de campanha de vacinação) ──────────
+    // RH cria/lê as solicitações da própria empresa; admin (time Vegl.ia/Vacivitta)
+    // lê todas e atualiza o status. Isolamento por company_id.
+    match /incompany_requests/{id} {
+      allow read: if isAuthenticated() && (isAdmin() || resource.data.company_id == myCompany());
+      allow create: if isAuthenticated() && request.resource.data.company_id == myCompany();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
     // ── Config (video IDs e configurações da plataforma) ──────────────────────
     // Qualquer autenticado pode ler (necessário para useVideoIds nas trilhas).
     // Apenas admin pode escrever (protege contra adulteração de conteúdo).
@@ -167,11 +193,30 @@ service cloud.firestore {
     // Colaborador cria/lê os próprios registros. Nenhuma alteração ou deleção.
     // RH da mesma empresa pode ler para relatórios.
     match /vaccination_records/{recordId} {
+      // Colaborador lê os próprios; RH lê os da própria empresa (isolamento).
       allow read: if isAuthenticated() && (
-        resource.data.uid == request.auth.uid || isRH()
+        resource.data.uid == request.auth.uid
+        || (isRH() && resource.data.company_id == myCompany())
       );
-      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      // Colaborador auto-reporta (uid próprio); RH registra para a própria empresa.
+      allow create: if isAuthenticated() && (
+        request.resource.data.uid == request.auth.uid
+        || (isRH() && request.resource.data.company_id == myCompany())
+      );
       allow update, delete: if false;
+    }
+
+    // ── Vaccine Requests (colaborador solicita vacina ao RH) ──────────────────
+    match /vaccine_requests/{id} {
+      allow read: if isAuthenticated() && (
+        resource.data.requested_by == request.auth.uid
+        || (isRH() && resource.data.company_id == myCompany())
+      );
+      allow create: if isAuthenticated()
+        && request.resource.data.requested_by == request.auth.uid
+        && request.resource.data.company_id == myCompany();
+      allow update: if isRH() && resource.data.company_id == myCompany();
+      allow delete: if false;
     }
 
     // ── Company Certificates ──────────────────────────────────────────────────

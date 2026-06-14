@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vegl.ia · Tema Clean 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --cream:#FBF8F1;
+    --mist:#F4F7FB;
+    --navy:#0B2545;
+    --blue:#0A4D94;
+    --blue-bright:#0A6CDC;
+    --mint:#5DD3A8;
+    --mint-deep:#0E9C8C;
+    --champagne:#C9A96E;
+    --ink:#10243F;
+    --ink-soft:#5d6a7e;
+    --line:#E6ECF2;
+    --alert:#E05252;
+    /* sombras de profundidade (light mode realista) */
+    --sh-ambient:0 1px 2px rgba(11,37,69,.05);
+    --sh-soft:0 14px 34px -16px rgba(11,37,69,.16), 0 4px 10px -6px rgba(11,37,69,.08);
+    --sh-lift:0 36px 70px -24px rgba(11,37,69,.30), 0 12px 24px -12px rgba(10,77,148,.14);
+    --sh-mint:0 22px 50px -22px rgba(14,156,140,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(93,211,168,.10), transparent 60%),
+      radial-gradient(900px 500px at -5% 110%, rgba(10,108,220,.08), transparent 55%),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .label{font-family:'Plus Jakarta Sans',sans-serif}
+  .serif{font-family:'Fraunces',Georgia,serif}
+
+  /* ── Topbar ── */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 32px;
+    background:rgba(255,255,255,.78);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:baseline;gap:1px;font-family:'Fraunces',serif;font-weight:700;font-size:24px;letter-spacing:-.02em}
+  .brand .b{color:var(--navy)} .brand .dot{color:var(--champagne)} .brand .ia{color:var(--mint-deep)}
+  .top-right{display:flex;align-items:center;gap:18px}
+  .pill{
+    font-family:'Plus Jakarta Sans';font-size:12px;font-weight:600;color:var(--blue);
+    background:rgba(10,77,148,.07);border:1px solid rgba(10,77,148,.14);
+    padding:7px 14px;border-radius:999px;
+  }
+  .avatar{
+    width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(135deg,var(--mint),var(--blue-bright));
+    color:#fff;font-weight:700;display:grid;place-items:center;font-size:13px;
+    box-shadow:var(--sh-soft);
+  }
+
+  /* ── Layout ── */
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 32px 80px}
+  .page-head{margin-bottom:34px}
+  .eyebrow{font-family:'Plus Jakarta Sans';font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mint-deep);margin-bottom:10px}
+  h1.title{font-family:'Fraunces',serif;font-weight:600;font-size:38px;line-height:1.05;letter-spacing:-.02em;color:var(--navy)}
+  h1.title em{font-style:normal;color:var(--blue)}
+  .sub{margin-top:10px;color:var(--ink-soft);font-size:15px;max-width:560px}
+
+  .section-title{display:flex;align-items:center;gap:10px;margin:46px 0 20px}
+  .section-title .num{font-family:'Plus Jakarta Sans';font-size:12px;font-weight:700;color:var(--champagne)}
+  .section-title h2{font-family:'Fraunces',serif;font-weight:600;font-size:22px;color:var(--navy)}
+  .section-title .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+  /* ── Grade 3D ── */
+  .scene{perspective:1500px}
+  .grid{display:grid;gap:22px}
+  .grid.kpi{grid-template-columns:repeat(4,1fr)}
+  .grid.two{grid-template-columns:repeat(2,1fr)}
+  .grid.three{grid-template-columns:repeat(3,1fr)}
+
+  /* ── Card 3D base ── */
+  .card{
+    position:relative;
+    background:linear-gradient(180deg,#fff, #fdfefe);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:24px;
+    transform-style:preserve-3d;
+    transform:translateZ(0);
+    box-shadow:var(--sh-ambient),var(--sh-soft);
+    transition:transform .18s cubic-bezier(.2,.7,.2,1), box-shadow .25s ease, border-color .25s ease;
+    will-change:transform;
+  }
+  /* brilho interno superior (luz de cima) */
+  .card::before{
+    content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,0) 38%);
+    opacity:.6;
+  }
+  /* faixa de acento no topo */
+  .card::after{
+    content:"";position:absolute;left:24px;right:24px;top:0;height:3px;border-radius:0 0 4px 4px;
+    background:linear-gradient(90deg,var(--mint),var(--blue-bright));
+    transform:translateZ(40px);
+    opacity:.0;transition:opacity .25s ease;
+  }
+  .card:hover{box-shadow:var(--sh-ambient),var(--sh-lift);border-color:rgba(93,211,168,.5)}
+  .card:hover::after{opacity:1}
+  .card .lift{transform:translateZ(45px);transition:transform .18s ease}
+  .card .lift-2{transform:translateZ(26px)}
+
+  /* ── KPI ── */
+  .kpi-ico{
+    width:42px;height:42px;border-radius:13px;display:grid;place-items:center;margin-bottom:16px;
+    background:linear-gradient(140deg,rgba(93,211,168,.18),rgba(10,108,220,.12));
+    border:1px solid rgba(93,211,168,.28);
+    box-shadow:0 10px 20px -12px rgba(14,156,140,.5);
+  }
+  .kpi-ico svg{width:20px;height:20px;stroke:var(--blue);fill:none;stroke-width:1.7}
+  .kpi-label{font-family:'Plus Jakarta Sans';font-size:12px;font-weight:600;color:var(--ink-soft)}
+  .kpi-val{font-family:'Fraunces',serif;font-weight:600;font-size:34px;color:var(--navy);line-height:1;margin:6px 0 4px;letter-spacing:-.02em}
+  .kpi-val span{font-size:16px;color:var(--mint-deep)}
+  .kpi-delta{font-size:12px;font-weight:600;color:var(--mint-deep)}
+  .kpi-delta.warn{color:var(--champagne)}
+
+  /* ── Trilha card ── */
+  .trilha-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .badge{font-family:'Plus Jakarta Sans';font-size:11px;font-weight:700;padding:5px 11px;border-radius:999px}
+  .badge.mint{color:var(--mint-deep);background:rgba(93,211,168,.14);border:1px solid rgba(93,211,168,.3)}
+  .badge.gold{color:#9a7b3c;background:rgba(201,169,110,.16);border:1px solid rgba(201,169,110,.34)}
+  .trilha-card h3{font-family:'Fraunces',serif;font-weight:600;font-size:19px;color:var(--navy);line-height:1.15}
+  .trilha-card p.desc{color:var(--ink-soft);font-size:13.5px;margin-top:6px;line-height:1.5}
+  .ring{position:relative;width:64px;height:64px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .pct{position:absolute;inset:0;display:grid;place-items:center;font-family:'Plus Jakarta Sans';font-weight:700;font-size:15px;color:var(--blue)}
+  .mods{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .mod{display:flex;align-items:center;gap:11px;font-size:13px;color:var(--ink)}
+  .mod .dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:10px;font-weight:700}
+  .mod .dot.done{background:var(--mint);color:#fff}
+  .mod .dot.now{background:rgba(10,108,220,.12);color:var(--blue);border:1px solid rgba(10,108,220,.3)}
+  .mod .dot.lock{background:var(--mist);color:#b8c4d2;border:1px solid var(--line)}
+  .mod .mtitle{color:var(--ink-soft)}
+  .mod.is-done .mtitle{color:var(--ink)}
+  .btn{
+    margin-top:20px;display:inline-flex;align-items:center;gap:8px;
+    font-family:'Plus Jakarta Sans';font-weight:700;font-size:13.5px;
+    background:linear-gradient(135deg,var(--mint),var(--mint-deep));color:#fff;
+    padding:11px 18px;border-radius:13px;border:none;cursor:pointer;
+    box-shadow:var(--sh-mint);transition:transform .15s ease, box-shadow .2s ease;
+    transform:translateZ(50px);
+  }
+  .btn:hover{transform:translateZ(50px) translateY(-1px)}
+  .btn.ghost{background:#fff;color:var(--blue);border:1px solid rgba(10,77,148,.2);box-shadow:var(--sh-ambient)}
+
+  /* ── Saúde cards ── */
+  .health-ico{
+    width:48px;height:48px;border-radius:15px;display:grid;place-items:center;margin-bottom:16px;
+    box-shadow:0 14px 26px -14px rgba(11,37,69,.4);transform:translateZ(38px);
+  }
+  .health-ico.mint{background:linear-gradient(140deg,#eafbf4,#d4f4e8);border:1px solid rgba(93,211,168,.4)}
+  .health-ico.blue{background:linear-gradient(140deg,#eaf2fd,#d7e7fb);border:1px solid rgba(10,108,220,.28)}
+  .health-ico.gold{background:linear-gradient(140deg,#faf4e6,#f1e6cd);border:1px solid rgba(201,169,110,.4)}
+  .health-ico svg{width:24px;height:24px;fill:none;stroke-width:1.7}
+  .health-ico.mint svg{stroke:var(--mint-deep)} .health-ico.blue svg{stroke:var(--blue)} .health-ico.gold svg{stroke:#9a7b3c}
+  .health-card h3{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--navy)}
+  .health-card p{color:var(--ink-soft);font-size:13.5px;margin-top:6px;line-height:1.55}
+  .health-stat{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:8px}
+  .health-stat b{font-family:'Fraunces',serif;font-weight:600;font-size:26px;color:var(--blue)}
+  .health-stat small{font-size:12px;color:var(--ink-soft)}
+
+  /* progress bar */
+  .bar{height:7px;border-radius:99px;background:var(--mist);overflow:hidden;margin-top:14px}
+  .bar > i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--mint),var(--blue-bright))}
+
+  .footnote{margin-top:50px;text-align:center;color:var(--ink-soft);font-size:12.5px}
+  .footnote b{color:var(--navy)}
+
+  @media(max-width:980px){
+    .grid.kpi{grid-template-columns:repeat(2,1fr)}
+    .grid.three{grid-template-columns:1fr}
+  }
+  @media(max-width:680px){
+    .grid.two,.grid.kpi{grid-template-columns:1fr}
+    .wrap{padding:28px 18px 60px}
+    h1.title{font-size:30px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .card{transition:box-shadow .2s ease}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand"><span class="b">Vegl</span><span class="dot">·</span><span class="ia">ia</span></div>
+  <div class="top-right">
+    <span class="pill">Lei 15.377/2026 · Em conformidade</span>
+    <div class="avatar">RH</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- PAGE HEAD -->
+  <div class="page-head">
+    <p class="eyebrow">Painel do RH · RHHUB</p>
+    <h1 class="title">Sua empresa <em>cuida</em> — e agora consegue provar.</h1>
+    <p class="sub">Acompanhe compliance, trilhas e saúde dos colaboradores em um só lugar. Tema claro, leitura tranquila.</p>
+  </div>
+
+  <!-- KPIs 3D -->
+  <div class="scene">
+    <div class="grid kpi" id="kpiGrid">
+      <div class="card" data-tilt>
+        <div class="kpi-ico lift"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="kpi-label label">Índice de Compliance</div>
+        <div class="kpi-val">92<span>/100</span></div>
+        <div class="kpi-delta">▲ 6 pts no mês</div>
+      </div>
+      <div class="card" data-tilt>
+        <div class="kpi-ico lift"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6S14 16 14.5 19"/><path d="M16 8.5a3 3 0 010 5"/><path d="M18 19c-.2-2-1-3.4-2.4-4.2"/></svg></div>
+        <div class="kpi-label label">Colaboradores ativos</div>
+        <div class="kpi-val">148</div>
+        <div class="kpi-delta">96% engajados</div>
+      </div>
+      <div class="card" data-tilt>
+        <div class="kpi-ico lift"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="kpi-label label">Certificados emitidos</div>
+        <div class="kpi-val">112</div>
+        <div class="kpi-delta">12 esta semana</div>
+      </div>
+      <div class="card" data-tilt>
+        <div class="kpi-ico lift"><svg viewBox="0 0 24 24"><path d="M12 3v6"/><path d="M9 6h6"/><rect x="6" y="9" width="12" height="11" rx="2.5"/><path d="M9.5 14.5h5"/></svg></div>
+        <div class="kpi-label label">Cobertura vacinal</div>
+        <div class="kpi-val">78<span>%</span></div>
+        <div class="kpi-delta warn">22% pendente</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRILHAS -->
+  <div class="section-title"><span class="num label">01</span><h2>Trilhas de Compliance</h2><span class="rule"></span></div>
+  <div class="scene">
+    <div class="grid two">
+      <!-- Card Lei -->
+      <div class="card trilha-card" data-tilt>
+        <div class="trilha-top">
+          <div class="lift">
+            <span class="badge mint">Obrigatória</span>
+            <h3 style="margin-top:12px">Lei 15.377/2026 — Compliance</h3>
+            <p class="desc">Vacinação adulta, prevenção de cânceres e saúde mental no trabalho.</p>
+          </div>
+          <div class="ring lift">
+            <svg width="64" height="64"><circle cx="32" cy="32" r="27" stroke="#E6ECF2" stroke-width="6" fill="none"/><circle cx="32" cy="32" r="27" stroke="url(#g1)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="170" stroke-dashoffset="36"/><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5DD3A8"/><stop offset="1" stop-color="#0A6CDC"/></linearGradient></defs></svg>
+            <span class="pct">79%</span>
+          </div>
+        </div>
+        <div class="mods">
+          <div class="mod is-done"><span class="dot done">✓</span><span class="mtitle">Compliance Legal</span></div>
+          <div class="mod is-done"><span class="dot done">✓</span><span class="mtitle">Vacinação Adulta</span></div>
+          <div class="mod"><span class="dot now">▶</span><span class="mtitle">Prevenção de Cânceres</span></div>
+          <div class="mod"><span class="dot lock">○</span><span class="mtitle">Saúde Mental</span></div>
+        </div>
+        <button class="btn">Acessar trilha →</button>
+      </div>
+
+      <!-- Card NR-1 -->
+      <div class="card trilha-card" data-tilt>
+        <div class="trilha-top">
+          <div class="lift">
+            <span class="badge gold">Regulatória</span>
+            <h3 style="margin-top:12px">NR-1 — Riscos Psicossociais</h3>
+            <p class="desc">GRO, PGR e obrigações do empregador na nova NR-1.</p>
+          </div>
+          <div class="ring lift">
+            <svg width="64" height="64"><circle cx="32" cy="32" r="27" stroke="#E6ECF2" stroke-width="6" fill="none"/><circle cx="32" cy="32" r="27" stroke="url(#g2)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="170" stroke-dashoffset="92"/><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C9A96E"/><stop offset="1" stop-color="#0A4D94"/></linearGradient></defs></svg>
+            <span class="pct">46%</span>
+          </div>
+        </div>
+        <div class="mods">
+          <div class="mod is-done"><span class="dot done">✓</span><span class="mtitle">O que é a NR-1</span></div>
+          <div class="mod"><span class="dot now">▶</span><span class="mtitle">GRO e PGR na Prática</span></div>
+        </div>
+        <button class="btn ghost">Acessar trilha →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAÚDE -->
+  <div class="section-title"><span class="num label">02</span><h2>Saúde &amp; Operação</h2><span class="rule"></span></div>
+  <div class="scene">
+    <div class="grid three">
+      <div class="card health-card" data-tilt>
+        <div class="health-ico mint"><svg viewBox="0 0 24 24"><path d="M12 4v6"/><path d="M9 7h6"/><rect x="6.5" y="10" width="11" height="10" rx="2.5"/><path d="M10 15h4"/></svg></div>
+        <h3>Vacinação In-Company</h3>
+        <p>Agende a equipe Vacivitta na sua empresa. Operação real, registro automático.</p>
+        <div class="health-stat"><b>2</b><small>campanhas agendadas</small></div>
+      </div>
+      <div class="card health-card" data-tilt>
+        <div class="health-ico blue"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 17l5-5 3 3 7-7"/><circle cx="19" cy="8" r="1.6" fill="#0A4D94" stroke="none"/></svg></div>
+        <h3>Índice Preventivo</h3>
+        <p>4 dimensões de saúde da empresa, com histórico e impacto financeiro estimado.</p>
+        <div class="health-stat"><b>+18%</b><small>vs. trimestre anterior</small></div>
+        <div class="bar"><i style="width:84%"></i></div>
+      </div>
+      <div class="card health-card" data-tilt>
+        <div class="health-ico gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20c.7-3.6 3.4-5.5 7-5.5s6.3 1.9 7 5.5"/></svg></div>
+        <h3>Autoridade Médica</h3>
+        <p>Conteúdo validado pela Dra. Amanda Conde Perez Fernandes — SBIm.</p>
+        <div class="health-stat"><b>100%</b><small>trilhas chanceladas</small></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote"><b>Vegl.ia</b> · Tema Clean · Powered by Vacivitta · <i class="serif">Quem vela, cuida.</i></p>
+</div>
+
+<script>
+  // Tilt 3D com rastreamento do ponteiro (sutil, premium)
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce){
+    document.querySelectorAll('[data-tilt]').forEach(card=>{
+      const MAX = 7; // graus
+      card.addEventListener('pointermove', e=>{
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left)/r.width - .5;
+        const py = (e.clientY - r.top)/r.height - .5;
+        card.style.transform = `rotateY(${px*MAX}deg) rotateX(${-py*MAX}deg) translateZ(6px)`;
+      });
+      card.addEventListener('pointerleave', ()=>{
+        card.style.transform = '';
+      });
+    });
+  }
+</script>
+</body>
+</html>

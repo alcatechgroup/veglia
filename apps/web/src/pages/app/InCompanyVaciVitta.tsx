@@ -1,60 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { collection, addDoc, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "@veglia/firebase-config";
 import { useAuth } from "../../contexts/AuthContext";
 
 // ─── Contato Vacivitta ────────────────────────────────────────────────────────
-// Atualizar com o número oficial de atendimento corporativo da Vacivitta.
-// Formato: código do país + DDD + número, sem espaços ou caracteres especiais.
-const VACIVITTA_WHATSAPP = "5511999999999"; // TODO: atualizar com número real
-
-function buildWhatsAppUrl(form?: Partial<FormState>, companyName?: string): string {
-  const base = `https://wa.me/${VACIVITTA_WHATSAPP}?text=`;
-
-  if (!form || !form.vacinas_selecionadas?.length) {
-    // Mensagem genérica — chamada sem contexto do form
-    const msg = [
-      "Olá! Vim pelo painel Vegl.ia e gostaria de solicitar uma campanha de Vacinação In-Company.",
-      companyName ? `Empresa: ${companyName}` : "",
-      "Pode me ajudar com informações e disponibilidade?",
-    ]
-      .filter(Boolean)
-      .join("\n");
-    return base + encodeURIComponent(msg);
-  }
-
-  // Mensagem estruturada com os dados do form
-  const datas = [form.data_1, form.data_2, form.data_3]
-    .filter(Boolean)
-    .map((d) => {
-      if (!d) return "";
-      const [y, m, day] = d.split("-");
-      return `${day}/${m}/${y}`;
-    })
-    .join(", ");
-
-  const turnoMap: Record<string, string> = {
-    manha: "Manhã (8–12h)",
-    tarde: "Tarde (13–17h)",
-    integral: "Integral",
-  };
-
-  const msg = [
-    "Olá! Vim pelo painel Vegl.ia e gostaria de agendar uma campanha de Vacinação In-Company.",
-    "",
-    companyName ? `Empresa: ${companyName}` : "",
-    `Vacinas: ${form.vacinas_selecionadas?.join(", ")}`,
-    datas ? `Datas preferidas: ${datas}` : "",
-    `Turno: ${turnoMap[form.turno ?? "manha"] ?? form.turno}`,
-    `Colaboradores estimados: ${form.colaboradores_estimados ?? "—"}`,
-    form.observacoes ? `Observações: ${form.observacoes}` : "",
-    "",
-    "Aguardo o retorno para confirmar logística e disponibilidade.",
-  ]
-    .filter((l) => l !== undefined && !(l === "" && false))
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n");
-
-  return base + encodeURIComponent(msg);
-}
+// Atendimento corporativo Vacivitta. 0800 é número de ligação (não funciona em
+// WhatsApp). Se houver um celular com WhatsApp, adicionar como contato secundário.
+const VACIVITTA_FONE = "08001233333"; // dígitos para o link tel:
+const VACIVITTA_FONE_DISPLAY = "0800 123 3333";
+const VACIVITTA_TEL = `tel:${VACIVITTA_FONE}`;
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -97,36 +51,7 @@ const VACINAS_DISPONIVEIS = [
   "COVID-19 (atualizacao)",
 ] as const;
 
-const COLABORADORES_MOCK = [
-  "Ana Paula Silva",
-  "Carlos Eduardo Mendes",
-  "Fernanda Torres Costa",
-  "Ricardo Almeida Souza",
-  "Beatriz Oliveira Lima",
-  "Marcelo Ferreira Nunes",
-  "Juliana Castro Pereira",
-  "Thiago Martins Rodrigues",
-] as const;
-
-const SOLICITACOES_MOCK: Solicitacao[] = [
-  {
-    id: "sol-001",
-    vacinas: ["Influenza 2026", "Hepatite B"],
-    data_preferencia: "2026-05-20",
-    colaboradores_estimados: 45,
-    status: "confirmado",
-    responsavel_vacivitta: "Equipe VaciVitta Sul",
-    criado_em: "2026-05-10",
-  },
-  {
-    id: "sol-002",
-    vacinas: ["dTpa"],
-    data_preferencia: "2026-06-03",
-    colaboradores_estimados: 12,
-    status: "solicitado",
-    criado_em: "2026-05-09",
-  },
-];
+// Solicitações reais vêm do Firestore (coleção incompany_requests), por empresa.
 
 const FORM_INITIAL: FormState = {
   vacinas_selecionadas: [],
@@ -542,15 +467,6 @@ interface Step3Props {
 }
 
 function Step3({ form, onChange }: Step3Props) {
-  const toggleColaborador = (nome: string) => {
-    const ja = form.colaboradores_especificos.includes(nome);
-    onChange({
-      colaboradores_especificos: ja
-        ? form.colaboradores_especificos.filter((c) => c !== nome)
-        : [...form.colaboradores_especificos, nome],
-    });
-  };
-
   return (
     <div className="space-y-5">
       <div>
@@ -596,83 +512,6 @@ function Step3({ form, onChange }: Step3Props) {
           A VaciVitta confirma a capacidade de atendimento com base neste numero.
         </p>
       </div>
-
-      {/* Selecao especifica */}
-      <div className="space-y-3">
-        <button
-          type="button"
-          onClick={() =>
-            onChange({
-              selecionar_especificos: !form.selecionar_especificos,
-              colaboradores_especificos: [],
-            })
-          }
-          className="flex items-center gap-2.5 text-sm text-white/60 hover:text-white/80 transition-colors"
-        >
-          <div
-            className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all ${
-              form.selecionar_especificos
-                ? "bg-[#5DD3A8] border-[#5DD3A8]"
-                : "border-white/20 bg-transparent"
-            }`}
-          >
-            {form.selecionar_especificos && (
-              <span className="text-[#0B2545] text-[10px] font-bold leading-none">
-                ✓
-              </span>
-            )}
-          </div>
-          Quero selecionar colaboradores especificos
-        </button>
-
-        {form.selecionar_especificos && (
-          <div className="bg-white/3 border border-white/8 rounded-xl p-4 space-y-2">
-            <p className="text-xs text-white/40 mb-3">
-              Selecione os colaboradores que participarao:
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {COLABORADORES_MOCK.map((nome) => {
-                const selecionado = form.colaboradores_especificos.includes(nome);
-                return (
-                  <button
-                    key={nome}
-                    type="button"
-                    onClick={() => toggleColaborador(nome)}
-                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border text-left transition-all text-sm ${
-                      selecionado
-                        ? "bg-[#5DD3A8]/8 border-[#5DD3A8]/30 text-[#5DD3A8]"
-                        : "bg-white/3 border-white/8 text-white/50 hover:bg-white/6 hover:text-white/70"
-                    }`}
-                  >
-                    <div
-                      className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-all ${
-                        selecionado
-                          ? "bg-[#5DD3A8] border-[#5DD3A8]"
-                          : "border-white/20 bg-transparent"
-                      }`}
-                    >
-                      {selecionado && (
-                        <span className="text-[#0B2545] text-[9px] font-bold leading-none">
-                          ✓
-                        </span>
-                      )}
-                    </div>
-                    {nome}
-                  </button>
-                );
-              })}
-            </div>
-            {form.colaboradores_especificos.length > 0 && (
-              <p className="text-xs text-[#5DD3A8] mt-2">
-                {form.colaboradores_especificos.length} colaborador
-                {form.colaboradores_especificos.length !== 1 ? "es" : ""}{" "}
-                selecionado
-                {form.colaboradores_especificos.length !== 1 ? "s" : ""}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -684,11 +523,10 @@ interface Step4Props {
   responsavelNome: string;
   loading: boolean;
   sucesso: boolean;
-  whatsappUrl: string;
   onSubmit: () => void;
 }
 
-function Step4({ form, responsavelNome, loading, sucesso, whatsappUrl, onSubmit }: Step4Props) {
+function Step4({ form, responsavelNome, loading, sucesso, onSubmit }: Step4Props) {
   if (sucesso) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8 text-center">
@@ -697,23 +535,19 @@ function Step4({ form, responsavelNome, loading, sucesso, whatsappUrl, onSubmit 
         </div>
         <div>
           <h3 className="text-base font-bold text-[#5DD3A8] mb-1">
-            Solicitacao enviada!
+            Solicitacao registrada!
           </h3>
           <p className="text-sm text-white/50">
-            A equipe VaciVitta entrara em contato em ate 48h para confirmar
-            logistica e data.
+            Sua solicitacao foi registrada e aparece em "Solicitacoes ativas". A equipe
+            VaciVitta entrara em contato em ate 48h para confirmar logistica e data.
           </p>
         </div>
         <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/25 text-[#25D366] font-medium text-sm rounded-xl transition-colors"
+          href={VACIVITTA_TEL}
+          className="flex items-center gap-2 px-4 py-2 bg-[#5DD3A8]/10 hover:bg-[#5DD3A8]/20 border border-[#5DD3A8]/25 text-[#5DD3A8] font-medium text-sm rounded-xl transition-colors"
         >
-          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-[#25D366]" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-          Tambem pode nos chamar no WhatsApp
+          <span className="text-base">☎</span>
+          Falar agora: {VACIVITTA_FONE_DISPLAY}
         </a>
       </div>
     );
@@ -784,12 +618,6 @@ function Step4({ form, responsavelNome, loading, sucesso, whatsappUrl, onSubmit 
           <p className="text-sm text-white font-medium">
             {form.colaboradores_estimados} pessoas
           </p>
-          {form.selecionar_especificos &&
-            form.colaboradores_especificos.length > 0 && (
-              <p className="text-xs text-white/40 mt-1">
-                Lista especifica: {form.colaboradores_especificos.join(", ")}
-              </p>
-            )}
         </div>
 
         {/* Responsavel */}
@@ -889,18 +717,43 @@ function ComoFunciona() {
 // ─── Componente principal ─────────────────────────────────────────────────────
 
 export default function InCompanyVaciVitta() {
-  const { vegliaUser, firebaseUser } = useAuth();
+  const { vegliaUser, firebaseUser, claims } = useAuth();
+  const companyId = claims?.company_id;
 
   const [form, setForm] = useState<FormState>(FORM_INITIAL);
   const [step, setStep] = useState<WizardStep>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [sucesso, setSucesso] = useState<boolean>(false);
+  const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
 
   const responsavelNome =
     vegliaUser?.displayName ?? firebaseUser?.displayName ?? firebaseUser?.email ?? "—";
 
-  // Nome da empresa para compor a mensagem do WhatsApp (via displayName ou email)
-  const companyName = vegliaUser?.displayName ?? firebaseUser?.displayName ?? undefined;
+  // Solicitações reais da empresa (coleção incompany_requests)
+  useEffect(() => {
+    if (!companyId) return;
+    // Sem orderBy no Firestore (evita índice composto); ordenamos no cliente.
+    const q = query(
+      collection(db, "incompany_requests"),
+      where("company_id", "==", companyId)
+    );
+    return onSnapshot(q, (snap) => {
+      const rows = snap.docs.map((d) => {
+        const data = d.data() as Record<string, unknown>;
+        return {
+          id: d.id,
+          vacinas: (data.vacinas as string[]) ?? [],
+          data_preferencia: (data.data_preferencia as string) ?? "",
+          colaboradores_estimados: (data.colaboradores_estimados as number) ?? 0,
+          status: (data.status as StatusSolicitacao) ?? "solicitado",
+          responsavel_vacivitta: data.responsavel_vacivitta as string | undefined,
+          criado_em: (data.criado_em as string) ?? "",
+        };
+      });
+      rows.sort((a, b) => b.criado_em.localeCompare(a.criado_em));
+      setSolicitacoes(rows);
+    });
+  }, [companyId]);
 
   const updateForm = (updates: Partial<FormState>) => {
     setForm((prev) => ({ ...prev, ...updates }));
@@ -927,12 +780,29 @@ export default function InCompanyVaciVitta() {
     setStep((prev) => (Math.max(prev - 1, 1) as WizardStep));
   };
 
-  const enviar = () => {
+  const enviar = async () => {
+    if (!companyId) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await addDoc(collection(db, "incompany_requests"), {
+        company_id: companyId,
+        requested_by: firebaseUser?.uid ?? "",
+        responsavel: responsavelNome,
+        vacinas: form.vacinas_selecionadas,
+        datas: [form.data_1, form.data_2, form.data_3].filter(Boolean),
+        data_preferencia: form.data_1,
+        turno: form.turno,
+        colaboradores_estimados: form.colaboradores_estimados,
+        observacoes: form.observacoes,
+        status: "solicitado",
+        criado_em: new Date().toISOString().slice(0, 10),
+      });
       setSucesso(true);
-    }, 1500);
+    } catch {
+      // Falha de rede/permissão — mantém o formulário para nova tentativa
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetarWizard = () => {
@@ -967,53 +837,45 @@ export default function InCompanyVaciVitta() {
         </div>
       </div>
 
-      {/* ── CTA WhatsApp Vacivitta ── */}
-      <div className="bg-[#25D366]/8 border border-[#25D366]/20 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap">
+      {/* ── CTA Ligação Vacivitta (0800) ── */}
+      <div className="bg-[#5DD3A8]/8 border border-[#5DD3A8]/20 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-start gap-4">
-          {/* Ícone WhatsApp */}
-          <div className="w-10 h-10 rounded-xl bg-[#25D366]/15 border border-[#25D366]/25 flex items-center justify-center shrink-0">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#25D366]" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
+          <div className="w-10 h-10 rounded-xl bg-[#5DD3A8]/15 border border-[#5DD3A8]/25 flex items-center justify-center shrink-0 text-[#5DD3A8] text-lg">
+            ☎
           </div>
           <div>
             <p className="text-sm font-semibold text-white">
               Fale direto com a Vacivitta
             </p>
             <p className="text-xs text-white/45 mt-0.5 leading-relaxed">
-              Prefere resolver pelo WhatsApp? Clique para abrir uma conversa com
-              atendimento corporativo da Vacivitta — já com os dados da sua
-              solicitação pré-preenchidos.
+              Atendimento corporativo da Vacivitta. Ligue para tirar dúvidas ou acelerar
+              o agendamento da sua campanha.
             </p>
           </div>
         </div>
         <a
-          href={buildWhatsAppUrl(form, companyName)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#25D366] hover:bg-[#20BA5A] text-white font-semibold text-sm rounded-xl transition-colors shrink-0"
+          href={VACIVITTA_TEL}
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#5DD3A8] hover:bg-[#4BC495] text-[#0B2545] font-semibold text-sm rounded-xl transition-colors shrink-0"
         >
-          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-          Abrir WhatsApp
+          <span className="text-base">☎</span>
+          {VACIVITTA_FONE_DISPLAY}
         </a>
       </div>
 
-      {/* ── Secao 1: Solicitacoes ativas ── */}
-      {SOLICITACOES_MOCK.length > 0 && (
+      {/* ── Secao 1: Solicitacoes ativas (dados reais) ── */}
+      {solicitacoes.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-lg font-bold text-white">
               Solicitacoes ativas
             </h2>
             <span className="text-xs text-white/30">
-              {SOLICITACOES_MOCK.length} solicitacao
-              {SOLICITACOES_MOCK.length !== 1 ? "es" : ""}
+              {solicitacoes.length} solicitacao
+              {solicitacoes.length !== 1 ? "es" : ""}
             </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {SOLICITACOES_MOCK.map((sol) => (
+            {solicitacoes.map((sol) => (
               <SolicitacaoCard key={sol.id} solicitacao={sol} />
             ))}
           </div>
@@ -1045,7 +907,6 @@ export default function InCompanyVaciVitta() {
               responsavelNome={responsavelNome}
               loading={loading}
               sucesso={sucesso}
-              whatsappUrl={buildWhatsAppUrl(form, companyName)}
               onSubmit={enviar}
             />
           )}
